@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SkinTime")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3e6444ec046b25b68435240ea003fefd7e949570")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae205154ab8185c37e9f25a7adbb0fdbc34f5928")]
 [assembly: System.Reflection.AssemblyProductAttribute("SkinTime")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SkinTime")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

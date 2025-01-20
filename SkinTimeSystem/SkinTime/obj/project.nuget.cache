@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "5+s7RUmVQdI=",
+  "dgSpecHash": "iWupHyn6yZ4=",
   "success": true,
-  "projectFilePath": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime\\SkinTime.csproj",
+  "projectFilePath": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\SkinTime.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PC\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
