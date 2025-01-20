@@ -1,0 +1,12 @@
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\bin\Debug\net8.0\SkinTime.DAL.deps.json
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\bin\Debug\net8.0\SkinTime.DAL.dll
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\bin\Debug\net8.0\SkinTime.DAL.pdb
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\SkinTime.DAL.csproj.AssemblyReference.cache
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\SkinTime.DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\SkinTime.DAL.AssemblyInfoInputs.cache
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\SkinTime.DAL.AssemblyInfo.cs
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\SkinTime.DAL.csproj.CoreCompileInputs.cache
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\SkinTime.DAL.dll
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\refint\SkinTime.DAL.dll
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\SkinTime.DAL.pdb
+D:\CoursewareFPT\Semester-7\SWD392\Project\SkinTimeSystem\SkinTime.DAL\obj\Debug\net8.0\ref\SkinTime.DAL.dll

@@ -1,0 +1,527 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\extensions\\applicationserviceextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\extensions\\applicationserviceextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\models\\useradd.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\models\\useradd.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\models\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\models\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.bll\\services\\userservice\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|solutionrelative:skintime.bll\\services\\userservice\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.bll\\services\\userservice\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|solutionrelative:skintime.bll\\services\\userservice\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\entities\\baseentities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\entities\\baseentities.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\entities\\transaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\entities\\transaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\helpers\\mapping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\helpers\\mapping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\extensions\\dbcontextextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\extensions\\dbcontextextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\entities\\service.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\entities\\service.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\entities\\feedback.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\entities\\feedback.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.bll\\data\\unitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|solutionrelative:skintime.bll\\data\\unitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\entities\\booking.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\entities\\booking.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.bll\\data\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|solutionrelative:skintime.bll\\data\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\interfaces\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\interfaces\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\interfaces\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\interfaces\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\skintime.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\skintime.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.bll\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|solutionrelative:skintime.bll\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\enum\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\enum\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.dal\\skintime.dal.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{E87BCF5B-80C8-4C12-B557-23921DCF779D}|SkinTime.DAL\\SkinTime.DAL.csproj|solutionrelative:skintime.dal\\skintime.dal.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.bll\\migrations\\20250119112159_8386minhtrimaidinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|solutionrelative:skintime.bll\\migrations\\20250119112159_8386minhtrimaidinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.bll\\migrations\\applicationdbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|solutionrelative:skintime.bll\\migrations\\applicationdbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119112057_8386minhtrimaidinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119081500_testtt.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119080806_testtt.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119074309_tesst.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime.bll\\skintime.bll.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C44593B8-3ECF-4A7F-9F12-DDCACC345660}|SkinTime.BLL\\SkinTime.BLL.csproj|solutionrelative:skintime.bll\\skintime.bll.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|d:\\coursewarefpt\\semester-7\\swd392\\project-backend\\back-end\\skintimesystem\\skintime\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}|SkinTime\\SkinTime.csproj|solutionrelative:skintime\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250118133142_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Program.cs",
+              "RelativeDocumentMoniker": "SkinTime\\Program.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Program.cs",
+              "RelativeToolTip": "SkinTime\\Program.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAEwBAAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T06:33:54.488Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationServiceExtension.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Extensions\\ApplicationServiceExtension.cs",
+              "RelativeDocumentMoniker": "SkinTime\\Extensions\\ApplicationServiceExtension.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Extensions\\ApplicationServiceExtension.cs",
+              "RelativeToolTip": "SkinTime\\Extensions\\ApplicationServiceExtension.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T06:35:37.043Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserAdd.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Models\\UserAdd.cs",
+              "RelativeDocumentMoniker": "SkinTime\\Models\\UserAdd.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Models\\UserAdd.cs",
+              "RelativeToolTip": "SkinTime\\Models\\UserAdd.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T15:50:40.683Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ApiResponse.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Models\\ApiResponse.cs",
+              "RelativeDocumentMoniker": "SkinTime\\Models\\ApiResponse.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Models\\ApiResponse.cs",
+              "RelativeToolTip": "SkinTime\\Models\\ApiResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T11:36:51.409Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "SkinTime\\Controllers\\UserController.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Controllers\\UserController.cs",
+              "RelativeToolTip": "SkinTime\\Controllers\\UserController.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAwwCgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T09:27:34.649Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Services\\UserService\\UserService.cs",
+              "RelativeDocumentMoniker": "SkinTime.BLL\\Services\\UserService\\UserService.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Services\\UserService\\UserService.cs",
+              "RelativeToolTip": "SkinTime.BLL\\Services\\UserService\\UserService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAIA4wDMAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T09:25:50.454Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IUserService.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Services\\UserService\\IUserService.cs",
+              "RelativeDocumentMoniker": "SkinTime.BLL\\Services\\UserService\\IUserService.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Services\\UserService\\IUserService.cs",
+              "RelativeToolTip": "SkinTime.BLL\\Services\\UserService\\IUserService.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAADwvw8AAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T08:58:49.529Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BaseEntities.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\BaseEntities.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Entities\\BaseEntities.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\BaseEntities.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Entities\\BaseEntities.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T06:14:33.782Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\User.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Entities\\User.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\User.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Entities\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T08:55:08.341Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Transaction.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\Transaction.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Entities\\Transaction.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\Transaction.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Entities\\Transaction.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAABMAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T11:02:24.168Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Mapping.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Helpers\\Mapping.cs",
+              "RelativeDocumentMoniker": "SkinTime\\Helpers\\Mapping.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Helpers\\Mapping.cs",
+              "RelativeToolTip": "SkinTime\\Helpers\\Mapping.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T04:46:14.072Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "DbContextExtension.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Extensions\\DbContextExtension.cs",
+              "RelativeDocumentMoniker": "SkinTime\\Extensions\\DbContextExtension.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\Extensions\\DbContextExtension.cs",
+              "RelativeToolTip": "SkinTime\\Extensions\\DbContextExtension.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T07:47:10.075Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Service.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\Service.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Entities\\Service.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\Service.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Entities\\Service.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAuwBAAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T06:15:01.963Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Feedback.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\Feedback.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Entities\\Feedback.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\Feedback.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Entities\\Feedback.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-20T02:10:44.491Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "UnitOfWork.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Data\\UnitOfWork.cs",
+              "RelativeDocumentMoniker": "SkinTime.BLL\\Data\\UnitOfWork.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Data\\UnitOfWork.cs",
+              "RelativeToolTip": "SkinTime.BLL\\Data\\UnitOfWork.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAgwCQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T07:36:47.275Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Booking.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\Booking.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Entities\\Booking.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Entities\\Booking.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Entities\\Booking.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAmwBQAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T11:00:07.187Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "GenericRepository.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Data\\GenericRepository.cs",
+              "RelativeDocumentMoniker": "SkinTime.BLL\\Data\\GenericRepository.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Data\\GenericRepository.cs",
+              "RelativeToolTip": "SkinTime.BLL\\Data\\GenericRepository.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAgwIgAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T16:47:26.048Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "IGenericRepository.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Interfaces\\IGenericRepository.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Interfaces\\IGenericRepository.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Interfaces\\IGenericRepository.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Interfaces\\IGenericRepository.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAUwBQAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T16:28:19.497Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "IUnitOfWork.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Interfaces\\IUnitOfWork.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Interfaces\\IUnitOfWork.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Interfaces\\IUnitOfWork.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Interfaces\\IUnitOfWork.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T06:54:40.237Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "SkinTime.csproj",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\SkinTime.csproj",
+              "RelativeDocumentMoniker": "SkinTime\\SkinTime.csproj",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\SkinTime.csproj",
+              "RelativeToolTip": "SkinTime\\SkinTime.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-01-18T06:32:58.204Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "SkinTime.BLL\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "SkinTime.BLL\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAQwBYAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T15:04:05.477Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Role.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Enum\\Role.cs",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\Enum\\Role.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\Enum\\Role.cs",
+              "RelativeToolTip": "SkinTime.DAL\\Enum\\Role.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T12:07:56.483Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "SkinTime.DAL.csproj",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\SkinTime.DAL.csproj",
+              "RelativeDocumentMoniker": "SkinTime.DAL\\SkinTime.DAL.csproj",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.DAL\\SkinTime.DAL.csproj",
+              "RelativeToolTip": "SkinTime.DAL\\SkinTime.DAL.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-01-19T10:58:01.81Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "20250119112159_8386minhtrimaidinh.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119112159_8386minhtrimaidinh.cs",
+              "RelativeDocumentMoniker": "SkinTime.BLL\\Migrations\\20250119112159_8386minhtrimaidinh.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119112159_8386minhtrimaidinh.cs",
+              "RelativeToolTip": "SkinTime.BLL\\Migrations\\20250119112159_8386minhtrimaidinh.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwBAAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T11:21:59.359Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "ApplicationDbContextModelSnapshot.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\ApplicationDbContextModelSnapshot.cs",
+              "RelativeDocumentMoniker": "SkinTime.BLL\\Migrations\\ApplicationDbContextModelSnapshot.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\ApplicationDbContextModelSnapshot.cs",
+              "RelativeToolTip": "SkinTime.BLL\\Migrations\\ApplicationDbContextModelSnapshot.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T11:22:10.333Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "20250119112057_8386minhtrimaidinh.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119112057_8386minhtrimaidinh.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119112057_8386minhtrimaidinh.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119112057_8386minhtrimaidinh.cs",
+              "RelativeToolTip": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119112057_8386minhtrimaidinh.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T11:20:57.684Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "20250119081500_testtt.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119081500_testtt.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119081500_testtt.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119081500_testtt.cs",
+              "RelativeToolTip": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119081500_testtt.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T08:15:00.348Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "20250119080806_testtt.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119080806_testtt.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119080806_testtt.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119080806_testtt.cs",
+              "RelativeToolTip": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119080806_testtt.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T08:08:06.898Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "20250119074309_tesst.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119074309_tesst.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119074309_tesst.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119074309_tesst.cs",
+              "RelativeToolTip": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250119074309_tesst.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAwA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-19T07:43:09.952Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "SkinTime.BLL.csproj",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\SkinTime.BLL.csproj",
+              "RelativeDocumentMoniker": "SkinTime.BLL\\SkinTime.BLL.csproj",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime.BLL\\SkinTime.BLL.csproj",
+              "RelativeToolTip": "SkinTime.BLL\\SkinTime.BLL.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-01-18T12:20:05.401Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\appsettings.json",
+              "RelativeDocumentMoniker": "SkinTime\\appsettings.json",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project-Backend\\back-end\\SkinTimeSystem\\SkinTime\\appsettings.json",
+              "RelativeToolTip": "SkinTime\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-01-18T07:57:10.104Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "20250118133142_InitialCreate.cs",
+              "DocumentMoniker": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250118133142_InitialCreate.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250118133142_InitialCreate.cs",
+              "ToolTip": "D:\\CoursewareFPT\\Semester-7\\SWD392\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250118133142_InitialCreate.cs",
+              "RelativeToolTip": "..\\..\\..\\Project\\SkinTimeSystem\\SkinTime.BLL\\Migrations\\20250118133142_InitialCreate.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-18T13:31:42.558Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
