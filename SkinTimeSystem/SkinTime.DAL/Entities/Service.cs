@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Entities;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,11 +13,22 @@ namespace SkinTime.DAL.Entities
 {
     public class Service : BaseEntity
     {
-        public string? ServiceName { get; set; }
-        public string? Description { get; set; }
-        public string? Duration { get; set; }
-        public decimal? Price { get; set; }
+        [Column("service_name", TypeName = "NVARCHAR")]
+        [MaxLength(50)]
+        public required string ServiceName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public int Duration { get; set; }
+        public string Thumbnail { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public string? Status { get; set; }
 
-        public virtual ICollection<Booking> Bookings { get; set; }
+        [ForeignKey(nameof(ServiceCategory))]
+        public Guid ServiceCategoryID { get; set; }
+
+        // Virtual properties for relationship navigation
+        public ServiceCategory? ServiceCategory { get; set; }
+        public virtual ICollection<ServiceRecommendation> ServiceRecommendationNavigation { get; set; } = new Collection<ServiceRecommendation>();
+        public virtual ICollection<ServiceDetail> ServiceDetailNavigation { get; set; } = new Collection<ServiceDetail>();
+        public virtual ICollection<ServiceImage> ServiceImageNavigation { get; set; } = new Collection<ServiceImage>();
     }
 }

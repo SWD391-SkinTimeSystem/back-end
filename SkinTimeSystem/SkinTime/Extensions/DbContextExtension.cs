@@ -11,11 +11,19 @@ namespace SkinTime.BLL.Data
             IConfiguration config
         )
         {
-            services.AddDbContext<ApplicationDbContext>(opt => opt.UseMySql( 
-                config.GetConnectionString("DefaultConnection"),
-                ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnection"))
-                ));
+
+            // Code to use DbContext for MySQL database engine 
+            //services.AddDbContext<ApplicationDbContext>(opt => opt.UseMySql( 
+            //    config.GetConnectionString("DefaultConnection"),
+            //    ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnection"))
+            //    ));
+
+            // Code to use DbContext for SQL Server database engine 
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
             return services;
+
         }
 
 

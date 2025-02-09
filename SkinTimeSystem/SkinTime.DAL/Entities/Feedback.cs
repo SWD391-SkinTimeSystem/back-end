@@ -9,10 +9,23 @@ namespace SkinTime.DAL.Entities
 {
     public class Feedback : BaseEntity
     {
-        public string? Disscription { get; set; }
+        [Column("booking_id")]
+        [ForeignKey(nameof(Booking))]
+        public Guid BookingId { get; set; }
 
-        [ForeignKey("User")]
-        public virtual Guid UserId { get; set; }
-        public virtual User? User { get; set; }
+        [Column("therapist_rating")]
+        public int TherapistRating { get; set; }
+
+        [Column("service_rating")]
+        public int ServiceRating { get; set; }
+
+        [Column("therapist_feedback")]
+        public string TherapistFeedback { get; set; } = string.Empty;
+
+        [Column("service_feedback")]
+        public string ServiceFeedback { get; set; } = string.Empty;
+
+        // virtual properties represent entity relationship with other entities.
+        public virtual Booking BookingNavigation { get; set; } = null!;
     }
 }

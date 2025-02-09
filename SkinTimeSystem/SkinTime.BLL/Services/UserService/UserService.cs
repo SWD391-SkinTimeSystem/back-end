@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SkinTime.BLL.Migrations;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using SkinTime.DAL.Interfaces;
