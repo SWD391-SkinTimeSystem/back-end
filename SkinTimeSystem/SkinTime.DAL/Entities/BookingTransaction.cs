@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SkinTime.DAL.Entities
 {
-    public class Transaction : BaseEntity
+    public class BookingTransaction : BaseEntity
     {
         public string? Description { get; set; }
         public string? Status { get; set; }
@@ -18,7 +17,5 @@ namespace SkinTime.DAL.Entities
         [ForeignKey("Booking")]
         public virtual Guid? BookingId { get; set; }
         public virtual Booking? Booking { get; set; }
-
-
     }
 }
