@@ -13,5 +13,7 @@ namespace SkinTime.DAL.Enum
         Male,
         [EnumMember(Value = "Female")]
         Female,
+        [EnumMember(Value = "Other")]
+        Other,
     }
 }

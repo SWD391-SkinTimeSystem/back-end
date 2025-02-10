@@ -45,9 +45,15 @@ namespace SkinTime.BLL.Data
 
             // User - Therapist 1:1
             builder.Entity<User>()
-           .HasOne(u => u.Therapists)
+           .HasOne(u => u.TherapistNavigation)
            .WithOne(b => b.Users)
            .HasForeignKey<Therapist>(b => b.UserID);
+
+            // Booking - User M:1
+            builder.Entity<Booking>()
+                .HasOne(u => u.CustomerNavigation)
+                .WithMany(b => b.BookingNavigation)
+                .HasForeignKey(b => b.CustomerId);
 
             // Schedule - Tracking 1:1
             builder.Entity<Schedule>()

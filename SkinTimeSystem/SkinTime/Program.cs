@@ -12,7 +12,6 @@ namespace SkinTime
             var services = builder.Services;
             var config = builder.Configuration;
 
-
             services.AddDatabaseConfig(config);
             services.AddApplicationServices(config);
 
