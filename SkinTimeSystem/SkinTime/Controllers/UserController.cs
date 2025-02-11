@@ -19,13 +19,13 @@ namespace SkinTime.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var allService = await _services.GetAllUsers();
-            var user = _mapper.Map<List<UserAddWithRole>>(allService);
-            return Ok(user);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllUsers()
+        //{
+        //    var allService = await _services.GetAllUsers();
+        //    var user = _mapper.Map<List<UserAddWithRole>>(allService);
+        //    return Ok(user);
+        //}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(string id)
         {

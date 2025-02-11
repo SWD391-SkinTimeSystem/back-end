@@ -12,9 +12,9 @@ namespace SkinTime.DAL.Entities
     {
         [ForeignKey("Service")]
         public Guid ServiceID { get; set; }
-        public Service? Service { get; set; }
+        public virtual Service? Service { get; set; }
         [ForeignKey("SkinType")]
-        public Guid SkinTypeID{ get; set; }
-        public SkinType? SkinType { get; set; }
+        public virtual Guid SkinTypeID{ get; set; }
+        public virtual SkinType? SkinType { get; set; }
     }
 }

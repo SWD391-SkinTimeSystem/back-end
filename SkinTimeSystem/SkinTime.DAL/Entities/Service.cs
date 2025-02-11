@@ -26,7 +26,7 @@ namespace SkinTime.DAL.Entities
         public Guid ServiceCategoryID { get; set; }
 
         // Virtual properties for relationship navigation
-        public ServiceCategory? ServiceCategory { get; set; }
+        public virtual ServiceCategory? ServiceCategory { get; set; }
         public virtual ICollection<ServiceRecommendation> ServiceRecommendationNavigation { get; set; } = new Collection<ServiceRecommendation>();
         public virtual ICollection<ServiceDetail> ServiceDetailNavigation { get; set; } = new Collection<ServiceDetail>();
         public virtual ICollection<ServiceImage> ServiceImageNavigation { get; set; } = new Collection<ServiceImage>();

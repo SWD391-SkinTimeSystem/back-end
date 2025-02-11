@@ -18,11 +18,11 @@ namespace Entities {
         public int DateToNextStep {  get; set; }
         public bool IsDetele {  get; set; }
 
-        [ForeignKey("Service")]
+       // [ForeignKey("Service")]
         public Guid ServiceID { get; set; }
 
         // Virtual properties represent entity relationship.
-        public virtual Service Service { get; set; } = null!;
+      //  public virtual Service Service { get; set; } = null!;
         public virtual ICollection<Schedule> ScheduleNavigation { get; set; } = new Collection<Schedule>();
     }
 }
