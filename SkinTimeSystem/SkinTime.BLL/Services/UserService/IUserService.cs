@@ -9,7 +9,7 @@ namespace SkinTime.BLL.Services.UserService
 {
     public interface IUserService
     {
-        Task<List<User>> GetAllUsers();
+        //Task<List<User>> GetAllUsers();
         Task<User> GetUser(string id);
         Task CrateUser(User user);
         Task DeleteUser(string user);

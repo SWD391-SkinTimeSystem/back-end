@@ -20,6 +20,21 @@ namespace SkinTime.BLL.Data
         {
             _context = context;
         }
+        //public Task<IQueryable<T>> GetAll()
+        //{// hàm này là lấy tất cả các entity của thực thể nhưng không truy vấn ngay lâpj tức => mục đích là để sử dụng cho việc truy vấn sau này
+        //    return _context.Set<T>();
+        //}
+        public async Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.ToListAsync();
+        }
 
         public async Task AddAsync(T entity)
         {// thằng này đơn giản là thêm entity vào db context
@@ -70,10 +85,7 @@ namespace SkinTime.BLL.Data
             return await _context.Set<T>().SingleOrDefaultAsync(match);
         }
 
-        public IQueryable<T> GetAll()
-        {// hàm này là lấy tất cả các entity của thực thể nhưng không truy vấn ngay lâpj tức => mục đích là để sử dụng cho việc truy vấn sau này
-            return _context.Set<T>();
-        }
+
 
         public T? GetById(Guid id)
         {// hàm này là là lấy entity theo id và có thể sửa đổi entity đó và sử dụng savechanges để lưu thay đổi
@@ -104,6 +116,21 @@ namespace SkinTime.BLL.Data
         {// như trên nhưng lấy dựa vào id đê lấy tất cả
             return await _context.Set<T>().ToListAsync();
         }
+        public async Task<T?> GetByConditionAsync(
+    Expression<Func<T, bool>> filter,
+    Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
+)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            if (includeProperties != null)
+            {
+                query = includeProperties(query);
+            }
+
+            return await query.FirstOrDefaultAsync(filter);
+        }
+
 
         public async Task<IEnumerable<T>> ListAsync(
             Expression<Func<T, bool>>? filter = null,
@@ -131,7 +158,7 @@ namespace SkinTime.BLL.Data
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
         )
-        {// cũng như thằng trên nhưng thêm includeProperties để include các thực thể khác => Truy vấn chỉ lấy những dữ liệu bạn cần
+        {// cũng như thằng trên nhưng thêm includeProperties để include các thực thể khác 
             IQueryable <T> query = _context.Set<T>();
 
             if (filter != null)
@@ -154,6 +181,11 @@ namespace SkinTime.BLL.Data
         public void Update(T entity)
         {// thằng này đơn giản  là cập nhật entity
             _context.Set<T>().Update(entity);
+        }
+
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _context.AddRangeAsync(entities);
         }
     }
 }

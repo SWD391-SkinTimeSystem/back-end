@@ -14,8 +14,6 @@ namespace SkinTime.DAL.Entities
         [ForeignKey("SkinType")]
         public Guid SkinTypeID { get; set; }
         public virtual SkinType? SkinType { get; set; }
-        [ForeignKey("Question")]
         public Guid QuestionID { get; set; }
-        public virtual Question? Questions { get; set; }
     }
 }

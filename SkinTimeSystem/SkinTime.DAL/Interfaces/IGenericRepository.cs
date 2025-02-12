@@ -13,7 +13,8 @@ namespace SkinTime.DAL.Interfaces
     {
         Task<T?> GetEntityByIdAsync(Guid id);
         Task<IReadOnlyList<T>> ListAllAsync();
-        IQueryable<T> GetAll();
+        Task AddRangeAsync(IEnumerable<T> entities);
+        Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
         T? GetById(Guid id);
         T? Find(Expression<Func<T, bool>> match);
         Task<T?> FindAsync(Expression<Func<T, bool>> match);
@@ -30,12 +31,18 @@ namespace SkinTime.DAL.Interfaces
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
         );
+        Task<T?> GetByConditionAsync(
+    Expression<Func<T, bool>> filter,
+    Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
+);
+
 
         Task<IEnumerable<T>> ListAsync(
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
         );
+        
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
     }
 }
