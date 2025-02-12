@@ -35,9 +35,13 @@ namespace SkinTime.Controllers
         [HttpPost("recommendations")]
         public async Task<IActionResult> GetServiceRecommments([FromBody] AnswerModel answer)
         {
-            var serviceRecomment = await _service.GetServiceRecommments(answer.UserId, answer.ResultIds);
-            var serviceRecommendationDto = _mapper.Map<AnalysisModel>(serviceRecomment);
-            return Ok(serviceRecommendationDto);
+            return await HandleApiCallAsync(async () =>
+            {
+                var serviceRecomment = await _service.GetServiceRecommments(answer.UserId, answer.ResultIds);
+                var serviceRecommendation = _mapper.Map<AnalysisModel>(serviceRecomment);
+                return serviceRecommendation;
+            });
+
         }
 
     }

@@ -16,15 +16,12 @@ namespace SkinTime.BLL.Services.SkinTimeService
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<(Service?, List<(Booking?,  Feedback?, User?)>?)> GetService(Guid idService)
+        public async Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService)
         {
             var service = await _unitOfWork.Repository<Service>()
-                              .GetByConditionAsync(s => s.Id == idService,
-                                  query => query.Include(s => s.ServiceDetailNavigation)
-                                                .Include(s => s.ServiceImageNavigation));
-
-            if (service == null)
-                return (null, null);
+                .GetByConditionAsync(s => s.Id == idService,
+                    query => query.Include(s => s.ServiceDetailNavigation)
+                                  .Include(s => s.ServiceImageNavigation));
 
             var bookings = await _unitOfWork.Repository<Booking>()
                 .ListAsync(
@@ -34,12 +31,15 @@ namespace SkinTime.BLL.Services.SkinTimeService
                         .Include(b => b.CustomerNavigation)
                         .Include(b => b.FeedbackNavigation!)
                 );
-            var result = bookings.Any()
-                  ? bookings.Select(b => (b, b.FeedbackNavigation,b.CustomerNavigation)).ToList()
-                  : null;
 
-            return (service, result);
+            var result = bookings
+                .Where(b => b.FeedbackNavigation != null) 
+                .Select(b => (b, b.FeedbackNavigation!, b.CustomerNavigation))
+                .ToList();
+
+            return (service, result.Any() ? result : null);
         }
+
 
     }
 
