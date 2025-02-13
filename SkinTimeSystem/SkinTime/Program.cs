@@ -14,6 +14,7 @@ namespace SkinTime
 
             services.AddDatabaseConfig(config);
             services.AddApplicationServices(config);
+            services.ConfigurateAuthenticationMethod(config);
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();
