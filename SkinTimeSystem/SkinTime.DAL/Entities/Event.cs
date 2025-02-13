@@ -12,13 +12,12 @@ namespace SkinTime.DAL.Entities
         public int? Capacity {get; set; }
         public decimal? TicketPrice { get; set; }
         public string? Description { get; set; }
-        public DateOnly? EventDate { get; set; }
         public DateTime? TimeStart { get; set; }
         public DateTime? TimeEnd { get; set; }
         public string? Location{ get;set; }
-        public string? thubmnail { get; set; }
-        public bool? IsDeleted { get; set; }
-        public virtual ICollection<EventTicket> EventTickets { get; set; }
+        public string? Thubmnail { get; set; }
+        public required string Status {  get; set; }
+        public virtual ICollection<EventTicket> EventTickets { get; set; } = new List<EventTicket>();
 
     }
 }

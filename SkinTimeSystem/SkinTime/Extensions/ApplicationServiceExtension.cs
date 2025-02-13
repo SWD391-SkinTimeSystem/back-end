@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SkinTime.BLL.Data;
+using SkinTime.BLL.Services.EventService;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
@@ -20,6 +21,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEventService, EventService>();
             
             return services;
         }
