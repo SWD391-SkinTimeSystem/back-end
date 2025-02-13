@@ -10,9 +10,11 @@ namespace SkinTime.DAL.Enum
     public enum Role
     {
         [EnumMember(Value = "custommer")]
-        Custommer,
+        Customer,
         [EnumMember(Value = "manager")]
         Manager,
+        [EnumMember(Value = "therapist")]
+        Therapist,
         [EnumMember(Value = "staff")]
         Staff,
         [EnumMember(Value="admin")]

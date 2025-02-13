@@ -12,9 +12,9 @@ namespace SkinTime
             var services = builder.Services;
             var config = builder.Configuration;
 
-
             services.AddDatabaseConfig(config);
             services.AddApplicationServices(config);
+            services.ConfigurateAuthenticationMethod(config);
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();

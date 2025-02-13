@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\ServicesST\**" />
+    <EmbeddedResource Remove="Services\ServicesST\**" />
+    <None Remove="Services\ServicesST\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -24,10 +30,6 @@
     <ProjectReference Include="..\SkinTime.DAL\SkinTime.DAL.csproj">
       <Private>True</Private>
     </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\ServicesST\" />
   </ItemGroup>
 
 </Project>
