@@ -29,27 +29,20 @@ namespace SkinTime.Controllers
             _tokenUtilities = tokenUtil;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(string id)
-        {
-            var user = await _services.GetUser(id);
-
-            if (user == null)
-            {
-                return NotFound("Resource Not Found");
-            }
-            return Ok(_mapper.Map<AccountInformation>(user));
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             await _services.DeleteUser(id);
-            return Ok();
+
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Data = "Deleted user information"
+            });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpadteUser(string id,[FromBody] UserAdd user)
+        [HttpPut("account")]
+        public async Task<IActionResult> UpdateUser(string id,[FromBody] AccountUpdateInformation user)
         {           
             var userUpdate = _mapper.Map<User>(user);
             await _services.UpdateUser(id,userUpdate);
@@ -57,7 +50,7 @@ namespace SkinTime.Controllers
         }
 
         [HttpGet("account")]
-        public async Task<IActionResult> GetUserAccount()
+        public async Task<IActionResult> GetUserAccountList()
         {
             IReadOnlyCollection<AccountInformation> result = _mapper.Map<IReadOnlyCollection<User>,IReadOnlyCollection<AccountInformation>>(await _services.GetUsersAsReadOnly());
 
@@ -70,7 +63,28 @@ namespace SkinTime.Controllers
             };
 
             return Ok(response);
-        } 
+        }
+
+        [HttpGet("account/{id}")]
+        public async Task<IActionResult> GetUserAccount(string id)
+        {
+            var user = await _services.GetUser(id);
+
+            if (user == null)
+            {
+                return NotFound(new ApiResponse<string>
+                {
+                    Success = false,
+                    Data = "User information not found with given id"
+                });
+            }
+
+            return Ok(new ApiResponse<AccountInformation>
+            {
+                Success = true,
+                Data = _mapper.Map<AccountInformation>(user),
+            });
+        }
 
         [HttpPost("account/customer/register")]
         public async Task<IActionResult> RegisterCustomerAccount([FromBody] CustomerRegistration registrationInfo)
@@ -118,8 +132,6 @@ namespace SkinTime.Controllers
         public async Task<IActionResult> SignInWithPassword([FromBody] UserCredential credential)
         {
             var userInformation = await _services.GetUserWithCredential(credential.Account, credential.Password);
-
-            Console.WriteLine(userInformation != null);
 
             if (userInformation != null)
             {   Dictionary<string, string> userObject = new Dictionary<string, string>

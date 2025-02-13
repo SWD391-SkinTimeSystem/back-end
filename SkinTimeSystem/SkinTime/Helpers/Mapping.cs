@@ -17,7 +17,8 @@ namespace SkinTime.Helpers
 
             CreateMap<AccountRegistration, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Username));
-                
+
+            CreateMap<AccountUpdateInformation, User>();
 
             CreateMap<User, AccountInformation>()
                 .ReverseMap();

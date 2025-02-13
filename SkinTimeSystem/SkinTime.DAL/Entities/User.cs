@@ -35,9 +35,12 @@ namespace SkinTime.DAL.Entities
         [StringLength(20)]
         public string Phone { get; set; } = string.Empty;
 
-        [Column(name: "role", TypeName = "VARCHAR(100)")]
-        public string? Role { get; set; }
+        [Column(name: "role", TypeName = "VARCHAR")]
+        [MaxLength(25)]
+        public required string Role { get; set; }
 
+        [Column(name: "avatar", TypeName ="VARCHAR")]
+        [MaxLength(255)]
         public string Avatar { get; set; } = string.Empty;
 
         // Navigational virtual properties represent entity relationship with other entities.

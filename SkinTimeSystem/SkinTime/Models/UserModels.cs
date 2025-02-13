@@ -35,9 +35,19 @@ namespace SkinTime.Models
         
         public DateOnly DateOfBirth { get; set; }
 
-        public Gender Gender { get; set; }
+        public required string Gender { get; set; }
 
         public bool IsTermOfUseAccepted { get; set; } = false;
+    }
+
+    public class AccountUpdateInformation
+    {
+        public string? UserName { get; set; }
+        public string? Email { get; set; }
+        public string? FullName { get; set; }
+        public string? Phone { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
+        public string? Role { get; set; }
     }
 
     public class AccountInformation
