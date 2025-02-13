@@ -14,10 +14,13 @@ namespace SkinTime.Extensions
         )
         {// khai báo tất cả các service ở đây => tìm hiểu midderware, tìm hiểu thêm về addscoped vs addtransient vs addsingleton
             services.AddAutoMapper(typeof(Mapping).Assembly);
+            services.AddScoped<ITokenUtilities, TokenUtilities>();
+            services.AddScoped<IEmailUtilities, EmailUtilities>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddScoped<IUserService, UserService>();
+            
             return services;
         }
     }
