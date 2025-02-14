@@ -128,7 +128,7 @@ namespace SkinTime.Controllers
             return Created((string) null!,response);
         }
         
-        [HttpPost("account/sign-in")]
+        [HttpPost("auth/sign-in")]
         public async Task<IActionResult> SignInWithPassword([FromBody] UserCredential credential)
         {
             var userInformation = await _services.GetUserWithCredential(credential.Account, credential.Password);
@@ -162,7 +162,7 @@ namespace SkinTime.Controllers
             return Unauthorized(response);
         }
 
-        [HttpPost("refresh-token")]
+        [HttpPost("auth/refresh-token")]
         public async Task<IActionResult> RefreshAccessToken([FromBody] string refreshToken)
         {
             // Validate refreshtoken.
