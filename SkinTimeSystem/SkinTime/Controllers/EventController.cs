@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SkinTime.BLL.Services.EventService;
@@ -33,10 +34,10 @@ namespace SkinTime.Controllers
             var filteredEvents = await _services.GetEventList(filterExpression);
 
             // Create an api response and map the result to data.
-            ApiResponse<ICollection<EventInformation>> response = new()
+            ApiResponse<ICollection<AvailableEventInformation>> response = new()
             {
                 Success = true,
-                Data = _mapper.Map<ICollection<EventInformation>>(filteredEvents)
+                Data = _mapper.Map<ICollection<AvailableEventInformation>>(filteredEvents)
             };
 
             return Ok(response);

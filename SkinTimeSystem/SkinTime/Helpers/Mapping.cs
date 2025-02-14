@@ -31,6 +31,14 @@ namespace SkinTime.Helpers
                 .ForMember(dst => dst.AvailableTickets, opt => opt.MapFrom(src => src.Capacity - src.EventTickets.Count))
                 .ForMember(dst => dst.EventStatus, opt => opt.MapFrom(src => src.Status));
 
+            CreateMap<Event, AvailableEventInformation>()
+                .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dst => dst.StartDate, opt => opt.MapFrom(src => src.TimeStart))
+                .ForMember(dst => dst.EndDate, opt => opt.MapFrom(src => src.TimeEnd))
+                .ForMember(dst => dst.ImageUrl, opt => opt.MapFrom(src => src.Thubmnail))
+                .ForMember(dst => dst.EventId, opt => opt.MapFrom(src => src.Id));
+
+
             CreateMap<EventCreation, Event>()
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.EventName))
                 .ForMember(dst => dst.Thubmnail, opt => opt.MapFrom(src => src.EventImage))
