@@ -10,9 +10,9 @@ namespace SkinTime.DAL.Entities
 {
     public class UserChoice : BaseEntity
     {
-        [ForeignKey("Question")]
-        public Guid QuestionID { get; set; }
-        public virtual Question? Questions { get; set; }
+        [ForeignKey("QuestionOption")]
+        public Guid QuestionOptionID{ get; set; }
+        public virtual QuestionOption? QuestionOptions { get; set; }
         [ForeignKey("User")]
         public Guid UserID { get; set; }
         public virtual User? Users{ get; set; }

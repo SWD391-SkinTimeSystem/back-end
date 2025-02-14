@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SkinTime.DAL.Entities;
 
 namespace SkinTime.BLL.Data
@@ -12,15 +13,18 @@ namespace SkinTime.BLL.Data
         )
         {
 
-            // Code to use DbContext for MySQL database engine 
-            //services.AddDbContext<ApplicationDbContext>(opt => opt.UseMySql( 
-            //    config.GetConnectionString("DefaultConnection"),
-            //    ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnection"))
-            //    ));
+           //  Code to use DbContext for MySQL database engine 
+            services.AddDbContext<ApplicationDbContext>(opt => opt.UseMySql( 
+                config.GetConnectionString("DefaultConnectionMySQL"),
+                ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnectionMySQL"))
+                ));
 
             // Code to use DbContext for SQL Server database engine 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //{
+            //    options.UseLazyLoadingProxies();
+            //    options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+           // });
 
             return services;
 

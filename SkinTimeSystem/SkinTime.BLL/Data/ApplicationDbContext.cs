@@ -94,5 +94,12 @@ namespace SkinTime.BLL.Data
             // Hàm này gọi OnModelCreating() default của DbContext. 
             base.OnModelCreating(builder);
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseLazyLoadingProxies();
+            }
+        }
     }
 }
