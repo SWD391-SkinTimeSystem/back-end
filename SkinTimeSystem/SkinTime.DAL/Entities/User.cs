@@ -16,7 +16,7 @@ namespace SkinTime.DAL.Entities
         public string FullName { get; set; } = string.Empty;
 
         [Column("username")]
-        public string UseName { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
 
         [Column("email")]
         public string Email { get; set; } = string.Empty;
@@ -25,20 +25,27 @@ namespace SkinTime.DAL.Entities
         [StringLength(250)]
         public string Password { get; set; } = string.Empty;
 
+        [Column(name: "date_of_birth", TypeName = "DATE")]
+        public DateOnly DateOfBirth { get; set; } 
+
         [Column(name:"gender")]
         public Gender Gender { get; set; }
 
-        [Column(name: "phone_number", TypeName = "VARCHAR(255)")]
+        [Column(name:"phone_number", TypeName = "VARCHAR")]
+        [StringLength(20)]
         public string Phone { get; set; } = string.Empty;
 
-        [Column(name: "role", TypeName = "VARCHAR(100)")]
-        public string? Role { get; set; }
+        [Column(name: "role", TypeName = "VARCHAR")]
+        [MaxLength(25)]
+        public required string Role { get; set; }
 
-
+        [Column(name: "avatar", TypeName ="VARCHAR")]
+        [MaxLength(255)]
+        public string Avatar { get; set; } = string.Empty;
 
         // Navigational virtual properties represent entity relationship with other entities.
-        public virtual Therapist Therapists { get; set; } = null!;
-        public virtual ICollection<Booking> Bookings { get; set; } = new Collection<Booking>();
+        public virtual Therapist TherapistNavigation { get; set; } = null!;
+        public virtual ICollection<Booking> BookingNavigation { get; set; } = new Collection<Booking>();
         public virtual ICollection<UserChoice> UserChoices { get; set; } = new Collection<UserChoice>();
         public virtual ICollection<EventTicket> EventTickets { get; set; } = new Collection<EventTicket>();
     }

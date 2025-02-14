@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkinTime", "SkinTime\SkinTime.csproj", "{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkinTime", "SkinTime\SkinTime.csproj", "{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkinTime.DAL", "SkinTime.DAL\SkinTime.DAL.csproj", "{E87BCF5B-80C8-4C12-B557-23921DCF779D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkinTime.DAL", "SkinTime.DAL\SkinTime.DAL.csproj", "{E87BCF5B-80C8-4C12-B557-23921DCF779D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkinTime.BLL", "SkinTime.BLL\SkinTime.BLL.csproj", "{C44593B8-3ECF-4A7F-9F12-DDCACC345660}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkinTime.BLL", "SkinTime.BLL\SkinTime.BLL.csproj", "{C44593B8-3ECF-4A7F-9F12-DDCACC345660}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4B0B620-7C1E-47CC-A5F5-F9B193C2D755}
 	EndGlobalSection
 EndGlobal
