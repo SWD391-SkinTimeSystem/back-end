@@ -36,7 +36,7 @@ namespace SkinTime.BLL.Services.UserService
             }
         }
 
-        public async Task<List<User>> GetAllUsers() => await _unitOfWork.Repository<User>().GetAll().ToListAsync();
+        public async Task<List<User>> GetAllUsers() => await _unitOfWork.Repository<User>().GetAllAsync();
 
         public async Task<User?> GetUser(string id)
         {

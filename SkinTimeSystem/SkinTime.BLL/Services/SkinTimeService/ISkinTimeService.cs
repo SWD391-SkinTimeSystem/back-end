@@ -9,6 +9,6 @@ namespace SkinTime.BLL.Services.SkinTimeService
 {
     public interface ISkinTimeService
     {
-        Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService);
+        Task<(Service? , List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService);
     }
 }
