@@ -117,7 +117,7 @@ namespace SkinTime.Controllers
             var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email_staff.html");
             content = content.Replace("[1]", registrationInfo.Username).Replace("[2]", registrationInfo.Password);
             
-            await _emailUtilities.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content, "collincomms@gmail.com", "bglbjsyeohtjcnhg");
+            await _emailUtilities.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content);
 
             ApiResponse<string> response = new ApiResponse<string>
             {
