@@ -44,5 +44,19 @@ namespace SkinTime.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateQuestion([FromBody] ICollection<QuestionCreationModel> quiz)
+        {
+            var questionCollection = _mapper.Map<ICollection<Question>>(quiz);
+
+            await _service.CreateOrUpdateQuestions(questionCollection);
+
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Data = "Successfully updated the quiz"
+            });
+        }
+
     }
 }

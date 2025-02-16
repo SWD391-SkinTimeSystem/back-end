@@ -28,7 +28,16 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.No, opt => opt.MapFrom(src => src.OrderNo))
                 .ForMember(dest => dest.IdQuestion, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptionsNavigation));
+
             CreateMap<QuestionOption, QuestionOptionModel>();
+
+            CreateMap<QuestionCreationModel, Question>()
+                .ForMember(dest => dest.OrderNo, opt => opt.MapFrom(src => src.No))
+                .ForMember(dest => dest.QuestionOptionsNavigation, opt => opt.MapFrom(src => src.options));
+
+            CreateMap<OptionCreationModel, QuestionOption>()
+                .ForMember(dest => dest.SkinTypeID, opt => opt.MapFrom(src => src.skinType));
+
             CreateMap<SkinType, SkintypePercentage>()
             .ForMember(dest => dest.NameSkinType, opt => opt.MapFrom(src => src.Name));
 

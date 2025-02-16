@@ -18,4 +18,18 @@
         public string Id { get; set; }            
     }
 
+    public class QuestionCreationModel
+    {
+        public Guid? Id { get; set; } = Guid.Empty;
+        public required string Content { get; set; }
+        public int No { get; set; } = 0;
+        public ICollection<OptionCreationModel> options { get; set; } = new List<OptionCreationModel>();
+    }
+
+    public class OptionCreationModel
+    {
+        public Guid? Id { get; set; } = Guid.Empty;
+        public required string Content { get; set; }
+        public required Guid skinType { get; set; }
+    }
 }

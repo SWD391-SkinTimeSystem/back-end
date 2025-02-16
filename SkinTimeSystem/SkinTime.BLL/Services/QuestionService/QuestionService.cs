@@ -17,6 +17,35 @@ namespace SkinTime.BLL.Services.QuestionService
             _unitOfWork = unitOfWork;
         }
 
+        public async Task CreateOrUpdateQuestions(ICollection<Question> questions)
+        {
+            // Process questions to generate Id for newly added question
+            foreach (Question question in questions)
+            {
+                foreach (QuestionOption option in question.QuestionOptionsNavigation)
+                {
+                    if (option.Id == Guid.Empty)
+                    {
+                        option.Id = Guid.NewGuid();
+                        await _unitOfWork.Repository<QuestionOption>().AddAsync(option);
+                    }
+                }
+
+                if (question.Id == Guid.Empty)
+                {
+                    question.Id = Guid.NewGuid();
+                    await _unitOfWork.Repository<Question>().AddAsync(question);
+                }
+                else
+                {
+                    _unitOfWork.Repository<Question>().Update(question);
+                }
+            }
+
+            // Save data to the database
+            await _unitOfWork.Complete();
+        }
+
         public Task<List<Question>> GetAllQuestion() =>_unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptionsNavigation);
         
 

@@ -187,5 +187,10 @@ namespace SkinTime.BLL.Data
         {
             await _context.AddRangeAsync(entities);
         }
+
+        public void UpdateRange(IEnumerable<T> entities)
+        {
+            _context.Set<T>().UpdateRange(entities);
+        }
     }
 }

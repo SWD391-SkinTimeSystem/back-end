@@ -14,6 +14,7 @@ namespace SkinTime.DAL.Interfaces
         Task<T?> GetEntityByIdAsync(Guid id);
         Task<IReadOnlyList<T>> ListAllAsync();
         Task AddRangeAsync(IEnumerable<T> entities);
+        void UpdateRange(IEnumerable<T> entities);
         Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
         T? GetById(Guid id);
         T? Find(Expression<Func<T, bool>> match);
