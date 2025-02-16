@@ -10,6 +10,7 @@ namespace SkinTime.DAL.Entities
 {
     public class BaseEntity
     {
+        [Column("id")]
         public Guid Id { get; set; }
 
         [Column("created_at")]

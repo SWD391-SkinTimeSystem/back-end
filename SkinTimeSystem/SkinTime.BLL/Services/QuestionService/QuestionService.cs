@@ -17,7 +17,7 @@ namespace SkinTime.BLL.Services.QuestionService
             _unitOfWork = unitOfWork;
         }
 
-        public Task<List<Question>> GetAllQuestion() =>_unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptions);
+        public Task<List<Question>> GetAllQuestion() =>_unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptionsNavigation);
         
 
         public async Task<(Dictionary<SkinType, double> SkinTypes, List<Service> Services)> GetServiceRecommments(Guid userId, List<Guid> listResult)
@@ -34,7 +34,7 @@ namespace SkinTime.BLL.Services.QuestionService
             var allSkinTypes = await _unitOfWork.Repository<SkinType>().ListAsync();// lấy tất cả các loại skin type
 
             var questionOptions = await _unitOfWork.Repository<QuestionOption>()
-                .ListAsync(qo => listResult.Contains(qo.Id), null, qo => qo.Include(q => q.SkinType));// Lấy thông tin của các lựa chọn của người dùng
+                .ListAsync(qo => listResult.Contains(qo.Id), null, qo => qo.Include(q => q.SkinTypeNavigation));// Lấy thông tin của các lựa chọn của người dùng
 
             if (!questionOptions.Any())
             {
@@ -42,7 +42,7 @@ namespace SkinTime.BLL.Services.QuestionService
             }
 
             var skinTypeCounts = questionOptions
-                .GroupBy(qo => qo.SkinType)
+                .GroupBy(qo => qo.SkinTypeNavigation)
                 .ToDictionary(g => g.Key, g => g.Count()); // 
 
             int totalSelections = skinTypeCounts.Values.Sum();

@@ -22,7 +22,7 @@ namespace SkinTime.DAL.Entities
         public string Email { get; set; } = string.Empty;
 
         [Column(name: "password", TypeName = "VARCHAR")]
-        [StringLength(250)]
+        [MaxLength(250)]
         public string Password { get; set; } = string.Empty;
 
         [Column(name: "date_of_birth", TypeName = "DATE")]
@@ -32,7 +32,7 @@ namespace SkinTime.DAL.Entities
         public Gender Gender { get; set; }
 
         [Column(name:"phone_number", TypeName = "VARCHAR")]
-        [StringLength(20)]
+        [MaxLength(20)]
         public string Phone { get; set; } = string.Empty;
 
         [Column(name: "role", TypeName = "VARCHAR")]

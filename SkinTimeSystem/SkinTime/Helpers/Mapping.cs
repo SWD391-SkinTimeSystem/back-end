@@ -27,7 +27,7 @@ namespace SkinTime.Helpers
             CreateMap<Question, QuestionModel>()
                 .ForMember(dest => dest.No, opt => opt.MapFrom(src => src.OrderNo))
                 .ForMember(dest => dest.IdQuestion, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptions));
+                .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptionsNavigation));
             CreateMap<QuestionOption, QuestionOptionModel>();
             CreateMap<SkinType, SkintypePercentage>()
             .ForMember(dest => dest.NameSkinType, opt => opt.MapFrom(src => src.Name));
@@ -74,7 +74,6 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item1.Id))
                 .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Item1.ServiceName))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item1.Description))
-                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Item1.Duration))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Item1.Thumbnail))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item1.Price))
                 .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.Item1.ServiceDetailNavigation))

@@ -25,6 +25,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ISkinTimeService, SkinTimeService>();
+            
             return services;
         }
     }

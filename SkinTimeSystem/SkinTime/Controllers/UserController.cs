@@ -54,8 +54,6 @@ namespace SkinTime.Controllers
         {
             IReadOnlyCollection<AccountInformation> result = _mapper.Map<IReadOnlyCollection<User>,IReadOnlyCollection<AccountInformation>>(await _services.GetUsersAsReadOnly());
 
-            Console.WriteLine(result.Count);
-
             ApiResponse<IReadOnlyCollection<AccountInformation>> response = new()
             {
                 Success = true,

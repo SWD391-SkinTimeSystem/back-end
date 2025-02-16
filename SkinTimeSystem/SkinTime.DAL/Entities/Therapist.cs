@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,23 @@ namespace SkinTime.DAL.Entities
 {
     public class Therapist : BaseEntity
     {
-        public int? ExperienceYears { get; set; }
-        public string? BIO { get; set; }
-        public string? Status { get; set; }
+        [Column("experience_years")]
+        public int ExperienceYears { get; set; }
 
+        [Column("bio", TypeName = "NVARCHAR")]
+        [MaxLength(1024)]
+        public string BIO { get; set; } = string.Empty;
+        
+        [Column("status", TypeName = "VARCHAR")]
+        [MaxLength(20)]
+        public string Status { get; set; } = "available";
+
+        [Column("user_id")]
         [ForeignKey("User")]
         public Guid UserID {  get; set; }
-        public virtual User? Users{ get; set; }
 
+        // Virtual properties
+        public virtual User UserNavigation { get; set; } = null!;
         public virtual ICollection<Tracking> TrackingNavigation { get; set; } = new List<Tracking>();
     }
 }
