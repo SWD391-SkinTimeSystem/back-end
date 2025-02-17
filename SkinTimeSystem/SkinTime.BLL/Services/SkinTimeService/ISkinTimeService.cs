@@ -1,4 +1,5 @@
-﻿using SkinTime.DAL.Entities;
+﻿using Entities;
+using SkinTime.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace SkinTime.BLL.Services.SkinTimeService
     public interface ISkinTimeService
     {
         Task<(Service? , List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService);
+        Task<(Service?, List<ServiceDetail>)> GetTreatmentPlan(Guid idService);
     }
 }

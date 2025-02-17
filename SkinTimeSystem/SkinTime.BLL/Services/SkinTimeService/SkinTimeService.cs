@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +42,18 @@ namespace SkinTime.BLL.Services.SkinTimeService
             return (service, result.Any() ? result : null);
         }
 
+        public async Task<(Service?, List<ServiceDetail>)> GetTreatmentPlan(Guid idService)
+        {
+            var service = _unitOfWork.Repository<Service>().GetEntityByIdAsync(idService);
+
+            var serviceDetails = await _unitOfWork.Repository<ServiceDetail>().ListAsync(
+                filter: b => b.ServiceID == idService,
+                orderBy: null,
+                includeProperties: null
+            );
+
+            return (service, serviceDetails);
+        }
 
     }
 

@@ -1,5 +1,6 @@
 ﻿using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
+using SkinTime.DAL.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,9 @@ namespace SkinTime.BLL.Services.BookingService
 
         Task<ServiceResult<Booking>> GetBookingInformation(Guid bookingId);
 
-        Task<ServiceResult<Booking>> CreateNewBooking(Booking bookingInformation);
+        Task<(Booking, Service)> CreateNewBooking(Guid serviceId, DateTime dateTime);
 
         Task<ServiceResult<Booking>> UpdateBookingInformation(Guid id, Booking bookingInformation);
+        Task<(User, List<Booking>)> GetAppointments(Guid customerId, BookingStatus status);
     }
 }
