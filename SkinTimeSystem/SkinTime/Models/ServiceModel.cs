@@ -3,14 +3,8 @@ using SkinTime.DAL.Entities;
 
 namespace SkinTime.Models
 {
-    public class ServiceModel
-    {
-        public Guid Id { get; set; }
-        public string ServiceName { get; set; }
-        public string Description { get; set; }
-        public int Duration { get; set; }
-        public string Thumbnail { get; set; }
-        public decimal Price { get; set; }
+    public class ServiceModel : ServicesModel
+    {  
 
         public List<ServiceDetailModel> ServiceDetails { get; set; }
         public List<ServiceImageModel> ServiceImages { get; set; }
@@ -36,6 +30,16 @@ namespace SkinTime.Models
         public DateTime? CreatedTime { get; set; }
         public int? Star {  get; set; }
         public string? Comment { get; set; }
+    }
+
+    public class ServicesModel
+    {
+        public Guid Id { get; set; }
+        public string ServiceName { get; set; }
+        public string Description { get; set; }
+        public int Duration { get; set; }
+        public string Thumbnail { get; set; }
+        public decimal Price { get; set; }
     }
 
 }

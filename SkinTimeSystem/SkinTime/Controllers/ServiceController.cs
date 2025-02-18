@@ -28,5 +28,15 @@ namespace SkinTime.Controllers
                 return serviceDTO;
             });
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllService()
+        {
+            return await HandleApiCallAsync(async () =>
+            {
+                var service = _skinTimeService.GetAllService;
+                var serviceDTO = _mapper.Map<ServiceModel>(service);
+                return serviceDTO;
+            });
+        }
     }
 }

@@ -16,6 +16,9 @@ namespace SkinTime.BLL.Services.SkinTimeService
         {
             _unitOfWork = unitOfWork;
         }
+
+        public async Task<IList<Service>> GetAllService() => await _unitOfWork.Repository<Service>().GetAllAsync();
+
         public async Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService)
         {
             var service = await _unitOfWork.Repository<Service>()
