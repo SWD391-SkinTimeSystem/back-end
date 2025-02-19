@@ -9,6 +9,7 @@ namespace SkinTime.BLL.Services.TransactionService
 {
     public class TransactionService : ITransactionService
     {
+        private readonly ITransactionService _transactionService;
         public Task<BookingTransaction> CreateTransaction(BookingTransaction bookingTransaction, string returnUrl, string notifyUrl)
         {
             throw new NotImplementedException();

@@ -23,8 +23,8 @@ namespace SkinTime.Controllers
         public Task<IActionResult> CreateTransaction([FromBody] TransactionModel transaction)
         {
             var bookingTransaction = _mapper.Map<BookingTransaction>(transaction);
-            _service.CreateTransaction(bookingTransaction, transaction.returnUrl,transaction.returnUrl);
-            return Ok();            
+            _service.CreateTransaction(bookingTransaction, transaction.returnUrl,transaction.notifyUrl);
+            return Ok(bookingTransaction);            
         } 
     }
 }
