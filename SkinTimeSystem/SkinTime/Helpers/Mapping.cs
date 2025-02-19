@@ -72,6 +72,17 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.Item1.ServiceImageNavigation))
                 .ForMember(dest => dest.Feedbacks, opt => opt.MapFrom(src => src.Item2 ?? new List<(Booking?, Feedback?, User?)>())); // Nếu null, chuyển thành list rỗng
 
+            CreateMap<Service, TreatmentPlanModel>()
+            .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.ServiceDetailNavigation));
+
+            CreateMap<ServiceDetail, Step>()
+                .ForMember(dest => dest.ServiceDetailId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ServiceDetailName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Step))
+                .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.Duration));
+
         }
 
     }

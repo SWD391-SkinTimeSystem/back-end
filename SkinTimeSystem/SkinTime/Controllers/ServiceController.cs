@@ -38,5 +38,16 @@ namespace SkinTime.Controllers
                 return serviceDTO;
             });
         }
+        [HttpGet("treatment-plan/{id}")]// 35. Lấy danh sách thông tin của treatment plan 
+        public async Task<IActionResult> GetTreatmentPlan(Guid id)
+        {
+            return await HandleApiCallAsync(async () =>
+            {
+                var treatmentPlan = await _skinTimeService.GetTrementplant(id);
+                var treatmentPlanDTO =  _mapper.Map<TreatmentPlanModel>(treatmentPlan);
+                return treatmentPlanDTO;
+            });
+        }
     }
+
 }
