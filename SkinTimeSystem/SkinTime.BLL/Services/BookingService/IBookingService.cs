@@ -15,8 +15,9 @@ namespace SkinTime.BLL.Services.BookingService
 
         Task<ServiceResult<Booking>> GetBookingInformation(Guid bookingId);
 
-        Task<(Booking, Service)> CreateNewBooking(Guid serviceId, DateTime dateTime);
-
+        Task<(Booking, Service)> CreateNewBooking(Guid customerId,Guid serviceId, DateTime dateTime);
+        Task<(Booking, Service)> UpdateBookingService(Guid bookingId, DateTime dateTime);
+        
         Task<ServiceResult<Booking>> UpdateBookingInformation(Guid id, Booking bookingInformation);
         Task<(User, List<Booking>)> GetAppointments(Guid customerId, BookingStatus status);
     }

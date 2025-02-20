@@ -20,9 +20,9 @@ namespace SkinTime.DAL.Entities
 
         public DateTime Date { get; set; }
 
-        public DateTime ReservedStartTime { get; set; }
+        public TimeSpan ReservedStartTime { get; set; }
 
-        public DateTime ReservedEndTime { get; set; }
+        public TimeSpan ReservedEndTime { get; set; }
 
         public ScheduleStatus Status { get; set; } = ScheduleStatus.NotStarted;
 

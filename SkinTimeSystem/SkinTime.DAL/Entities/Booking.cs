@@ -26,6 +26,7 @@ namespace SkinTime.DAL.Entities
 
         [ForeignKey(nameof(Voucher))]
         public Guid? VoucherId { get; set; }
+        public decimal TotalPrice { get; set; } 
 
         public DateTime ReservedTime { get; set; }
 

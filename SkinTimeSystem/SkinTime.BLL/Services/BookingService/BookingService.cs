@@ -1,4 +1,5 @@
 ﻿using Castle.Core.Resource;
+using Entities;
 using Microsoft.EntityFrameworkCore;
 using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
@@ -19,107 +20,63 @@ namespace SkinTime.BLL.Services.BookingService
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<(Booking, Service)> CreateNewBooking(Guid serviceId, DateTime dateTime)
+        public async Task<(Booking, Service)> CreateNewBooking(Guid customerId, Guid serviceId, DateTime dateTime)
         {
+            DateTime date = dateTime.Date;
+            TimeSpan time = dateTime.TimeOfDay;
+
             var service = await _unitOfWork.Repository<Service>()
-               .GetByConditionAsync(s => s.Id == serviceId,
-                   query => query.Include(s => s.ServiceDetailNavigation));
+            .GetByConditionAsync(s => s.Id == serviceId,
+          query => query.Include(s => s.ServiceDetailNavigation)
+                        .Include(s => s.ServiceImageNavigation));
 
-            // Kiểm tra nếu Service không tồn tại
-            if (service == null)
-            {
-                return (null, null);
-            }
 
-            // Nếu Service không có ServiceDetails, thêm Schedule với ngày hiện tại
-            if (service.ServiceDetailNavigation == null || !service.ServiceDetailNavigation.Any())
-            {
-                var booking = new Booking
-                {
-                    Id = Guid.NewGuid(),
-                    ServiceId = serviceId,
-                    ReservedTime = dateTime,
-                    Status = BookingStatus.NotStarted
-                };
-
-                try
-                {
-                    // Thêm booking vào database
-                    await _unitOfWork.Repository<Booking>().AddAsync(booking);
-                    await _unitOfWork.Complete();
-
-                    // Thêm Schedule với ngày hiện tại
-                    var schedule = new Schedule
-                    {
-                        BookingId = booking.Id,
-                        ServiceDetailId = Guid.NewGuid(),  
-                        Date = dateTime, // Lấy ngày hiện tại cho lịch trình
-                        ReservedStartTime = dateTime,
-                        ReservedEndTime = dateTime.AddMinutes(60)  // Giả sử duration là 60 phút
-                    };
-
-                    await _unitOfWork.Repository<Schedule>().AddAsync(schedule);
-                    await _unitOfWork.Complete();
-
-                    return (booking, service);
-                }
-                catch (Exception ex)
-                {
-                    return (null, null);
-                }
-            }
-
-            // Nếu Service có ServiceDetail, tạo Schedule theo các bước
-            var serviceDetails = service.ServiceDetailNavigation
-                                        .Where(sd => !sd.IsDetele) // Loại bỏ những ServiceDetail đã bị xóa
-                                        .OrderBy(sd => sd.Step)  // Sắp xếp theo bước
-                                        .ToList();
-
-            if (!serviceDetails.Any())
-            {
-                return (null, null);
-            }
-
-            var bookingWithService = new Booking
+            var booking = new Booking
             {
                 Id = Guid.NewGuid(),
+                CustomerId = customerId,               
                 ServiceId = serviceId,
                 ReservedTime = dateTime,
-                Status = BookingStatus.NotStarted
+                Status = BookingStatus.NotStarted,
+                TotalPrice = service.Price,
+                
             };
-
-            try
+            await _unitOfWork.Repository<Booking>().AddAsync(booking);
+            var serviceDetails = service.ServiceDetailNavigation
+                                     .Where(sd => !sd.IsDetele) 
+                                     .OrderBy(sd => sd.Step)  
+                                     .ToList();
+            if (serviceDetails == null)
             {
-                // Thêm booking vào database
-                await _unitOfWork.Repository<Booking>().AddAsync(bookingWithService);
-                await _unitOfWork.Complete();
-
-                // Tính toán lịch trình bắt đầu với Step 1
-                DateTime currentDateTime = dateTime;
+                var schedule = new Schedule
+                {
+                    BookingId = booking.Id,
+                    Date = date, 
+                    ReservedStartTime = time, 
+                    ReservedEndTime = time.Add(TimeSpan.FromMinutes(Duration)) // Thời gian kết thúc
+                };
+            }
+                if (service.ServiceDetailNavigation != null )
+            {
 
                 foreach (var serviceDetail in serviceDetails)
                 {
                     var schedule = new Schedule
                     {
-                        BookingId = bookingWithService.Id,
+                        BookingId = booking.Id,
                         ServiceDetailId = serviceDetail.Id,
-                        Date = currentDateTime, // Ngày hiện tại của lịch trình
-                        ReservedStartTime = currentDateTime, // Thời gian bắt đầu
-                        ReservedEndTime = currentDateTime.AddMinutes(serviceDetail.Duration) // Thời gian kết thúc
+                        Date = date,
+                        ReservedStartTime = time,
+                        ReservedEndTime = time.Add(TimeSpan.FromMinutes(serviceDetail.Duration))  // Thời gian kết thúc
                     };
 
                     await _unitOfWork.Repository<Schedule>().AddAsync(schedule);
                     await _unitOfWork.Complete();
 
-                    currentDateTime = currentDateTime.AddDays(serviceDetail.DateToNextStep);
+                     date = date.AddDays(serviceDetail.DateToNextStep);
                 }
 
-                return (bookingWithService, service);
-            }
-            catch (Exception ex)
-            {
-                return (null, null);
-            }
+            }            
         }
 
         public Task<ServiceResult<ICollection<Booking>>> GetAllUserBooking(Guid userId)
@@ -151,7 +108,9 @@ namespace SkinTime.BLL.Services.BookingService
             throw new NotImplementedException();
         }
 
-
-
+        public Task<(Booking, Service)> UpdateBookingService(Guid bookingId, DateTime dateTime)
+        {
+            throw new NotImplementedException();// CÓ DÂU CHẤM HỎI RẤT LỚN VỀ NỘI RÁNGF BUỘC... 
+        }
     }
 }

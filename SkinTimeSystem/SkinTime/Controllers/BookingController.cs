@@ -39,7 +39,12 @@ namespace SkinTime.Controllers
         [HttpPost]
         public async Task<IActionResult> BookingService(BookingServiceModel booking)
         {
-            var bookingService = _service.CreateNewBooking(booking.serviceId,booking.serviceDate);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userId, out var customerId))
+                return BadRequest("Invalid user ID format");
+
+            var bookingService = _service.CreateNewBooking(customerId,booking.serviceId,booking.serviceDate);
+
             //  var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
 
             //return Ok(new ApiResponse<Booking>
@@ -49,18 +54,18 @@ namespace SkinTime.Controllers
             //});
             return Ok();
         }
-        //[HttpPut]
-        //public async Task<IActionResult> UpdateBookingService(BookingServiceModel booking)
-        //{
-        //    var bookingService = _service.CreateNewBooking(booking.serviceId, booking.serviceDate);
-        //    var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
+        [HttpPut]
+        public async Task<IActionResult> UpdateBookingService(UpdateBookingModel booking)
+        {
+            var bookingService = _service.UpdateBookingService(booking.BookingId, booking.NewsTimeStart);
+            var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
 
-        //    return Ok(new ApiResponse<BookingServiceModel>
-        //    {
-        //        Success = true,
-        //        Data = bookingServiceDTO,
-        //    });
-        //}
+            return Ok(new ApiResponse<BookingServiceModel>
+            {
+                Success = true,
+                Data = bookingServiceDTO,
+            });
+        }
 
 
     }
