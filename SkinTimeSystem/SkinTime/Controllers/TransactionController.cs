@@ -20,11 +20,11 @@ namespace SkinTime.Controllers
             _mapper = mapper;
         }
         [HttpPost]
-        public Task<IActionResult> CreateTransaction([FromBody] TransactionModel transaction)
+        public async Task<IActionResult> CreateTransaction([FromBody] TransactionModel transaction)
         {
             var bookingTransaction = _mapper.Map<BookingTransaction>(transaction);
-            _service.CreateTransaction(bookingTransaction, transaction.returnUrl,transaction.notifyUrl);
-            return Ok(bookingTransaction);            
+            var approvalUrl = await _service.CreateTransaction(bookingTransaction, transaction.returnUrl,transaction.notifyUrl);
+            return Redirect(approvalUrl);
         } 
     }
 }

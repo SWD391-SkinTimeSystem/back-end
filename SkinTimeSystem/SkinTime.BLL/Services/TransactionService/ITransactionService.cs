@@ -10,6 +10,6 @@ namespace SkinTime.BLL.Services.TransactionService
 {
     public interface ITransactionService
     {
-        Task<BookingTransaction> CreateTransaction(BookingTransaction bookingTransaction,string returnUrl,string notifyUrl);
+        Task<string> CreateTransaction(BookingTransaction bookingTransaction,string returnUrl,string notifyUrl);
     }
 }

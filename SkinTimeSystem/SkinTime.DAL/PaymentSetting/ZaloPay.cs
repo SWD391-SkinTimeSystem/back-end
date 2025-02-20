@@ -18,9 +18,21 @@ namespace Cursus.Core.Options.PaymentSetting
         public string? CallbackUrl { get; set; }
         public string? QueryOrderUrl { get; set; }
 
+        #region ZALOPAY
+        public async Task<string> CreateZaloPayOrder(decimal? amount, string returnUrl)
+        {
+            var response = await CreateZaloPayQrOrderAsync(amount, returnUrl);
+            if (response.TryGetValue("order_url", out var orderUrl))
+            {
+                return orderUrl; // URL to redirect user for ZaloPay QR code
+            }
+            throw new Exception("Failed to create ZaloPay order.");
+        }
+        #endregion
+
         #region Request Process
         public async Task<Dictionary<string, string>> CreateZaloPayQrOrderAsync(
-            decimal amount,
+            decimal? amount,
             string returnURL
         )
         {

@@ -19,7 +19,13 @@ namespace SkinTime
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy => policy.AllowAnyOrigin()
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader());
+            });
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -27,7 +33,7 @@ namespace SkinTime
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("AllowAll");
             app.UseHttpsRedirection();
             app.UseAuthorization();
             await app.AddAutoMigrateDatabase();

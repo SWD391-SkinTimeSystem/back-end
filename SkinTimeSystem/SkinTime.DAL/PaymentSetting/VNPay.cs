@@ -25,14 +25,23 @@ namespace Cursus.Core.Options.PaymentSetting
             new VnPayCompare()
         );
 
+
+
+        #region VNPAY
+        public async Task<string> CreateVNPayOrder(decimal? amount, string returnUrl)
+        {
+            string ipAddress = await GetIpAddress();
+            await ConfigureRequest(amount, returnUrl, ipAddress);
+            return await CreatePaymentUrlAsync();
+        }
+        #endregion
+
+       
+
         #region Request process
-        public async Task ConfigureRequest(decimal amount, string returnUrl, string ipAddress)
+        public async Task ConfigureRequest(decimal? amount, string returnUrl, string ipAddress)
         {
             _requestData.Clear();
-
-            // Chuyển đổi số tiền từ string sang double
-            AmountInUsd = Convert.ToDouble(amount, CultureInfo.InvariantCulture);
-
 
             // Thêm đầy đủ các tham số vào _requestData
             AddRequestData("vnp_Version", Version);
@@ -89,7 +98,13 @@ namespace Cursus.Core.Options.PaymentSetting
         }
 
         public async Task<string> CreatePaymentUrlAsync()
+
         {
+            if (string.IsNullOrEmpty(BaseUrl))
+                throw new Exception("VNPay BaseUrl is null!");
+            if (string.IsNullOrEmpty(HashSecret))
+                throw new Exception("VNPay HashSecret is null!");
+
             return await CreateRequestUrl(BaseUrl, HashSecret);
         }
 
