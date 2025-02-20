@@ -28,13 +28,5 @@ namespace SkinTime.Controllers
                 return serviceDTO;
             });
         }
-        [HttpGet("service-details/{serviceId}")]
-        public async Task<IActionResult> GetTreatmentPlant([FromRoute] Guid serviceId)
-        {
-
-            var result = await _skinTimeService.GetTreatmentPlan(serviceId);
-
-            return Ok(result);
-        }
     }
 }

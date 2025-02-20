@@ -21,7 +21,9 @@ namespace SkinTime.BLL.Services.BookingService
         }
         public async Task<(Booking, Service)> CreateNewBooking(Guid serviceId, DateTime dateTime)
         {
-            var service = await _unitOfWork.Repository<Service>().GetEntityByIdAsync(serviceId);
+            var service = await _unitOfWork.Repository<Service>()
+               .GetByConditionAsync(s => s.Id == serviceId,
+                   query => query.Include(s => s.ServiceDetailNavigation));
 
             // Kiểm tra nếu Service không tồn tại
             if (service == null)

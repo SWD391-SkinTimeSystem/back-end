@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SkinTime.BLL.Services.BookingService;
@@ -22,6 +23,7 @@ namespace SkinTime.Controllers
             _mapper = mapper;
             _service = service;
         }
+        [Authorize]
         [HttpGet("{status}")]
         public async Task<IActionResult> GetAppointments([FromRoute] BookingStatus status)
         {
@@ -38,15 +40,27 @@ namespace SkinTime.Controllers
         public async Task<IActionResult> BookingService(BookingServiceModel booking)
         {
             var bookingService = _service.CreateNewBooking(booking.serviceId,booking.serviceDate);
-            var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
+            //  var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
 
-            return Ok(new ApiResponse<BookingServiceModel>
-            {
-                Success = true,
-                Data = bookingServiceDTO,
-            });
+            //return Ok(new ApiResponse<Booking>
+            //{
+            //    Success = true,
+            //    Data = bookingService,
+            //});
+            return Ok();
         }
-       
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateBookingService(BookingServiceModel booking)
+        //{
+        //    var bookingService = _service.CreateNewBooking(booking.serviceId, booking.serviceDate);
+        //    var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
+
+        //    return Ok(new ApiResponse<BookingServiceModel>
+        //    {
+        //        Success = true,
+        //        Data = bookingServiceDTO,
+        //    });
+        //}
 
 
     }

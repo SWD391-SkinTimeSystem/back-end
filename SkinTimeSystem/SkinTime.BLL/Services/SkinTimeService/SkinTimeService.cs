@@ -42,18 +42,7 @@ namespace SkinTime.BLL.Services.SkinTimeService
             return (service, result.Any() ? result : null);
         }
 
-        public async Task<(Service?, List<ServiceDetail>)> GetTreatmentPlan(Guid idService)
-        {
-            var service = _unitOfWork.Repository<Service>().GetEntityByIdAsync(idService);
-
-            var serviceDetails = await _unitOfWork.Repository<ServiceDetail>().ListAsync(
-                filter: b => b.ServiceID == idService,
-                orderBy: null,
-                includeProperties: null
-            );
-
-            return (service, serviceDetails);
-        }
+       
 
     }
 

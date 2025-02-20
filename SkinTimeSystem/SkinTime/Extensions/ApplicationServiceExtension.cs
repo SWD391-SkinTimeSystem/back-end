@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SkinTime.BLL.Data;
+using SkinTime.BLL.Services.BookingService;
 using SkinTime.BLL.Services.QuestionService;
 using SkinTime.BLL.Services.SkinTimeService;
 using SkinTime.BLL.Services.UserService;
@@ -20,7 +21,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IEmailUtilities, EmailUtilities>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+            services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IQuestionService, QuestionService>();
