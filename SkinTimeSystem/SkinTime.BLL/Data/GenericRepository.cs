@@ -85,7 +85,10 @@ namespace SkinTime.BLL.Data
             return await _context.Set<T>().SingleOrDefaultAsync(match);
         }
 
-
+        public IQueryable<T> GetAll()
+        {// hàm này là lấy tất cả các entity của thực thể nhưng không truy vấn ngay lâpj tức => mục đích là để sử dụng cho việc truy vấn sau này
+            return _context.Set<T>();
+        }
 
         public T? GetById(Guid id)
         {// hàm này là là lấy entity theo id và có thể sửa đổi entity đó và sử dụng savechanges để lưu thay đổi

@@ -10,12 +10,12 @@
 
     public class QuestionOptionModel
     {
-        public string Content { get; set; }     
+        public string Content { get; set; }
         //public bool IsDelete { get; set; }        
         //public string SkinTypeID { get; set; }    
         //public string SkinType { get; set; }      
         //public string QuestionID { get; set; }   
-        public string Id { get; set; }            
+        public string Id { get; set; }
     }
 
     public class QuestionCreationModel
@@ -30,6 +30,6 @@
     {
         public Guid? Id { get; set; } = Guid.Empty;
         public required string Content { get; set; }
-        public required Guid skinType { get; set; }
+        public required Guid SkinType { get; set; }
     }
 }
