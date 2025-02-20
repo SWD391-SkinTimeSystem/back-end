@@ -2,6 +2,7 @@
 using SkinTime.BLL.Data;
 using SkinTime.BLL.Services.QuestionService;
 using SkinTime.BLL.Services.SkinTimeService;
+using SkinTime.BLL.Services.EventService;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
@@ -25,6 +26,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ISkinTimeService, SkinTimeService>();
+            services.AddScoped<IEventService, EventService>();
             
             return services;
         }
