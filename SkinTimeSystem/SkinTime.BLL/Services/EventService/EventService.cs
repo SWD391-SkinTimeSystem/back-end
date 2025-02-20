@@ -47,16 +47,14 @@ namespace SkinTime.BLL.Services.EventService
         public async Task<ICollection<Event>> GetEventList()
         {
             return await _unitOfWork.Repository<Event>()
-                .GetAll()
-                .ToListAsync();
+                .GetAllAsync();
         }
 
         public async Task<ICollection<Event>> GetEventList(Expression<Func<Event, bool>> expression)
         {
-            return await _unitOfWork.Repository<Event>()
-                .GetAll()
-                .Where(expression)
-                .ToListAsync();
+            IEnumerable<Event> events = await _unitOfWork.Repository<Event>().ListAsync(expression, null, null);
+             
+            return events.ToList();
         }
 
         public async Task<Event?> GetEventWithId(Guid id)
