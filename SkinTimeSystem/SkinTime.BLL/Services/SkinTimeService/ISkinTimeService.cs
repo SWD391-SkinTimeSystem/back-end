@@ -1,5 +1,4 @@
-﻿using Entities;
-using SkinTime.DAL.Entities;
+﻿using SkinTime.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

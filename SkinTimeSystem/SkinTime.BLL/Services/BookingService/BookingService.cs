@@ -1,4 +1,5 @@
-﻿using SkinTime.BLL.Commons;
+﻿using Microsoft.EntityFrameworkCore;
+using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using SkinTime.DAL.Interfaces;
@@ -17,63 +18,63 @@ namespace SkinTime.BLL.Services.BookingService
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<(Booking, Service)> CreateNewBooking(Guid customerId, Guid serviceId, DateTime date )
-        {
-            DateTime date = dateTime.Date;
-            TimeSpan time = dateTime.TimeOfDay;
+        //public async Task<(Booking, Service)> CreateNewBooking(Guid customerId, Guid serviceId, DateTime date)
+        //{
+        //    DateTime date = dateTime.Date;
+        //    TimeSpan time = dateTime.TimeOfDay;
 
-            var service = await _unitOfWork.Repository<Service>()
-            .GetByConditionAsync(s => s.Id == serviceId,
-          query => query.Include(s => s.ServiceDetailNavigation)
-                        .Include(s => s.ServiceImageNavigation));
+        //    var service = await _unitOfWork.Repository<Service>()
+        //    .GetByConditionAsync(s => s.Id == serviceId,
+        //  query => query.Include(s => s.ServiceDetailNavigation)
+        //                .Include(s => s.ServiceImageNavigation));
 
 
-            var booking = new Booking
-            {
-                Id = Guid.NewGuid(),
-                CustomerId = customerId,
-                ServiceId = serviceId,
-                ReservedTime = dateTime,
-                Status = BookingStatus.NotStarted,
-                TotalPrice = service.Price,
+        //    var booking = new Booking
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        CustomerId = customerId,
+        //        ServiceId = serviceId,
+        //        ReservedTime = dateTime,
+        //        Status = BookingStatus.NotStarted,
+        //        TotalPrice = service.Price,
 
-            };
-            await _unitOfWork.Repository<Booking>().AddAsync(booking);
-            var serviceDetails = service.ServiceDetailNavigation
-                                     .Where(sd => !sd.IsDetele)
-                                     .OrderBy(sd => sd.Step)
-                                     .ToList();
-            if (serviceDetails == null)
-            {
-                var schedule = new Schedule
-                {
-                    BookingId = booking.Id,
-                    Date = date,
-                    ReservedStartTime = time,
-                    ReservedEndTime = time.Add(TimeSpan.FromMinutes(Duration)) // Thời gian kết thúc
-                };
-            }
-            if (service.ServiceDetailNavigation != null)
-            {
-                foreach (var serviceDetail in serviceDetails)
-                {
-                    var schedule = new Schedule
-                    {
-                        BookingId = booking.Id,
-                        ServiceDetailId = serviceDetail.Id,
-                        Date = date,
-                        ReservedStartTime = time,
-                        ReservedEndTime = time.Add(TimeSpan.FromMinutes(serviceDetail.Duration))  // Thời gian kết thúc
-                    };
+        //    };
+        //    await _unitOfWork.Repository<Booking>().AddAsync(booking);
+        //    var serviceDetails = service.ServiceDetailNavigation
+        //                             .Where(sd => !sd.IsDetele)
+        //                             .OrderBy(sd => sd.Step)
+        //                             .ToList();
+        //    if (serviceDetails == null)
+        //    {
+        //        var schedule = new Schedule
+        //        {
+        //            BookingId = booking.Id,
+        //            Date = date,
+        //            ReservedStartTime = time,
+        //            ReservedEndTime = time.Add(TimeSpan.FromMinutes(Duration)) // Thời gian kết thúc
+        //        };
+        //    }
+        //    if (service.ServiceDetailNavigation != null)
+        //    {
+        //        foreach (var serviceDetail in serviceDetails)
+        //        {
+        //            var schedule = new Schedule
+        //            {
+        //                BookingId = booking.Id,
+        //                ServiceDetailId = serviceDetail.Id,
+        //                Date = date,
+        //                ReservedStartTime = time,
+        //                ReservedEndTime = time.Add(TimeSpan.FromMinutes(serviceDetail.Duration))  // Thời gian kết thúc
+        //            };
 
-                    await _unitOfWork.Repository<Schedule>().AddAsync(schedule);
-                    await _unitOfWork.Complete();
+        //            await _unitOfWork.Repository<Schedule>().AddAsync(schedule);
+        //            await _unitOfWork.Complete();
 
-                    date = date.AddDays(serviceDetail.DateToNextStep);
-                }
+        //            date = date.AddDays(serviceDetail.DateToNextStep);
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
         public async Task<ServiceResult<ICollection<Booking>>> GetAllUserBooking(string userId)
         {

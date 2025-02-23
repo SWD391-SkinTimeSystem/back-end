@@ -25,7 +25,6 @@ namespace SkinTime.DAL.Entities
 
         [Column("reserved_time_start", TypeName = "TIME")]
         public required TimeOnly ReservedStartTime { get; set; }
-        public TimeSpan ReservedStartTime { get; set; }
 
         public TimeSpan ReservedEndTime { get; set; }
 

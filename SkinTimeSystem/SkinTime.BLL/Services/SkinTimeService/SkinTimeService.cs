@@ -1,6 +1,5 @@
-﻿using Entities;
+﻿using SkinTime.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
-using SkinTime.DAL.Entities;
 using SkinTime.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
