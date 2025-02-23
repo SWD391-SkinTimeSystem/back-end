@@ -1,4 +1,5 @@
-﻿using SkinTime.DAL.Entities;
+﻿using SkinTime.BLL.Commons;
+using SkinTime.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace SkinTime.BLL.Services.QuestionService
 {
     public interface IQuestionService
     {
-        Task<List<Question>> GetAllQuestion();
+        Task<ServiceResult<ICollection<Question>>> GetAllQuestion();
         Task<(Dictionary<SkinType, double> SkinTypes, List<Service>? Services)> GetServiceRecommments(Guid userId, List<Guid> listResult);
     }
 }

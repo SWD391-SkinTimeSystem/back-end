@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
-using Entities;
 using Microsoft.EntityFrameworkCore;
 using SkinTime.DAL.Enum;
+using SkinTime.DAL.Enum.Schedule;
 
 namespace SkinTime.DAL.Entities
 {
@@ -23,15 +23,14 @@ namespace SkinTime.DAL.Entities
         [Column("date", TypeName = "DATE")]
         public required DateOnly Date { get; set; }
 
-        [Column("reserved_time_start", TypeName = "DATETIME")]
-        public required DateTime ReservedStartTime { get; set; }
+        [Column("reserved_time_start", TypeName = "TIME")]
+        public required TimeOnly ReservedStartTime { get; set; }
 
-        [Column("reserved_time_end", TypeName = "DATETIME")]
-        public required DateTime ReservedEndTime { get; set; }
+        [Column("reserved_time_end", TypeName = "TIME")]
+        public required TimeOnly ReservedEndTime { get; set; }
 
-        [Column("status", TypeName = "VARCHAR")]
-        [MaxLength(20)]
-        public required string Status { get; set; } = "not started";
+        [Column("status")]
+        public required ScheduleStatus Status { get; set; } = ScheduleStatus.NotStarted;
 
         // Virtual properties
         public virtual Booking BookingNavigation { get; set; } = null!;

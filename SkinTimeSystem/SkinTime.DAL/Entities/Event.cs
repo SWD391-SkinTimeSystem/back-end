@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SkinTime.DAL.Enum.EventEnums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,11 +30,11 @@ namespace SkinTime.DAL.Entities
         [Column("eventdate", TypeName = "DATE")]
         public required DateOnly EventDate { get; set; }
 
-        [Column("time_start", TypeName = "DATETIME")]
-        public required DateTime TimeStart { get; set; }
+        [Column("time_start", TypeName = "TIME")]
+        public required TimeOnly TimeStart { get; set; }
 
-        [Column("time_end", TypeName = "DATETIME")]
-        public required DateTime TimeEnd { get; set; }
+        [Column("time_end", TypeName = "TIME")]
+        public required TimeOnly TimeEnd { get; set; }
 
         [Column("location", TypeName = "VARCHAR")]
         [MaxLength(50)]
@@ -42,6 +43,9 @@ namespace SkinTime.DAL.Entities
         [Column("thumbnail_url", TypeName = "VARCHAR")]
         [MaxLength(256)]
         public string thubmnail { get; set; } = string.Empty;
+
+        [Column("status")]
+        public EventStatus Status { get; set; } = EventStatus.ApprovePending;
 
         // virtual navigation properties
         public virtual ICollection<EventTicket> EventTickets { get; set; } = new List<EventTicket>();

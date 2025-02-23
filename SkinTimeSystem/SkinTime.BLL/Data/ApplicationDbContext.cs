@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SkinTime.DAL.Entities;
@@ -18,6 +17,7 @@ namespace SkinTime.BLL.Data
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Therapist> Therapists { get; set; } = null!;
+        public DbSet<TherapistCertification> TherapistCertifications {get; set; } = null!;
 
         public DbSet<Voucher> Vouchers { get; set; } = null!;
         public DbSet<Transaction> TicketTransactions { get; set; } = null!;
@@ -101,10 +101,7 @@ namespace SkinTime.BLL.Data
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseLazyLoadingProxies();
-            }
+            optionsBuilder.UseLazyLoadingProxies();
         }
     }
 }

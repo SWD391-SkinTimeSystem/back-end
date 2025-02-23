@@ -1,47 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SkinTime.DAL.Enum;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SkinTime.DAL.Enum;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkinTime.DAL.Entities
 {
     public class User : BaseEntity
     {
-        [Column("fullname")]
+        [Column(name: "fullname")]
         public string FullName { get; set; } = string.Empty;
 
-        [Column("username")]
-        public string UserName { get; set; } = string.Empty;
+        [Column(name: "username")]
+        public string Username { get; set; } = string.Empty;
 
-        [Column("email")]
-        public string Email { get; set; } = string.Empty;
+        [Column(name: "email", TypeName = "VARCHAR")]
+        [MaxLength(40)]
+        public required string Email { get; set; }
 
         [Column(name: "password", TypeName = "VARCHAR")]
         [MaxLength(250)]
         public string Password { get; set; } = string.Empty;
 
         [Column(name: "date_of_birth", TypeName = "DATE")]
-        public DateOnly DateOfBirth { get; set; } 
+        public DateOnly DateOfBirth { get; set; }
 
-        [Column(name:"gender")]
+        [Column(name: "gender")]
         public Gender Gender { get; set; }
 
-        [Column(name:"phone_number", TypeName = "VARCHAR")]
+        [Column(name: "phone_number", TypeName = "VARCHAR")]
         [MaxLength(20)]
         public string Phone { get; set; } = string.Empty;
 
         [Column(name: "role", TypeName = "VARCHAR")]
         [MaxLength(25)]
-        public required string Role { get; set; }
+        public required UserRole Role { get; set; }
 
-        [Column(name: "avatar", TypeName ="VARCHAR")]
+        [Column(name: "avatar", TypeName = "VARCHAR")]
         [MaxLength(255)]
         public string Avatar { get; set; } = string.Empty;
+
+        [Column(name: "status")]
+        public UserStatus Status { get; set; } = UserStatus.Inactive;
 
         // Navigational virtual properties represent entity relationship with other entities.
         public virtual Therapist TherapistNavigation { get; set; } = null!;

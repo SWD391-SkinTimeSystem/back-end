@@ -1,4 +1,4 @@
-﻿namespace SkinTime.Helpers
+﻿namespace SharedLibrary.EmailUtilities
 {
     public interface IEmailUtilities
     {

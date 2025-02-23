@@ -135,21 +135,32 @@ namespace SkinTime.BLL.Data
 
             if (!context.Users.Any())
             {
-                var password = CreateUserPassword("Password");
+                string passwordString = "Password";
+                var password = CreateUserPassword(passwordString);
                 // These data only used for demonstration purposes.
                 await context.Users.AddAsync(new User
                 {
-                    UserName = "admin",
+                    Username = "admin",
                     Password = CreateUserPassword(configuration.GetValue<string>("Admin:Password")!),
                     Email = configuration.GetValue<string>("Admin:Email")!,
                     Gender = Gender.Other,
-                    Role = "Admin"
+                    Role = UserRole.Admin
+                });
+
+                await context.Users.AddAsync(new User
+                {
+                    Username = "manager",
+                    FullName = "Tran Nguyen Quoc Viet",
+                    Password = password,
+                    Email = "sample#example.com",
+                    Gender = Gender.Female,
+                    Role = UserRole.Manager
                 });
 
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Staff_01",
+                    Username = "Staff_01",
                     FullName = "Hannah",
                     Avatar = string.Empty,
                     Gender = Gender.Female,
@@ -157,12 +168,12 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "324563447",
                     DateOfBirth = DateOnly.Parse("1980/12/31"),
-                    Role = "Staff",
+                    Role = UserRole.Staff,
                 });
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Staff_02",
+                    Username = "Staff_02",
                     FullName = "Gregorry Hainz",
                     Avatar = string.Empty,
                     Gender = Gender.Female,
@@ -170,13 +181,13 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "1693837522",
                     DateOfBirth = DateOnly.Parse("2000/05/25"),
-                    Role = "Staff",
+                    Role = UserRole.Staff,
                 });
 
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Therapist_1",
+                    Username = "Therapist_1",
                     FullName = "Jacky Chan",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
@@ -184,19 +195,19 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "9912448336",
                     DateOfBirth = DateOnly.Parse("1997/04/20"),
-                    Role = "Therapist",
+                    Role = UserRole.Therapist,
                     TherapistNavigation = new Therapist
                     {
                         Id = Guid.NewGuid(),
                         BIO = "This is a description field",
                         ExperienceYears = 1,
-                        Status = "Available",
+                        Status = TherapistStatus.Available,
                     }
                 });
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Therapist_02",
+                    Username = "Therapist_02",
                     FullName = "Nguyen Van Lai",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
@@ -204,19 +215,19 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "8912448336",
                     DateOfBirth = DateOnly.Parse("1997/04/20"),
-                    Role = "Therapist",
+                    Role = UserRole.Therapist,
                     TherapistNavigation = new Therapist
                     {
                         Id = Guid.NewGuid(),
                         BIO = "This is therapist 2",
                         ExperienceYears = 5,
-                        Status = "Available",
+                        Status = TherapistStatus.Available,
                     }
                 });
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Therapist_03",
+                    Username = "Therapist_03",
                     FullName = "Harley Ferdinand",
                     Avatar = string.Empty,
                     Gender = Gender.Female,
@@ -224,19 +235,19 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "7429486726",
                     DateOfBirth = DateOnly.Parse("1980/11/30"),
-                    Role = "Therapist",
+                    Role = UserRole.Therapist,
                     TherapistNavigation = new Therapist
                     {
                         Id = Guid.NewGuid(),
                         BIO = "This is Ms.Harley Ferdinand",
                         ExperienceYears = 1,
-                        Status = "Available",
+                        Status = TherapistStatus.Available,
                     }
                 });
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Therapist_5",
+                    Username = "Therapist_5",
                     FullName = "Tommy Vercetti",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
@@ -244,20 +255,20 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "188928777",
                     DateOfBirth = DateOnly.Parse("1991/11/30"),
-                    Role = "Therapist",
+                    Role = UserRole.Therapist,
                     TherapistNavigation = new Therapist
                     {
                         Id = Guid.NewGuid(),
                         BIO = "This is Mr.Tommy Vercetti",
                         ExperienceYears = 2,
-                        Status = "Available",
+                        Status = TherapistStatus.Available,
                     }
                 });
 
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Customer_01",
+                    Username = "Customer_01",
                     FullName = "Un Ascii Key",
                     Avatar = string.Empty,
                     Gender = Gender.Female,
@@ -265,12 +276,12 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "0194302421",
                     DateOfBirth = DateOnly.Parse("2004/12/02"),
-                    Role = "Customer",
+                    Role = UserRole.Customer,
                 });
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Customer_02",
+                    Username = "Customer_02",
                     FullName = "Jack Teal",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
@@ -278,12 +289,12 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "0997442823",
                     DateOfBirth = DateOnly.Parse("2004/12/02"),
-                    Role = "Customer",
+                    Role = UserRole.Customer,
                 });
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
-                    UserName = "Customer_03",
+                    Username = "Customer_03",
                     FullName = "User Customer 3",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
@@ -291,7 +302,7 @@ namespace SkinTime.BLL.Data
                     Password = password,
                     Phone = "0997442823",
                     DateOfBirth = DateOnly.Parse("2003/08/11"),
-                    Role = "Customer",
+                    Role = UserRole.Customer,
                 });
 
                 await context.SaveChangesAsync();
@@ -322,7 +333,7 @@ namespace SkinTime.BLL.Data
                     {
                         Id = Guid.NewGuid(),
                         Name = category,
-                        Status = "Available",
+                        Status = ServiceCategoryStatus.Enabled,
                     });
                 }
 
@@ -342,6 +353,32 @@ namespace SkinTime.BLL.Data
                         Price = random.Next(100000,2000000),
                         ServiceCategoryID = serviceCategory[random.Next(serviceCategory.Count())].Id,
                     });
+                }
+
+                await context.SaveChangesAsync();
+            }
+
+            if (!context.ServiceDetails.Any())
+            {
+                var Services = context.Services.ToArray();
+
+                for (int i = 0; i < 20; i++)
+                {
+                    var Service = Services[random.Next(Services.Count())];
+                    var Step = Service.ServiceDetailNavigation.Count() + 1;
+                    var UnitPrice = random.Next(100000, 2000000);
+                    await context.ServiceDetails.AddAsync(new()
+                    {
+                        Name = LoremIpsum(1, 2, 1, 1, 1),
+                        Description = LoremIpsum(10, 11, 2, 4, 1),
+                        Duration = random.Next(15, 120),
+                        UnitPrice = UnitPrice,
+                        ServiceID = Service.Id,
+                        DateToNextStep = random.Next(1, 20),
+                        Step = Step
+                    });
+
+                    Service.Price += UnitPrice;
                 }
 
                 await context.SaveChangesAsync();
@@ -405,11 +442,24 @@ namespace SkinTime.BLL.Data
                     EventDate = DateOnly.Parse("2025/11/20"),
                     Location = "Hall Alpha",
                     TicketPrice = 100000,
-                    TimeStart = DateTime.Parse("2025/11/20 12:00:00"),
-                    TimeEnd = DateTime.Parse("2025/11/20 14:00:00"),
+                    TimeStart = TimeOnly.Parse("12:00:00"),
+                    TimeEnd = TimeOnly.Parse("14:00:00"),
                 });
+
+                await context.Events.AddAsync(new()
+                {
+                    Name = "Chuyên đề về lợi ích của hệ thống chăm sóc da.",
+                    Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
+                    Capacity = 250,
+                    EventDate = DateOnly.Parse("2025/11/22"),
+                    Location = "Hall Alpha",
+                    TicketPrice = 150000,
+                    TimeStart = TimeOnly.Parse("07:00:00"),
+                    TimeEnd = TimeOnly.Parse("09:00:00"),
+                });
+
+                await context.SaveChangesAsync();
             }
         }
-
     }
 }

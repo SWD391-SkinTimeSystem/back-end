@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Interfaces;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SkinTime.BLL.Data
 {
@@ -20,11 +22,8 @@ namespace SkinTime.BLL.Data
         {
             _context = context;
         }
-        //public Task<IQueryable<T>> GetAll()
-        //{// hàm này là lấy tất cả các entity của thực thể nhưng không truy vấn ngay lâpj tức => mục đích là để sử dụng cho việc truy vấn sau này
-        //    return _context.Set<T>();
-        //}
-        public async Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
+
+        public async Task<ICollection<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query = _context.Set<T>();
 
@@ -36,9 +35,10 @@ namespace SkinTime.BLL.Data
             return await query.ToListAsync();
         }
 
-        public async Task AddAsync(T entity)
-        {// thằng này đơn giản là thêm entity vào db context
-            await _context.Set<T>().AddAsync(entity);
+        public async Task<T> AddAsync(T entity)
+        {
+            EntityEntry<T> entityTracker = await _context.Set<T>().AddAsync(entity);
+            return entityTracker.Entity;
         }
 
         public int Count()
@@ -102,12 +102,24 @@ namespace SkinTime.BLL.Data
             return entity;
         }
 
-        public async Task<T?> GetEntityByIdAsync(Guid id)
+        public async Task<T?> GetByIdAsync(Guid id)
         {// hàm này khá giống với trên nhưng thêm bất đồng bộ 
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<IReadOnlyList<T>> ListAllAsync()
+        public async Task<T?> GetByIdAsync(Guid id, Func<IQueryable<T>, IIncludableQueryable<T, object?>> includeProperties)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            if (includeProperties != null)
+            {
+                query = includeProperties(query);
+            }
+
+            return await query.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<IReadOnlyCollection<T>> ToListAsReadOnly()
         {// hàm này là lấy tất cả các entity của thực thể nhưng bất đồng bộ. Thực thi ngay lập tức khi gọi phương thức.
             return await _context.Set<T>().ToListAsync();
         }
@@ -117,8 +129,8 @@ namespace SkinTime.BLL.Data
             return await _context.Set<T>().ToListAsync();
         }
         public async Task<T?> GetByConditionAsync(
-    Expression<Func<T, bool>> filter,
-    Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
+            Expression<Func<T, bool>> filter,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
 )
         {
             IQueryable<T> query = _context.Set<T>();
@@ -154,9 +166,9 @@ namespace SkinTime.BLL.Data
         }
 
         public async Task<IEnumerable<T>> ListAsync(
+            Func<IQueryable<T>, IIncludableQueryable<T, object?>> includeProperties,
             Expression<Func<T, bool>>? filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
         )
         {// cũng như thằng trên nhưng thêm includeProperties để include các thực thể khác 
             IQueryable <T> query = _context.Set<T>();
@@ -178,9 +190,10 @@ namespace SkinTime.BLL.Data
             return await query.ToListAsync();
         }
 
-        public void Update(T entity)
+        public T Update(T entity)
         {// thằng này đơn giản  là cập nhật entity
-            _context.Set<T>().Update(entity);
+            EntityEntry<T> entityTracker = _context.Set<T>().Update(entity);
+            return entityTracker.Entity;
         }
 
         public async Task AddRangeAsync(IEnumerable<T> entities)

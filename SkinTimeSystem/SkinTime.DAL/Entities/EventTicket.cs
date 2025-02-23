@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SkinTime.DAL.Enum.EventEnums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -23,24 +24,24 @@ namespace SkinTime.DAL.Entities
         [MaxLength(50)]
         public string? TicketCode { get; set; }
 
-        [Column("ticket_status", TypeName = "VARCHAR")]
-        [MaxLength(16)]
-        public string Status { get; set; } = "bought";
+        [Column("ticket_status")]
+        public EventTicketStatus Status { get; set; } = EventTicketStatus.Paid;
 
-        [ForeignKey("User")]
+        [Column("user_id")]
+        [ForeignKey(nameof(User))]
         public Guid UserID { get; set; }
-        
-        [ForeignKey("EventTicket")]
-        public Guid EventTicketID { get; set; }
+
+        [Column("event_id")]
+        [ForeignKey(nameof(Event))]
+        public Guid EventId { get; set; }
 
         [Column("transaction_id")]
         [ForeignKey(nameof(Transaction))]
         public Guid? TransactionId { get; set; }
 
         // Vitual navigation properties
+        public virtual User UserNavigation { get; set; } = null!;
         public virtual Event EventNavigation { get; set; } = null!;
         public virtual Transaction? TransactionNavigation { get; set; }
-        public virtual User UserNavigation { get; set; } = null!;
-
     }
 }

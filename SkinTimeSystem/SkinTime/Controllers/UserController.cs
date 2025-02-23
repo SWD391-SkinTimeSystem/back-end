@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
+using SharedLibrary.EmailUtilities;
+using SharedLibrary.TokenUtilities;
+using SkinTime.BLL.Commons;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
-using SkinTime.Helpers;
 using SkinTime.Models;
 using System.IO;
 using System.Text;
@@ -13,192 +16,116 @@ using System.Text;
 namespace SkinTime.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class userController : Controller
+    [Authorize]
+    [Route("api/account")]
+    public class UserController : BaseController
     {
         private readonly IUserService _services;
-        private readonly IMapper _mapper;
-        private readonly IEmailUtilities _emailUtilities;
-        private readonly ITokenUtilities _tokenUtilities;
 
-        public userController(IUserService services, IMapper mapper, IEmailUtilities emailUtil, ITokenUtilities tokenUtil)
+        public UserController(IUserService services, IMapper mapper, IEmailUtilities emailUtil, ITokenUtilities tokenUtil)
+            :base(mapper, emailUtil,tokenUtil)
         {
             _services = services;
-            _mapper = mapper;
-            _emailUtilities = emailUtil;
-            _tokenUtilities = tokenUtil;
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<ActionResult<AccountInformation>> DeleteUser(string id)
         {
-            await _services.DeleteUser(id);
-
-            return Ok(new ApiResponse<string>
+            return await HandleServiceCall<User, AccountInformation>(async () =>
             {
-                Success = true,
-                Data = "Deleted user information"
+                return await _services.DeleteUser(id);
             });
         }
 
-        [HttpPut("account")]
-        public async Task<IActionResult> UpdateUser(string id,[FromBody] AccountUpdateInformation user)
-        {           
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] AccountUpdateInformation user)
+        {
+            // Get user id from jwt token.
+            string jwt = Request.Headers.Authorization.First()!;
+            string user_id = _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
+
             var userUpdate = _mapper.Map<User>(user);
-            await _services.UpdateUser(id,userUpdate);
+            await _services.UpdateUser(user_id,userUpdate);
             return Ok();
         }
 
-        [HttpGet("account")]
-        public async Task<IActionResult> GetUserAccountList()
+        [AllowAnonymous]
+        [HttpGet("list")]
+        public async Task<ActionResult<IReadOnlyCollection<AccountInformation>>> GetUserAccountList()
         {
-            IReadOnlyCollection<AccountInformation> result = _mapper.Map<IReadOnlyCollection<User>,IReadOnlyCollection<AccountInformation>>(await _services.GetUsersAsReadOnly());
-
-            ApiResponse<IReadOnlyCollection<AccountInformation>> response = new()
-            {
-                Success = true,
-                Data = result
-            };
-
-            return Ok(response);
+            return await HandleServiceCall<IReadOnlyCollection<User>, IReadOnlyCollection<AccountInformation>>(_services.GetUsersAsReadOnly);
         }
 
-        [HttpGet("account/{id}")]
-        public async Task<IActionResult> GetUserAccount(string id)
+        [HttpGet]
+        public async Task<ActionResult<AccountInformation>> GetUserAccount()
         {
-            var user = await _services.GetUser(id);
+            // Get user id from jwt token.
+            string jwt = Request.Headers.Authorization.First()!;
+            string user_id = _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
 
-            if (user == null)
+            return await HandleServiceCall<User, AccountInformation>(async () =>
             {
-                return NotFound(new ApiResponse<string>
-                {
-                    Success = false,
-                    Data = "User information not found with given id"
-                });
-            }
-
-            return Ok(new ApiResponse<AccountInformation>
-            {
-                Success = true,
-                Data = _mapper.Map<AccountInformation>(user),
+                return await _services.GetUser(user_id);
             });
         }
 
-        [HttpPost("account/customer/register")]
-        public async Task<IActionResult> RegisterCustomerAccount([FromBody] CustomerRegistration registrationInfo)
+        /// <summary>
+        ///     Register a customer account
+        /// </summary>
+        /// <param name="registrationInfo">The required fields that a customer need to fill on the register page.</param>
+        /// <returns>The result of the operation, the data will be the newly created user id.</returns>
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<ActionResult<ApiResponse>> RegisterCustomerAccount([FromBody] CustomerRegistration registrationInfo)
         {
-            User userInformation = _mapper.Map<User>(registrationInfo);
-
-            await _services.CreateUserAccount(userInformation);
-
-            var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email.html");
-            await _emailUtilities.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content.Replace("[0]", registrationInfo.Fullname));
-
-            ApiResponse<string> response = new ApiResponse<string>
+            return await HandleServiceCall(async () =>
             {
-                Success = true,
-                Data = "Successfully created user account."
-            };
+                ServiceResult<User> result = await _services.CreateUserAccount(_mapper.Map<User>(registrationInfo));
 
-            return Ok(response);
+                if (result.IsFailed)
+                {
+                    return result;
+                }
+
+                var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email.html");
+                await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content.Replace("[0]", registrationInfo.Fullname));
+
+                ApiResponse response = new ApiResponse(true, "Successfully created the user account", result.Data!.Id);
+
+                return ServiceResult.Success(response);
+            });
         }
 
+        /// <summary>
+        ///     Create a new user account of any role. 
+        /// </summary>
+        /// <param name="registrationInfo">The user account registration information</param>
+        /// <remarks>Only the admin may use this endpoint 
+        ///     <para>
+        ///         <b>Note:</b> This endpoint is not updated to use the latest 
+        ///         <see cref="BaseController.HandleServiceCall(Func{Task{ServiceResult}})"/> to return 
+        ///         a <see cref="ApiResponse"/> result to the client.
+        ///     </para>
+        /// </remarks>
+        /// <returns>200Ok response if successfully create an user account, else 400BadRequest</returns>
+        [Authorize(Roles = "admin")]
         [HttpPost("account")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountRegistration registrationInfo)
         {
             User userInformation = _mapper.Map<User>(registrationInfo);
 
-            userInformation.Role = registrationInfo.Role;
+            userInformation.Role = Enum.Parse<UserRole>(registrationInfo.Role);
 
             await _services.CreateUserAccount(userInformation);
 
             var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email_staff.html");
             content = content.Replace("[1]", registrationInfo.Username).Replace("[2]", registrationInfo.Password);
             
-            await _emailUtilities.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content);
+            await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content);
 
-            ApiResponse<string> response = new ApiResponse<string>
-            {
-                Success = true,
-                Data = "Successfully created user account."
-            };
+            ApiResponse<string> response = new(true, "Successfully created user account.");
 
             return Created((string) null!,response);
-        }
-        
-        [HttpPost("auth/sign-in")]
-        public async Task<IActionResult> SignInWithPassword([FromBody] UserCredential credential)
-        {
-            var userInformation = await _services.GetUserWithCredential(credential.Account, credential.Password);
-
-            if (userInformation != null)
-            {   Dictionary<string, string> userObject = new Dictionary<string, string>
-                {
-                    {"id", userInformation.Id.ToString()},
-                    {"role", userInformation.Role},
-                };
-
-                ApiResponse<AuthenticationTokens> repsonse = new ApiResponse<AuthenticationTokens>
-                {
-                    Success = true,
-                    Data = new()
-                    {
-                        AccessToken = _tokenUtilities.CreateJwtFromDictionary(userObject),
-                        RefreshToken = _tokenUtilities.CreateBase64RefreshToken(userObject["id"])
-                    }
-                };
-
-                return Ok(repsonse);
-            }
-
-            ApiResponse<string> response = new ApiResponse<string>
-            {
-                Success = false,
-                Data = "Login failed",
-            };
-
-            return Unauthorized(response);
-        }
-
-        [HttpPost("auth/refresh-token")]
-        public async Task<IActionResult> RefreshAccessToken([FromBody] string refreshToken)
-        {
-            // Validate refreshtoken.
-            string? userIdString = _tokenUtilities.ValidateBase64RefreshToken(refreshToken);
-
-            ApiResponse<AuthenticationTokens> response = new ApiResponse<AuthenticationTokens>
-            {
-                Success = true
-            };
-
-            if ( userIdString != null)
-            {
-                // Get user information.
-                User userInformation = (await _services.GetUser(userIdString))!;
-
-                // Create dictionary to generate new key.
-                Dictionary<string, string> userObject = new Dictionary<string, string>
-                {
-                    {"id", userInformation.Id.ToString()},
-                    {"role", userInformation.Role},
-                };
-
-                response.Data = new()
-                {
-                    AccessToken = _tokenUtilities.CreateJwtFromDictionary(userObject),
-                    RefreshToken = _tokenUtilities.CreateBase64RefreshToken(userObject["id"])
-                };
-
-                return Ok(response);
-            }
-
-            response = new ApiResponse<AuthenticationTokens>
-            {
-                Success = false,
-                Data = null
-            };
-
-            return Unauthorized(response);
         }
     }
 }

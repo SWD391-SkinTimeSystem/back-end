@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkinTime.DAL.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,9 +18,8 @@ namespace SkinTime.DAL.Entities
         [MaxLength(1024)]
         public string BIO { get; set; } = string.Empty;
         
-        [Column("status", TypeName = "VARCHAR")]
-        [MaxLength(20)]
-        public string Status { get; set; } = "available";
+        [Column("status")]
+        public TherapistStatus Status { get; set; } = TherapistStatus.Unavailable;
 
         [Column("user_id")]
         [ForeignKey("User")]
@@ -27,6 +27,8 @@ namespace SkinTime.DAL.Entities
 
         // Virtual properties
         public virtual User UserNavigation { get; set; } = null!;
+        public virtual ICollection<Booking> BookingNavigation { get; set; } = new List<Booking>();
         public virtual ICollection<Tracking> TrackingNavigation { get; set; } = new List<Tracking>();
+        public virtual ICollection<TherapistCertification> CertificationNavigation {  get; set; } = new List<TherapistCertification>();
     }
 }

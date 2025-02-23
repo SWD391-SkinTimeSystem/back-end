@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using SkinTime.DAL.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities {
+namespace SkinTime.DAL.Entities {
     public class ServiceDetail: BaseEntity
     {
         [Column("name", TypeName = "NVARCHAR")]
@@ -17,7 +18,7 @@ namespace Entities {
         public string Name{  get; set; } = string.Empty;
 
         [Column("description", TypeName = "NVARCHAR")]
-        [MaxLength(250)]
+        [MaxLength(1024)]
         public string Description { get; set; } = string.Empty;
 
         [Column("step")]
@@ -25,6 +26,10 @@ namespace Entities {
 
         [Column("duration")]
         public int Duration { get; set; }
+
+        [Column("price", TypeName = "DECIMAL")]
+        [Precision(16,2)]
+        public decimal UnitPrice { get; set; }
 
         [Column("day_to_next_step")]
         public int DateToNextStep {  get; set; }

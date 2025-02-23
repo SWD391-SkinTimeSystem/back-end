@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Interfaces;
 using System;
@@ -17,7 +18,8 @@ namespace SkinTime.BLL.Services.QuestionService
             _unitOfWork = unitOfWork;
         }
 
-        public Task<List<Question>> GetAllQuestion() =>_unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptionsNavigation);
+        public async Task<ServiceResult<ICollection<Question>>> GetAllQuestion() 
+            =>ServiceResult<ICollection<Question>>.Success(await _unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptionsNavigation));
         
 
         public async Task<(Dictionary<SkinType, double> SkinTypes, List<Service> Services)> GetServiceRecommments(Guid userId, List<Guid> listResult)
@@ -34,7 +36,7 @@ namespace SkinTime.BLL.Services.QuestionService
             var allSkinTypes = await _unitOfWork.Repository<SkinType>().ListAsync();// lấy tất cả các loại skin type
 
             var questionOptions = await _unitOfWork.Repository<QuestionOption>()
-                .ListAsync(qo => listResult.Contains(qo.Id), null, qo => qo.Include(q => q.SkinTypeNavigation));// Lấy thông tin của các lựa chọn của người dùng
+                .ListAsync(qo => qo.Include(q => q.SkinTypeNavigation), qo => listResult.Contains(qo.Id));// Lấy thông tin của các lựa chọn của người dùng
 
             if (!questionOptions.Any())
             {

@@ -1,13 +1,9 @@
-﻿using Humanizer;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
-using NuGet.Protocol.Plugins;
+﻿using Microsoft.Extensions.Configuration;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Mail;
-using System.Runtime.InteropServices.JavaScript;
-using System.Runtime.Serialization;
 
-namespace SkinTime.Helpers
+namespace SharedLibrary.EmailUtilities
 {
     public enum DefaultSmtpServer
     {
@@ -32,13 +28,12 @@ namespace SkinTime.Helpers
 
         public EmailUtilities(IConfiguration config) 
         {
-            _hostEmailAddress = config.GetValue<string>("MailSystem:Address")!;
-            _hostEmailPassword = config.GetValue<string>("MailSystem:Secret")!;
+            _hostEmailAddress = config.GetSection("MailSystem:Address").Value!;
+            _hostEmailPassword = config.GetSection("MailSystem:Secret").Value!;
         }
 
         public async Task<bool> SendEmailAsync(string recipientAddress, string subject, string body, string smtpServer, int smtpPort, string senderAdress, string senderKey)
         {
-            Console.WriteLine(smtpServer);
             using (SmtpClient client = new SmtpClient(smtpServer))
             {
                 MailMessage message = new MailMessage(
@@ -63,7 +58,6 @@ namespace SkinTime.Helpers
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
                     return false;
                 }
             }

@@ -1,6 +1,6 @@
-﻿using Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using SkinTime.DAL.Enum;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,12 +26,12 @@ namespace SkinTime.DAL.Entities
         [MaxLength(255)]
         public required string Thumbnail { get; set; } = string.Empty;
 
-        [Column("price")]
+        [Column("price", TypeName = "DECIMAL")]
         [Precision(16,2)]
         public required decimal Price { get; set; }
 
         [Column("status")]
-        public string Status { get; set; } = "available";
+        public ServiceStatus Status { get; set; } = ServiceStatus.Available;
 
         [Column("service_category_id")]
         [ForeignKey(nameof(ServiceCategory))]
