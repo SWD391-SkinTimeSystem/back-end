@@ -20,7 +20,7 @@ namespace SkinTime.BLL.Services.BookingService
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<(Booking, Service)> CreateNewBooking(Guid customerId, Guid serviceId, DateTime dateTime)
+        public async Task<(Booking, Service)> CreateNewBooking(Guid customerId, Guid serviceId, DateTime date )
         {
             DateTime date = dateTime.Date;
             TimeSpan time = dateTime.TimeOfDay;
@@ -34,31 +34,30 @@ namespace SkinTime.BLL.Services.BookingService
             var booking = new Booking
             {
                 Id = Guid.NewGuid(),
-                CustomerId = customerId,               
+                CustomerId = customerId,
                 ServiceId = serviceId,
                 ReservedTime = dateTime,
                 Status = BookingStatus.NotStarted,
                 TotalPrice = service.Price,
-                
+
             };
             await _unitOfWork.Repository<Booking>().AddAsync(booking);
             var serviceDetails = service.ServiceDetailNavigation
-                                     .Where(sd => !sd.IsDetele) 
-                                     .OrderBy(sd => sd.Step)  
+                                     .Where(sd => !sd.IsDetele)
+                                     .OrderBy(sd => sd.Step)
                                      .ToList();
             if (serviceDetails == null)
             {
                 var schedule = new Schedule
                 {
                     BookingId = booking.Id,
-                    Date = date, 
-                    ReservedStartTime = time, 
+                    Date = date,
+                    ReservedStartTime = time,
                     ReservedEndTime = time.Add(TimeSpan.FromMinutes(Duration)) // Thời gian kết thúc
                 };
             }
-                if (service.ServiceDetailNavigation != null )
+            if (service.ServiceDetailNavigation != null)
             {
-
                 foreach (var serviceDetail in serviceDetails)
                 {
                     var schedule = new Schedule
@@ -73,10 +72,10 @@ namespace SkinTime.BLL.Services.BookingService
                     await _unitOfWork.Repository<Schedule>().AddAsync(schedule);
                     await _unitOfWork.Complete();
 
-                     date = date.AddDays(serviceDetail.DateToNextStep);
+                    date = date.AddDays(serviceDetail.DateToNextStep);
                 }
 
-            }            
+            }
         }
 
         public Task<ServiceResult<ICollection<Booking>>> GetAllUserBooking(Guid userId)

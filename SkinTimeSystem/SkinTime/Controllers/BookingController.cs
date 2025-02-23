@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SkinTime.BLL.Services.BookingService;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
+using SkinTime.Helpers;
 using SkinTime.Models;
 using System.Security.Claims;
 
@@ -16,12 +17,13 @@ namespace SkinTime.Controllers
     {
         private readonly IBookingService _service;
         private readonly IMapper _mapper;
-
+        private readonly ITokenUtilities _tokenUtilities;
         public bookingController(IBookingService service,
-            IMapper mapper)
+            IMapper mapper,ITokenUtilities tokenUtilities)
         {
             _mapper = mapper;
             _service = service;
+            _tokenUtilities = tokenUtilities;
         }
         [Authorize]
         [HttpGet("{status}")]
@@ -36,14 +38,18 @@ namespace SkinTime.Controllers
 
             return Ok(result);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> BookingService(BookingServiceModel booking)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(userId, out var customerId))
-                return BadRequest("Invalid user ID format");
+            string token = Request.Headers.Authorization.First()!;           
+            string id = _tokenUtilities.GetDataDictionaryFromJwt(token)["id"];
 
-            var bookingService = _service.CreateNewBooking(customerId,booking.serviceId,booking.serviceDate);
+
+            if (!Guid.TryParse(id, out var userId))
+                return BadRequest();
+
+            var bookingService = _service.CreateNewBooking(userId, booking.serviceId, booking.serviceDate);
 
             //  var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
 
