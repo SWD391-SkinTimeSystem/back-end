@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SkinTime.DAL.Entities;
@@ -18,18 +17,18 @@ namespace SkinTime.BLL.Data
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Therapist> Therapists { get; set; } = null!;
+        public DbSet<TherapistCertification> TherapistCertifications {get; set; } = null!;
 
         public DbSet<Voucher> Vouchers { get; set; } = null!;
+        public DbSet<Transaction> TicketTransactions { get; set; } = null!;
 
         public DbSet<Event> Events { get; set; } = null!;
         public DbSet<EventTicket> EventTickets { get; set; } = null!;
-        public DbSet<TicketTransaction> TicketTransactions { get; set; } = null!;
 
         public DbSet<Booking> Bookings { get; set; } = null!;
         public DbSet<Feedback> Feedbacks { get; set; } = null!;
         public DbSet<Schedule> Schedules { get; set; } = null!;
         public DbSet<Tracking> Trackings { get; set; } = null!;
-        public DbSet<BookingTransaction> BookingTransactions { get; set; } = null!;
 
         public DbSet<SkinType> SkinTypes { get; set; } = null!;
         public DbSet<ServiceRecommendation> ServiceRecommendation { get; set; } = null!;
@@ -45,9 +44,15 @@ namespace SkinTime.BLL.Data
 
             // User - Therapist 1:1
             builder.Entity<User>()
-           .HasOne(u => u.Therapists)
-           .WithOne(b => b.Users)
+           .HasOne(u => u.TherapistNavigation)
+           .WithOne(b => b.UserNavigation)
            .HasForeignKey<Therapist>(b => b.UserID);
+
+            // Booking - User M:1
+            builder.Entity<Booking>()
+                .HasOne(u => u.CustomerNavigation)
+                .WithMany(b => b.BookingNavigation)
+                .HasForeignKey(b => b.CustomerId);
 
             // Schedule - Tracking 1:1
             builder.Entity<Schedule>()
@@ -96,10 +101,7 @@ namespace SkinTime.BLL.Data
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseLazyLoadingProxies();
-            }
+            optionsBuilder.UseLazyLoadingProxies();
         }
     }
 }

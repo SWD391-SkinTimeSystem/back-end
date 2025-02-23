@@ -1,7 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SharedLibrary.EmailUtilities;
+using SharedLibrary.TokenUtilities;
 using SkinTime.BLL.Data;
+using SkinTime.BLL.Services.AuthenticationService;
+using SkinTime.BLL.Services.BookingService;
+using SkinTime.BLL.Services.FeedbackService;
 using SkinTime.BLL.Services.QuestionService;
+using SkinTime.BLL.Services.ScheduleService;
 using SkinTime.BLL.Services.SkinTimeService;
+using SkinTime.BLL.Services.TherapistService;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
@@ -15,12 +22,31 @@ namespace SkinTime.Extensions
             IConfiguration config
         )
         {// khai báo tất cả các service ở đây => tìm hiểu midderware, tìm hiểu thêm về addscoped vs addtransient vs addsingleton
-            services.AddAutoMapper(typeof(Mapping).Assembly);
+            
+            // Repositories and Unit of work.
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IQuestionService, QuestionService>();
+
+            // Business logic (Application) layer services.
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITherapistService, TherapistService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ISkinTimeService, SkinTimeService>();
+            services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IScheduleService, ScheduleService>();
+            services.AddScoped<IFeedbackService,  FeedbackService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            
+
+            // Auto mapper
+            services.AddAutoMapper(typeof(Mapping).Assembly);
+
+            // Shared Libraries
+            services.AddTransient<ITokenUtilities, TokenUtilities>();
+            services.AddTransient<IEmailUtilities, EmailUtilities>();
+
+            // Middlewares
+
             return services;
         }
     }

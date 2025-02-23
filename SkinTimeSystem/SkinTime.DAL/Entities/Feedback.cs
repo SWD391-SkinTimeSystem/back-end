@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -19,10 +20,12 @@ namespace SkinTime.DAL.Entities
         [Column("service_rating")]
         public int ServiceRating { get; set; }
 
-        [Column("therapist_feedback")]
+        [Column("therapist_feedback", TypeName = "NVARCHAR")]
+        [MaxLength(250)]
         public string TherapistFeedback { get; set; } = string.Empty;
 
-        [Column("service_feedback")]
+        [Column("service_feedback", TypeName = "NVARCHAR")]
+        [MaxLength(250)]
         public string ServiceFeedback { get; set; } = string.Empty;
 
         // virtual properties represent entity relationship with other entities.

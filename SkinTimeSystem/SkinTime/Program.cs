@@ -12,25 +12,38 @@ namespace SkinTime
             var services = builder.Services;
             var config = builder.Configuration;
 
-
             services.AddDatabaseConfig(config);
             services.AddApplicationServices(config);
+            services.ConfigurateAuthenticationMethod(config);
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    name: "allowedOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                    });
+            });
+
             var app = builder.Build();
+
+            await app.AddAutoMigrateDatabase();
 
             if (app.Environment.IsDevelopment())
             {
+                await app.SeedDatabase();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("allowedOrigins");
             app.UseHttpsRedirection();
             app.UseAuthorization();
-            await app.AddAutoMigrateDatabase();
             app.MapControllers();
             app.Run();
         }
