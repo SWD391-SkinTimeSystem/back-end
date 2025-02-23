@@ -1,12 +1,11 @@
-﻿
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SkinTime.DAL.Entities;
-using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
-namespace SkinTime.Helpers
+namespace SharedLibrary.TokenUtilities
 {
     public class TokenUtilities : ITokenUtilities
     {
@@ -15,8 +14,8 @@ namespace SkinTime.Helpers
 
         public TokenUtilities(IConfiguration config)
         {
-            Issuer = config.GetValue<string>("JWT:Issuer")!;
-            Key = config.GetValue<string>("JWT:Key")!;
+            Issuer = config.GetSection("JWT:Issuer").Value!;
+            Key = config.GetSection("JWT:Key").Value!;
         }
 
         public string CreateJwtFromDictionary(Dictionary<string, string> data)
@@ -71,13 +70,11 @@ namespace SkinTime.Helpers
                 }
 
                 return tokenPart[0]; // Return the user id inside the token.
-                }
-                catch (FormatException)
-                {
-                    return null;
-                }
-
-            
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
         }
 
         public bool ValidateJwt(string token)
@@ -140,6 +137,26 @@ namespace SkinTime.Helpers
             }
 
             return tokenData;
+        }
+
+        private byte[] GetHashedBytes(string password)
+        {
+            byte[] saltBytes;
+            RandomNumberGenerator.Fill(saltBytes = new byte[16]); // Generate new salt each time.
+
+            Rfc2898DeriveBytes hashingFunction = new Rfc2898DeriveBytes(password, saltBytes, 10000, HashAlgorithmName.SHA256);
+            byte[] hashedPasswordBytes = hashingFunction.GetBytes(40);
+
+            byte[] savedPasswordHash = new byte[saltBytes.Length + hashedPasswordBytes.Length];
+            Array.Copy(saltBytes, 0, savedPasswordHash, 0, 16);
+            Array.Copy(hashedPasswordBytes, 0, savedPasswordHash, 16, hashedPasswordBytes.Length);
+
+            return savedPasswordHash;
+        }
+
+        public string HashPassword(string password)
+        {
+            return Convert.ToBase64String(GetHashedBytes(password));
         }
     }
 }

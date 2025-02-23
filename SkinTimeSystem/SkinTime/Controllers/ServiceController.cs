@@ -1,22 +1,23 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.EmailUtilities;
+using SharedLibrary.TokenUtilities;
 using SkinTime.BLL.Services.SkinTimeService;
 using SkinTime.DAL.Entities;
+using SkinTime.Helpers;
 using SkinTime.Models;
 
 namespace SkinTime.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/service")]
     [ApiController]
-    public class serviceController : BaseController
+    public class ServiceController : BaseController
     {
         private readonly ISkinTimeService _skinTimeService;
-        private readonly IMapper _mapper;
-        public serviceController(ISkinTimeService skinTimeService, IMapper mapper)
+        public ServiceController(ISkinTimeService skinTimeService, IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities) : base(mapper, emailUtilities, tokenUtilities)
         {
             _skinTimeService = skinTimeService;
-            _mapper = mapper;
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetService(Guid id)

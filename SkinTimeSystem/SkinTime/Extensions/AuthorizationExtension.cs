@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SkinTime.Models;
+using System.Reflection;
 using System.Text;
 
 namespace SkinTime.Extensions
@@ -24,6 +26,16 @@ namespace SkinTime.Extensions
                         ValidateActor = false,
                         ValidateAudience = false,
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnChallenge = async (context) =>
+                        {
+                            context.HandleResponse();
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            await context.HttpContext.Response.WriteAsJsonAsync(new ApiResponse(false, "Access denied", "Unauthorized"));
+                        }
+                    };
                 });
 
             // Update swagger to allow usae of JWT in the header while testing.
@@ -36,6 +48,9 @@ namespace SkinTime.Extensions
                     Description = "",
                     Version = "v1"
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFile));
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

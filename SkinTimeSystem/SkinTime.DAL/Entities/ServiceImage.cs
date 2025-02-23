@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,14 @@ namespace SkinTime.DAL.Entities
 {
     public class ServiceImage : BaseEntity
     {
-        public string? ImageUrl { get; set; }
+        [Column("image_url", TypeName = "NVARCHAR")]
+        [MaxLength(255)]
+        public string ImageUrl { get; set; } = string.Empty;
+
         [ForeignKey("Service")]
-        public Guid? ServiceId {  get; set; }
-        public virtual Service? Service { get; set; }// khoa ngoai cua moi quan he 1 service co nhieu anh 
+        public Guid ServiceId {  get; set; }
+
+        // Virtual navigation properties
+        public virtual Service Service { get; set; } = null!;
     }
 }

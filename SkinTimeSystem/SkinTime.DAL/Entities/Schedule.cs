@@ -4,27 +4,33 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
-using Entities;
 using Microsoft.EntityFrameworkCore;
 using SkinTime.DAL.Enum;
+using SkinTime.DAL.Enum.Schedule;
 
 namespace SkinTime.DAL.Entities
 {
     public class Schedule : BaseEntity
     {
-        [ForeignKey(nameof(Booking)),Column("booking_id")]
-        public Guid BookingId{ get; set; }
+        [Column("booking_id")]
+        [ForeignKey(nameof(Booking))]
+        public required Guid BookingId{ get; set; }
 
-        [ForeignKey(nameof(ServiceDetail)),Column("service_detail_id")]
-        public Guid ServiceDetailId { get; set; }
+        [Column("service_detail_id")]
+        [ForeignKey(nameof(ServiceDetail))]
+        public required Guid ServiceDetailId { get; set; }
 
-        public DateTime Date { get; set; }
+        [Column("date", TypeName = "DATE")]
+        public required DateOnly Date { get; set; }
 
+        [Column("reserved_time_start", TypeName = "TIME")]
+        public required TimeOnly ReservedStartTime { get; set; }
         public TimeSpan ReservedStartTime { get; set; }
 
         public TimeSpan ReservedEndTime { get; set; }
 
-        public ScheduleStatus Status { get; set; } = ScheduleStatus.NotStarted;
+        [Column("status")]
+        public required ScheduleStatus Status { get; set; } = ScheduleStatus.NotStarted;
 
         // Virtual properties
         public virtual Booking BookingNavigation { get; set; } = null!;

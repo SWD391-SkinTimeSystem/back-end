@@ -1,33 +1,37 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.EmailUtilities;
+using SharedLibrary.TokenUtilities;
 using SkinTime.BLL.Services.QuestionService;
 using SkinTime.DAL.Entities;
 using SkinTime.Models;
 
 namespace SkinTime.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/question")]
     [ApiController]
-    public class questionController : BaseController
+    public class QuestionController : BaseController
     {
         private readonly IQuestionService _service;
-        private readonly IMapper _mapper;
-
-        public questionController(IQuestionService service,
-            IMapper mapper)
+        public QuestionController(IQuestionService service,
+            IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities)
+            : base(mapper, emailUtilities, tokenUtilities)
         {
-            _mapper = mapper;
             _service = service;
         }
+
+        /// <summary>
+        ///     Get the list of questions (and corresponding options)
+        /// </summary>
+        /// <returns>The list of questions</returns>
         [HttpGet]
-        public async Task<IActionResult> GetAllQuestion()
+        public async Task<ActionResult<ApiResponse<ICollection<QuestionModel>>>> GetAllQuestion()
         {
-            return await HandleApiCallAsync(async () =>
+            return await HandleServiceCall<ICollection<QuestionModel>>(async () =>
             {
-                var allQuestion = await _service.GetAllQuestion();
-                var allQuestionDTO = _mapper.Map<List<QuestionModel>>(allQuestion);
-                return allQuestionDTO;
+                return await _service.GetAllQuestion();
             });
            
         }

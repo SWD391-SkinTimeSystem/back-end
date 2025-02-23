@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SharedLibrary.TokenUtilities;
+using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using SkinTime.DAL.Interfaces;
@@ -16,9 +18,11 @@ namespace SkinTime.BLL.Services.UserService
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork; 
-        public UserService(IUnitOfWork unitOfWork)
+        private readonly ITokenUtilities _tokenUtils;
+        public UserService(IUnitOfWork unitOfWork, ITokenUtilities tokenUtilities)
         {
             _unitOfWork = unitOfWork;
+            _tokenUtils = tokenUtilities;
         }
 
         public async Task CreateUser(User user)
@@ -27,25 +31,46 @@ namespace SkinTime.BLL.Services.UserService
             await _unitOfWork.Complete();
         }
 
-        public async Task DeleteUser(string id)
+        public async Task<ServiceResult<User>> DeleteUser(string id)
         {
             if (Guid.TryParse(id, out var parsedGuid))
             {
-                _unitOfWork.Repository<User>().Delete(parsedGuid);
-                await _unitOfWork.Complete();
+                var result = await _unitOfWork.Repository<User>().GetByIdAsync(parsedGuid);
+
+                if (result != null)
+                {
+                    result.Status = UserStatus.Deleted;
+                    _unitOfWork.Repository<User>().Update(result);
+                    
+                    await _unitOfWork.Complete();
+
+                    return ServiceResult<User>.Success(result);
+                }
+
+                return ServiceResult<User>.Failed(ServiceError.NotFound("Can not find user entity with provided id"));
             }
+
+            return ServiceResult<User>.Failed(ServiceError.ValidationFailed("The provided id is not in the right format"));
         }
 
-        public async Task<List<User>> GetAllUsers() => await _unitOfWork.Repository<User>().GetAllAsync();
+        public async Task<ServiceResult<ICollection<User>>> GetAllUsers()
+        { 
+            return ServiceResult<ICollection<User>>.Success(await _unitOfWork.Repository<User>().GetAllAsync()); 
+        }
 
-        public async Task<User?> GetUser(string id)
+        public async Task<ServiceResult<User>> GetUser(string id)
         {
             if (Guid.TryParse(id, out var parsedGuid))
             {
-                var user = await _unitOfWork.Repository<User>().GetEntityByIdAsync(parsedGuid);
-                return user;
+                var user = await _unitOfWork.Repository<User>().GetByIdAsync(parsedGuid);
+
+                if (user != null)
+                {
+                    return ServiceResult<User>.Success(user);
+                }
+                return ServiceResult<User>.Failed(ServiceError.NotFound("Can not find the user entity with provided id."));
             }
-            return null;
+            return ServiceResult<User>.Failed(ServiceError.ValidationFailed("The provided user id format does not match."));
         }
 
         public async Task UpdateUser(string id, User user)
@@ -56,24 +81,29 @@ namespace SkinTime.BLL.Services.UserService
 
                 if (existingUser == null)
                 {
-                    throw new Exception("Unknown user with provied Id.");
+                    throw new Exception("Unknown user with provided Id.");
                 }
-
-                existingUser.UserName = user.UserName;
+                existingUser.Username = user.Username;
                 existingUser.Email = user.Email;
-                existingUser.Password = user.Password;
+                existingUser.Phone = user.Phone;
+                existingUser.DateOfBirth = user.DateOfBirth;
+                existingUser.Avatar = user.Avatar;
+                existingUser.FullName = user.FullName;
+                existingUser.Password = _tokenUtils.HashPassword(user.Password);
 
                 _unitOfWork.Repository<User>().Update(existingUser);
                 await _unitOfWork.Complete();
             }
         }
 
-        public async Task<IReadOnlyCollection<User>> GetUsersAsReadOnly()
+        public async Task<ServiceResult<IReadOnlyCollection<User>>> GetUsersAsReadOnly()
         {
-            return await _unitOfWork.Repository<User>().ListAllAsync();
+            var result = await _unitOfWork.Repository<User>().ToListAsReadOnly();
+
+            return ServiceResult<IReadOnlyCollection<User>>.Success(result);
         }
 
-        public async Task<User> CreateUserAccount(User userInformation)
+        public async Task<ServiceResult<User>> CreateUserAccount(User userInformation)
         {
             var repository = _unitOfWork.Repository<User>();
 
@@ -82,71 +112,37 @@ namespace SkinTime.BLL.Services.UserService
             // Check for new email address.
             if (repository.Find(user => user.Email == userInformation.Email) != null)
             {
-                throw new Exception("An exisitng account using this email has been registered");
+                return ServiceResult<User>
+                    .Failed(ServiceError
+                        .ValidationFailed("An exisitng account using this email has been registered"));
             }
 
             // Check for existing username.
-            if (repository.Find(user => user.UserName == userInformation.UserName) != null)
+            if (repository.Find(user => user.Username == userInformation.Username) != null)
             {
-                throw new Exception("The username has been taken");
+                return ServiceResult<User>
+                    .Failed(ServiceError.ValidationFailed("The username has been taken"));
             }
 
             // Validate password.
             Regex passwordRegex = new Regex(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$");
             if (!passwordRegex.IsMatch(userInformation.Password))
             {
-                throw new Exception("The password must has 8 character minimum, containing at least one letter and one number");
+                return ServiceResult<User>
+                    .Failed(ServiceError
+                        .ValidationFailed("The password must has 8 character minimum, containing at least one letter and one number"));
             }
 
             /******* Data Processing ********/
 
-            byte[] saltBytes;
-            RandomNumberGenerator.Fill(saltBytes = new byte[16]); // Generate new salt each time.
 
-            Rfc2898DeriveBytes hashingFunction = new Rfc2898DeriveBytes(userInformation.Password, saltBytes, 10000, HashAlgorithmName.SHA256);
-            byte[] hashedPasswordBytes = hashingFunction.GetBytes(40);
-
-            byte[] savedPasswordHash = new byte[saltBytes.Length + hashedPasswordBytes.Length];
-            Array.Copy(saltBytes, 0, savedPasswordHash, 0, 16);
-            Array.Copy(hashedPasswordBytes, 0, savedPasswordHash, 16, hashedPasswordBytes.Length);
-
-            userInformation.Password = Convert.ToBase64String(savedPasswordHash); // Set user password using the newly created hashed password string.
+            userInformation.Password = _tokenUtils.HashPassword(userInformation.Password); // Set user password using the newly created hashed password string.
             /******* Data Storage ********/
 
-            await repository.AddAsync(userInformation);
+            userInformation = await repository.AddAsync(userInformation);
             await _unitOfWork.Complete();
 
-            return userInformation;
-        }
-
-        public async Task<User?> GetUserWithCredential(string account, string password)
-        {
-            /******* Data Retrieval *******/
-            var userAccount = await _unitOfWork.Repository<User>().FindAsync(x => x.UserName == account || x.Email == account);
-
-            if (userAccount == null)
-            {
-                return null;
-            }
-
-            /******* Data Processing ******/
-
-            // Convert the stored hashed passsword into byte array in order to extract the salt used when created.
-            byte[] userHashedPassword = Convert.FromBase64String(userAccount.Password);
-
-            byte[] saltBytes = new byte[16];
-            Array.Copy(userHashedPassword, 0, saltBytes, 0, 16);
-
-            // Regenerating the password hash with the given password.
-            Rfc2898DeriveBytes hashingFunction = new Rfc2898DeriveBytes(password, saltBytes, 10000, HashAlgorithmName.SHA256);
-            byte[] hashedPasswordBytes = hashingFunction.GetBytes(40);
-
-            byte[] recreatedHash = new byte[saltBytes.Length + hashedPasswordBytes.Length];
-            Array.Copy(saltBytes, 0, recreatedHash, 0, 16);
-            Array.Copy(hashedPasswordBytes, 0, recreatedHash, 16, hashedPasswordBytes.Length);
-            
-            // Check if the recreated hash is the same as the password hash (in base 64 string).
-            return Convert.ToBase64String(recreatedHash) == userAccount.Password ? userAccount : null;
+            return ServiceResult<User>.Success(userInformation);
         }
     }
 }

@@ -6,13 +6,15 @@ using System.Text;
 
 namespace SkinTime.DAL.Enum
 {
-    public enum TherapistStatus
+    public enum VoucherStatus
     {
-        [EnumMember(Value = "working")]
-        Working,
-        [EnumMember(Value = "not_available")]
-        NotAvailable,
+        [EnumMember(Value = "available")]
+        Available,
+        [EnumMember(Value = "unavailable")]
+        Unavailable,
         [EnumMember(Value = "deleted")]
         Deleted,
+        [EnumMember(Value = "expired")]
+        Expired,
     }
 }
