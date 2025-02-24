@@ -42,5 +42,6 @@ namespace SkinTime.DAL.Entities
         public virtual ICollection<ServiceRecommendation> ServiceRecommendationNavigation { get; set; } = new Collection<ServiceRecommendation>();
         public virtual ICollection<ServiceDetail> ServiceDetailNavigation { get; set; } = new Collection<ServiceDetail>();
         public virtual ICollection<ServiceImage> ServiceImageNavigation { get; set; } = new Collection<ServiceImage>();
+        public virtual ICollection<Booking> BookingNavigation { get; set; } = new Collection<Booking>();
     }
 }

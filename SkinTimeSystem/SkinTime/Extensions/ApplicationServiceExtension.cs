@@ -13,6 +13,7 @@ using SkinTime.BLL.Services.EventService;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
+using SkinTime.BLL.Services.StatisticService;
 
 namespace SkinTime.Extensions
 {
@@ -37,7 +38,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IFeedbackService,  FeedbackService>();
             services.AddScoped<IQuestionService, QuestionService>();
-            
+            services.AddScoped<IStatisticService, StatisticService>();
 
             // Auto mapper
             services.AddAutoMapper(typeof(Mapping).Assembly);

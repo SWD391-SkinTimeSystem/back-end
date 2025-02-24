@@ -147,6 +147,12 @@ namespace SkinTime.Helpers
                 .ForMember(dst => dst.TimeStart, opt => opt.MapFrom(src => src.StartTime))
                 .ForMember(dst => dst.TimeEnd, opt => opt.MapFrom(src => src.EndTime))
                 .ForMember(dst => dst.Status, opt => opt.MapFrom(src => "ApprovePending"));
+
+            CreateMap<Service, PopularServicesViewModel>()
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(x => x.Id))
+                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(x => x.ServiceName))
+                .ForMember(dest => dest.BookingCount, opt => opt.MapFrom(x => x.BookingNavigation.Count()))
+                .ForMember(dest => dest.TotalRevenue, opt => opt.MapFrom(x => x.BookingNavigation.Sum(x => x.TotalPayment)));
         }
 
     }
