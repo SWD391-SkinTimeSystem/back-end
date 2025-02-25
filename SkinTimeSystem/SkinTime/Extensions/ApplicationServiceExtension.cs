@@ -15,6 +15,7 @@ using SkinTime.BLL.Services.EventService;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
+using SkinTime.BLL.Services.TransactionService;
 
 namespace SkinTime.Extensions
 {
@@ -31,6 +32,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Business logic (Application) layer services.
+            services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITherapistService, TherapistService>();
             services.AddScoped<IAuthService, AuthService>();
@@ -39,8 +41,19 @@ namespace SkinTime.Extensions
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IFeedbackService,  FeedbackService>();
             services.AddScoped<IQuestionService, QuestionService>();
-            
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+               
+                    });
+            });
 
+            services.AddScoped<ITransactionService, TransactionService>();
             // Auto mapper
             services.AddAutoMapper(typeof(Mapping).Assembly);
 

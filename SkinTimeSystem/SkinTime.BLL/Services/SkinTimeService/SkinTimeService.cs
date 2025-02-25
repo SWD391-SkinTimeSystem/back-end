@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SkinTime.DAL.Entities;
+﻿using SkinTime.DAL.Entities;
+using Microsoft.EntityFrameworkCore;
 using SkinTime.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,6 +44,7 @@ namespace SkinTime.BLL.Services.SkinTimeService
             return (service, result.Any() ? result : null);
         }
 
+
         public async Task<Service?> GetTrementplant(Guid idService)
         {
             return await _unitOfWork.Repository<Service>()
@@ -51,6 +53,7 @@ namespace SkinTime.BLL.Services.SkinTimeService
                     includeProperties: query => query.Include(s => s.ServiceDetailNavigation)
                 );
         }
+
 
     }
 

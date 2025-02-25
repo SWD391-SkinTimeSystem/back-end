@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Cursus.Core.Options.PaymentSetting;
+using Microsoft.EntityFrameworkCore;
 using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
+using SkinTime.DAL.Enum;
+using SkinTime.DAL.Enum.Schedule;
 using SkinTime.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,13 +16,32 @@ namespace SkinTime.BLL.Services.BookingService
     public class BookingService : IBookingService
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        public BookingService(IUnitOfWork unitOfWork)
+        private readonly VNPay _vnPay;
+        private readonly ZaloPay _zaloPay;
+        public BookingService(IUnitOfWork unitOfWork,VNPay vNPay,ZaloPay zaloPay )
         {
             _unitOfWork = unitOfWork;
+            _vnPay = vNPay;
+            _zaloPay = zaloPay;
         }
 
-        public Task<ServiceResult<Booking>> CreateNewBooking(Booking bookingInformation)
+        public async Task<string> CreateNewBooking( string returnCallBack, Guid serviceId, string bank)
+        {
+            var service = _unitOfWork.Repository<Service>().GetById(serviceId);
+
+            if (!Enum.TryParse(bank, true, out PaymentMethod paymentMethod) || !Enum.IsDefined(typeof(PaymentMethod), paymentMethod))
+            {
+                throw new InvalidOperationException("Invalid payment method.");
+            }           
+            return paymentMethod switch
+            {
+                PaymentMethod.VnPay => await _vnPay.CreateVNPayOrder((int)service.Price, returnCallBack, service.ServiceName),
+                PaymentMethod.ZaloPay => await _zaloPay.CreateZaloPayOrder((int)service.Price, returnCallBack,service.ServiceName),
+                _ => throw new InvalidOperationException("Unsupported payment bank."),
+            };
+        }
+
+        public Task<ICollection<Booking>> GetAllBookingByStatus(Guid userId, string status)
         {
             throw new NotImplementedException();
         }
@@ -82,6 +104,11 @@ namespace SkinTime.BLL.Services.BookingService
         public Task<ServiceResult<Booking>> UpdateBookingInformation(string id, Booking bookingInformation)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<(Booking, Service)> UpdateBookingService(Guid bookingId, DateTime dateTime)
+        {
+            throw new NotImplementedException();// CÓ DÂU CHẤM HỎI RẤT LỚN VỀ NỘI RÁNGF BUỘC... 
         }
     }
 }

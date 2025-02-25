@@ -219,5 +219,6 @@ namespace SkinTime.DAL.Interfaces
         /// </summary>
         /// <returns>The number of entity in the context</returns>
         Task<int> CountAsync();
+        Task DeleteRange(IEnumerable<T> entities);
     }
 }

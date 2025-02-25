@@ -1,5 +1,7 @@
-﻿using SkinTime.BLL.Commons;
+﻿using Google.Apis.Http;
+using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
+using SkinTime.DAL.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace SkinTime.BLL.Services.BookingService
 {
     public interface IBookingService
     {
-        Task<ServiceResult<ICollection<Booking>>> GetAllUserBooking(string userId);
+        Task<ICollection<Booking>> GetAllBookingByStatus(Guid userId,string status );
 
         Task<ServiceResult<Booking>> GetBookingInformation(string bookingId);
 
@@ -24,7 +26,7 @@ namespace SkinTime.BLL.Services.BookingService
         /// </summary>
         /// <param name="bookingInformation"></param>
         /// <returns>The service result represent operation result. The data will be the newly created booking entity.</returns>
-        Task<ServiceResult<Booking>> CreateNewBooking(Booking bookingInformation);
+        Task<string> CreateNewBooking(string returnURL, Guid serviceId, string bank);
 
         Task<ServiceResult<Booking>> UpdateBookingInformation(string id, Booking bookingInformation);
     }

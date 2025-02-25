@@ -21,6 +21,9 @@ namespace SkinTime.DAL.Entities
         [Column(name: "payment_method")]
         public required PaymentMethod Method { get; set; }
 
+        [Column(name: "transaction_code")]
+        public required string TransactionCode { get; set; }
+
         [Column(name: "payment_status")]
         public required PaymentStatus Status { get; set; }
 

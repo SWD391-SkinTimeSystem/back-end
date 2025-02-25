@@ -30,6 +30,7 @@ namespace SkinTime.DAL.Entities
         [Column("voucher_id")]
         [ForeignKey(nameof(Voucher))]
         public Guid? VoucherId { get; set; }
+        public decimal TotalPrice { get; set; } 
 
         [Column("reserved_date")]
         public required DateTime ReservedTime { get; set; }
