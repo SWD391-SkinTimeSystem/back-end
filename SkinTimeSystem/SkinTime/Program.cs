@@ -41,7 +41,6 @@ namespace SkinTime
                 app.UseSwaggerUI();
             }
 
-            app.UseCors("allowedOrigins");
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();

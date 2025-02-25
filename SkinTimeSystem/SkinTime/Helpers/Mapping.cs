@@ -122,6 +122,10 @@ namespace SkinTime.Helpers
                  .ForMember(dest => dest.serviceId, opt => opt.MapFrom(src => src.Id))
                  .ForMember(dest => dest.serviceDate, opt => opt.MapFrom(src => src.CreatedTime))
                 .ReverseMap();
+            CreateMap<BookingTransaction, TransactionModel>()
+              .ForMember(dest => dest.paymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
+              .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
+              .ReverseMap();
             CreateMap<(Booking booking, Service service), ResBookingServiceModel>()
            .ForMember(dest => dest.bookingId, opt => opt.MapFrom(src => src.booking.Id))
            .ForMember(dest => dest.serviceId, opt => opt.MapFrom(src => src.service.Id))
