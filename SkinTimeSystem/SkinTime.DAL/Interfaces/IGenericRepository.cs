@@ -122,6 +122,10 @@ namespace SkinTime.DAL.Interfaces
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
         );
+        Task<T?> GetByConditionAsync(
+    Expression<Func<T, bool>> filter,
+    Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
+);
 
         /// <summary>
         ///     <para>

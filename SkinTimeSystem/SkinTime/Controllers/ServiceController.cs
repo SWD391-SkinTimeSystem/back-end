@@ -18,6 +18,7 @@ namespace SkinTime.Controllers
         public ServiceController(ISkinTimeService skinTimeService, IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities) : base(mapper, emailUtilities, tokenUtilities)
         {
             _skinTimeService = skinTimeService;
+            _mapper = mapper;
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetService(Guid id)
@@ -29,5 +30,26 @@ namespace SkinTime.Controllers
                 return serviceDTO;
             });
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllService()
+        {
+            return await HandleApiCallAsync(async () =>
+            {
+                var service = _skinTimeService.GetAllService;
+                var serviceDTO = _mapper.Map<ServiceModel>(service);
+                return serviceDTO;
+            });
+        }
+        [HttpGet("treatment-plan/{id}")]// 35. Lấy danh sách thông tin của treatment plan 
+        public async Task<IActionResult> GetTreatmentPlan(Guid id)
+        {
+            return await HandleApiCallAsync(async () =>
+            {
+                var treatmentPlan = await _skinTimeService.GetTrementplant(id);
+                var treatmentPlanDTO =  _mapper.Map<TreatmentPlanModel>(treatmentPlan);
+                return treatmentPlanDTO;
+            });
+        }
     }
+
 }

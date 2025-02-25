@@ -1,9 +1,10 @@
-﻿using SkinTime.DAL.Entities;
+﻿using Entities;
+using SkinTime.DAL.Entities;
 using System.Text.Json.Serialization;
 
 namespace SkinTime.Models
 {
-    public class ServiceModel
+    public class ServiceModel 
     {
         public Guid Id { get; set; }
         public string ServiceName { get; set; }

@@ -1,4 +1,4 @@
-﻿using Cursus.Core.Options.PaymentSetting;
+using Cursus.Core.Options.PaymentSetting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using SkinTime.DAL.Entities;
@@ -192,6 +192,16 @@ namespace SkinTime.BLL.Services.TransactionService
             await _unitOfWork.Complete();
             return true;
 
+        public async Task<string> CreateTransaction(BookingTransaction bookingTransaction, string returnUrl, string notifyUrl)
+        {
+            return bookingTransaction.PaymentMethod switch
+            {
+              (BankEnum.VNPAY) => await _vnPay.CreateVNPayOrder(bookingTransaction.Amount, returnUrl),
+                (BankEnum.ZALOPAY) => await _zaloPay.CreateZaloPayOrder(bookingTransaction.Amount, returnUrl),
+                _ => throw new InvalidOperationException(
+                    "Unsupported payment bank: " 
+                ),
+            };
         }
     }
 }

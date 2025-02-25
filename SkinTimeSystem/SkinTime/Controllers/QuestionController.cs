@@ -19,6 +19,7 @@ namespace SkinTime.Controllers
             IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities)
             : base(mapper, emailUtilities, tokenUtilities)
         {
+            _mapper = mapper;
             _service = service;
         }
 
@@ -27,11 +28,13 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <returns>The list of questions</returns>
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<ICollection<QuestionModel>>>> GetAllQuestion()
+        public async Task<IActionResult> GetAllQuestion()
         {
-            return await HandleServiceCall<ICollection<QuestionModel>>(async () =>
+            return await HandleApiCallAsync(async () =>
             {
-                return await _service.GetAllQuestion();
+                var allQuestion = await _service.GetAllQuestion();
+                var allQuestionDTO = _mapper.Map<List<QuestionModel>>(allQuestion);
+                return allQuestionDTO;
             });
            
         }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using SkinTime.DAL.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Transaction = SkinTime.DAL.Entities.Transaction;
 
+
 namespace SkinTime.BLL.Services.TransactionService
 {
     public interface ITransactionService
@@ -15,5 +16,6 @@ namespace SkinTime.BLL.Services.TransactionService
       //  Task<string> CreateTransaction(BookingTransaction bookingTransaction,string returnUrl,string notifyUrl);
 
         public Task<bool> CallbackPayment(Guid userId,IQueryCollection data,Booking booking,Schedule schedule);
+        Task<string> CreateTransaction(BookingTransaction bookingTransaction,string returnUrl,string notifyUrl)
     }
 }

@@ -47,11 +47,12 @@ namespace Cursus.Core.Options.PaymentSetting
             AddRequestData("vnp_Command", Command);
             AddRequestData("vnp_TmnCode", TmnCode);
             AddRequestData("vnp_Amount", (amount * 100).ToString()); 
+
             AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             AddRequestData("vnp_CurrCode", CurrCode);
             AddRequestData("vnp_IpAddr", ipAddress);
             AddRequestData("vnp_Locale", Locale);
-            AddRequestData("vnp_OrderInfo", "Thanh toán cho dịch vụ:"+ serviceName);
+            AddRequestData("vnp_OrderInfo", "Thanh toán cho dịch vụ:"+ serviceName)
             AddRequestData("vnp_OrderType", "other");
             AddRequestData("vnp_ReturnUrl", returnUrl);
             AddRequestData("vnp_TxnRef", Guid.NewGuid().ToString());
@@ -60,7 +61,6 @@ namespace Cursus.Core.Options.PaymentSetting
         public async Task<string> CreateRequestUrl(string baseUrl, string vnp_HashSecret)
         {
             StringBuilder data = new StringBuilder();
-
 
             foreach (KeyValuePair<string, string> kv in _requestData)
             {
@@ -184,8 +184,6 @@ namespace Cursus.Core.Options.PaymentSetting
                         hash.Append(theByte.ToString("x2"));
                     }
                 }
-              
-                
                 return hash.ToString();
             });
         }

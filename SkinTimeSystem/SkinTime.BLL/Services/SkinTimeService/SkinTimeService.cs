@@ -17,6 +17,9 @@ namespace SkinTime.BLL.Services.SkinTimeService
         {
             _unitOfWork = unitOfWork;
         }
+
+        public async Task<IList<Service>> GetAllService() => await _unitOfWork.Repository<Service>().GetAllAsync();
+
         public async Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService)
         {
             var service = await _unitOfWork.Repository<Service>()
@@ -41,7 +44,16 @@ namespace SkinTime.BLL.Services.SkinTimeService
             return (service, result.Any() ? result : null);
         }
 
-       
+
+        public async Task<Service?> GetTrementplant(Guid idService)
+        {
+            return await _unitOfWork.Repository<Service>()
+                .GetByConditionAsync(
+                    s => s.Id == idService,
+                    includeProperties: query => query.Include(s => s.ServiceDetailNavigation)
+                );
+        }
+
 
     }
 
