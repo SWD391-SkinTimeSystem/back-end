@@ -48,5 +48,14 @@ namespace SkinTime.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateQuestion([FromBody] ICollection<QuestionCreationModel> quiz)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.CreateOrUpdateQuestions(_mapper.Map<ICollection<Question>>(quiz));
+            });
+        }
+
     }
 }

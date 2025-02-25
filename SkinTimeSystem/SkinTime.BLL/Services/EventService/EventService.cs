@@ -58,8 +58,8 @@ namespace SkinTime.BLL.Services.EventService
                 }
 
                 // Business logic for and event deletion and refunds
-                throw new NotImplementedException();
-            }
+            throw new NotImplementedException();
+        }
 
             return ServiceResult.Failed(ServiceError.ValidationFailed("The given id does not match the correct format"));
         }
@@ -75,7 +75,7 @@ namespace SkinTime.BLL.Services.EventService
                 .Success((await _unitOfWork.Repository<Event>()
                     .ListAsync(x => x.Include(b => b.TicketNavigation))).ToList());
         }
-
+             
         public async Task<ServiceResult<ICollection<Event>>> GetEventList(Expression<Func<Event, bool>> expression)
         {
             return ServiceResult<ICollection<Event>>
@@ -88,7 +88,7 @@ namespace SkinTime.BLL.Services.EventService
             x.TicketNavigation));
 
             if (result == null)
-            {
+        {
                 return ServiceResult<Event>.Failed(ServiceError.ValidationFailed("Can not find event with the provided id"));
             }
 

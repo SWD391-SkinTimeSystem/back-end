@@ -20,7 +20,36 @@ namespace SkinTime.BLL.Services.QuestionService
 
         public async Task<ServiceResult<ICollection<Question>>> GetAllQuestion() 
             =>ServiceResult<ICollection<Question>>.Success(await _unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptionsNavigation));
-        
+        public async Task<ServiceResult> CreateOrUpdateQuestions(ICollection<Question> questions)
+        {
+            // Process questions to generate Id for newly added question
+            foreach (Question question in questions)
+            {
+                foreach (QuestionOption option in question.QuestionOptionsNavigation)
+                {
+                    if (option.Id == Guid.Empty)
+                    {
+                        option.Id = Guid.NewGuid();
+                        await _unitOfWork.Repository<QuestionOption>().AddAsync(option);
+                    }
+                }
+
+                if (question.Id == Guid.Empty)
+                {
+                    question.Id = Guid.NewGuid();
+                    await _unitOfWork.Repository<Question>().AddAsync(question);
+                }
+                else
+                {
+                    _unitOfWork.Repository<Question>().Update(question);
+                }
+            }
+
+            // Save data to the database
+            await _unitOfWork.Complete();
+
+            return ServiceResult.Success();
+        }
 
         public async Task<(Dictionary<SkinType, double> SkinTypes, List<Service> Services)> GetServiceRecommments(Guid userId, List<Guid> listResult)
         {
