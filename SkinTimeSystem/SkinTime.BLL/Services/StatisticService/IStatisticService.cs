@@ -15,10 +15,14 @@ namespace SkinTime.BLL.Services.StatisticService
 
         Task<ServiceResult<ICollection<RevenueDTO>>> GetDailyRevenueStatistics(DateOnly? from, DateOnly? to);
 
+        Task<ServiceResult<EventStatisticDTO>> GetDailyEventStatistics(DateOnly? from, DateOnly? to);
+
         Task<ServiceResult<ICollection<Service>>> GetMostPopularService(int limit = 5, bool includeDeleted = false);
 
         Task<ServiceResult<Dictionary<string, int>>> GetBookingStatisticByStatus(DateOnly? from, DateOnly? to);
 
         Task<ServiceResult<Dictionary<string, int>>> GetEventStatisticByStatus(DateOnly? from, DateOnly? to);
+
+        Task<ServiceResult<ICollection<Booking>>> GetUpcomingBookings(int limit = 5);
     }
 }

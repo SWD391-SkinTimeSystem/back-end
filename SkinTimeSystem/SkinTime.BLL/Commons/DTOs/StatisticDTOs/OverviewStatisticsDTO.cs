@@ -39,6 +39,13 @@ namespace SkinTime.BLL.Commons.DTOs.StatisticDTOs
         [JsonPropertyName("total_events")]
         public int NumberOfEvents { get; set; }
 
+        [JsonPropertyName("upcoming_event")]
+        public int NumberOfUpcomingEvent { get; set; }
+
+        [JsonPropertyName("canceled_event")]
+        public int NumberOfCanceledEvent { get; set; }
+
+
         [JsonPropertyName("total_ticket_sold")]
         public int NumberOfTickers {  get; set; }
 

@@ -3,6 +3,7 @@ using SkinTime.BLL.Commons;
 using SkinTime.BLL.Commons.DTOs.StatisticDTOs;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
+using SkinTime.DAL.Enum.EventEnums;
 using SkinTime.DAL.Interfaces;
 
 namespace SkinTime.BLL.Services.StatisticService
@@ -42,6 +43,33 @@ namespace SkinTime.BLL.Services.StatisticService
             // If the filtered list is empty, nothing will be return! 
             //return ServiceResult<Dictionary<string, int>>
             //    .Success(filtered.GroupBy(x => x.Status).ToDictionary(x => x.Key.ToString(), x => x.Count()));
+        }
+
+        public async Task<ServiceResult<EventStatisticDTO>> GetDailyEventStatistics(DateOnly? from, DateOnly? to)
+        {
+            if (from != null && to != null && from > to)
+            {
+                return ServiceResult<EventStatisticDTO>
+                    .Failed(ServiceError.ValidationFailed("the 'from' date must not be larger than the 'to' date"));
+            }
+
+            DateOnly actualFrom = from ?? DateOnly.FromDateTime(DateTime.UtcNow);
+            DateOnly actualTo = to ?? DateOnly.FromDateTime(DateTime.UtcNow);
+
+            IEnumerable<Event> query = await _unitOfWork.Repository<Event>()
+                .ListAsync(x => x.Include(x => x.TicketNavigation), x => actualFrom <= x.EventDate && x.EventDate <= actualTo);
+
+            EventStatisticDTO results = new EventStatisticDTO
+            {
+                Revenue = query.Sum(x => x.TicketNavigation.Sum(x=>x.PaidAmount)),
+                NumberOfEvents = query.Count(x => x.Status != EventStatus.Removed),
+                NumberOfRefunded = query.Sum(x => x.TicketNavigation.Count(x => x.Status == EventTicketStatus.Refunded)),
+                NumberOfTickers = query.Sum(x => x.TicketNavigation.Count()),
+                NumberOfUpcomingEvent = query.Where(x => x.Status == EventStatus.Approved).Count(),
+                NumberOfCanceledEvent = query.Count(x => x.Status == EventStatus.Canceled)
+            };
+
+            return ServiceResult<EventStatisticDTO>.Success(results);
         }
 
         public async Task<ServiceResult<ICollection<RevenueDTO>>> GetDailyRevenueStatistics(DateOnly? from, DateOnly? to)
@@ -103,9 +131,29 @@ namespace SkinTime.BLL.Services.StatisticService
             //    }).ToList());
         }
 
-        public Task<ServiceResult<Dictionary<string, int>>> GetEventStatisticByStatus(DateOnly? from, DateOnly? to)
+        public async Task<ServiceResult<Dictionary<string, int>>> GetEventStatisticByStatus(DateOnly? from, DateOnly? to)
         {
-            throw new NotImplementedException();
+            if (from != null && to != null && from > to)
+            {
+                return ServiceResult<Dictionary<string, int>>
+                    .Failed(ServiceError.ValidationFailed("the 'from' date must not be larger than the 'to' date"));
+            }
+
+            DateOnly actualFrom = from ?? DateOnly.FromDateTime(DateTime.UtcNow);
+            DateOnly actualTo = to ?? DateOnly.FromDateTime(DateTime.UtcNow);
+
+            IEnumerable<Event> filtered = await _unitOfWork.Repository<Event>()
+                .ListAsync(x => actualFrom <= x.EventDate && x.EventDate <= actualTo);
+
+            Dictionary<string, int> results = new Dictionary<string, int>();
+
+            foreach (EventStatus status in Enum.GetValues(typeof(EventStatus)))
+            {
+                results[status.ToString()] = filtered.Count(x => x.Status == status);
+            }
+
+            return ServiceResult<Dictionary<string, int>>.Success(results);
+
         }
 
         public async Task<ServiceResult<ICollection<Service>>> GetMostPopularService(int limit = 5, bool includeDeleted = false)
@@ -158,6 +206,18 @@ namespace SkinTime.BLL.Services.StatisticService
             };
 
             return ServiceResult<OverviewStatisticsDTO>.Success(result);
+        }
+
+        public async Task<ServiceResult<ICollection<Booking>>> GetUpcomingBookings(int limit = 5)
+        {
+            IEnumerable<Booking> query = await _unitOfWork.Repository<Booking>().ListAsync(x => 
+                x.Include(x => x.ServiceNavigation)
+                .Include(x => x.TherapistNavigation).ThenInclude(x => x.UserNavigation)
+                .Include(x => x.TransactionNavigation)
+                .Include(x => x.CustomerNavigation),
+                x => x.Status == BookingStatus.NotStarted, x => x.OrderByDescending(x => x.ReservedTime));
+
+            return ServiceResult<ICollection<Booking>>.Success(query.Take(limit).ToList());    
         }
     }
 }
