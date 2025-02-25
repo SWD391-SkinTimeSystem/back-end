@@ -42,13 +42,12 @@ namespace SkinTime.DAL.Entities
 
         [Column("thumbnail_url", TypeName = "VARCHAR")]
         [MaxLength(256)]
-        public string thubmnail { get; set; } = string.Empty;
+        public string Thumbnail { get; set; } = string.Empty;
 
         [Column("status")]
         public EventStatus Status { get; set; } = EventStatus.ApprovePending;
 
-        // virtual navigation properties
-        public virtual ICollection<EventTicket> EventTickets { get; set; } = new List<EventTicket>();
+        public virtual ICollection<EventTicket> TicketNavigation { get; set; } = new List<EventTicket>();
 
     }
 }

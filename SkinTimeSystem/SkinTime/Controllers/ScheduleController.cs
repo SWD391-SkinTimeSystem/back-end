@@ -25,6 +25,40 @@ namespace SkinTime.Controllers
         }
 
         /// <summary>
+        ///     Get the availability of a therapist for the current date (and the next 6 days)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("therapist/{id}/availability")]
+        public async Task<ActionResult<TherapistAvailabilityViewModel>> GetTherapistAvailabilitySchedule(string id)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                DateOnly currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+                ServiceResult<ICollection<Schedule>> result = await _service.GetTherapistSchedule(id, currentDate, currentDate.AddDays(6));
+
+                if (result.IsFailed)
+                {
+                    return result;
+                }
+
+                // Manually mapping to result return type.
+                TherapistAvailabilityViewModel viewModel = new TherapistAvailabilityViewModel
+                {
+                    TherapistId = Guid.Parse(id),
+                    Availability = new Dictionary<DateOnly, ICollection<TimeOnly>>(),
+                };
+
+                for (DateOnly x = currentDate; x <= currentDate.AddDays(6); x = x.AddDays(1) )
+                {
+                    viewModel.Availability[x] = result.Data!.Select(x => x.ReservedStartTime).ToList();
+                }
+
+                return ServiceResult.Success(viewModel);
+            });
+        }
+
+        /// <summary>
         ///     Generate a new schedule based on the booking id and the previous schedule. This is used for view purposes only.
         /// </summary>
         /// <param name="id">The booking id as string</param>

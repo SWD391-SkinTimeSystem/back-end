@@ -60,9 +60,9 @@ namespace SkinTime.Models
     public class TherapistAvailabilityViewModel
     {
         [JsonPropertyName("therapist_id")]
-        public Guid therapistId { get; set; }
+        public Guid TherapistId { get; set; }
 
         [JsonPropertyName("availability")]
-        public IDictionary<DateOnly, IDictionary<TimeOnly, bool>> Availability { get; set; } = null!;
+        public IDictionary<DateOnly, ICollection<TimeOnly>> Availability { get; set; } = null!;
     }
 }

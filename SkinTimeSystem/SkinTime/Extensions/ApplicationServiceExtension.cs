@@ -9,6 +9,7 @@ using SkinTime.BLL.Services.QuestionService;
 using SkinTime.BLL.Services.ScheduleService;
 using SkinTime.BLL.Services.SkinTimeService;
 using SkinTime.BLL.Services.TherapistService;
+using SkinTime.BLL.Services.EventService;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
@@ -47,6 +48,8 @@ namespace SkinTime.Extensions
 
             // Middlewares
 
+            services.AddScoped<IEventService, EventService>();
+            
             return services;
         }
     }
