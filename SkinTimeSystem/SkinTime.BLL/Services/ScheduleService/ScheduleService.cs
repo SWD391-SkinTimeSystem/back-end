@@ -109,9 +109,14 @@ namespace SkinTime.BLL.Services.ScheduleService
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
         }
 
-        public async Task<ServiceResult<ICollection<Schedule>>> GetBookingSchedule(Guid bookingId)
+        public async Task<ServiceResult<ICollection<Schedule>>> GetBookingSchedule(string bookingId)
         {
-            IEnumerable<Schedule> result = await _unitOfWork.Repository<Schedule>().ListAsync(x => x.Id == bookingId);
+            if (!Guid.TryParse(bookingId, out Guid reservationId))
+            {
+                return ServiceResult<ICollection<Schedule>>.Failed(ServiceError.ValidationFailed("the booking id is not in the correct format"));
+            }
+
+            IEnumerable<Schedule> result = await _unitOfWork.Repository<Schedule>().ListAsync(x => x.Id == reservationId);
 
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
         }
@@ -126,6 +131,25 @@ namespace SkinTime.BLL.Services.ScheduleService
             }
 
             return ServiceResult<Schedule>.Failed(ServiceError.NotFound($"Can not find schedule entity with id {scheduleId}"));
+        }
+
+        public async Task<ServiceResult<ICollection<Schedule>>> GetTherapistSchedule(string therapistId, DateOnly from, DateOnly to)
+        {
+            if (!Guid.TryParse(therapistId, out Guid parsedId))
+            {
+                return ServiceResult<ICollection<Schedule>>.Failed(ServiceError.ValidationFailed("the therapist id is not in the correct format"));
+            }
+
+            if ( !await _unitOfWork.Repository<Therapist>().ExistsAsync(x => x.Id == parsedId))
+            {
+                return ServiceResult<ICollection<Schedule>>.Failed(ServiceError.NotExisted("therapist information not found for the provided id"));
+            }
+
+            IEnumerable<Schedule> schedules = await _unitOfWork.Repository<Schedule>()
+                .ListAsync(x => x.Include(x => x.BookingNavigation),
+                x => x.BookingNavigation.TherapistId == parsedId && from <= x.Date && x.Date <= to);
+
+            return ServiceResult<ICollection<Schedule>>.Success(schedules.ToList());
         }
 
         public async Task<ServiceResult<ICollection<Schedule>>> GetUserSchedules(Guid userId)

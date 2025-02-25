@@ -41,6 +41,7 @@ namespace SkinTime.BLL.Services.ScheduleService
         /// </returns>
         Task<ServiceResult<Schedule>> GenerateScheduleForBooking(string bookingId);
         Task<ServiceResult<ICollection<Schedule>>> GetUserSchedules(Guid userId);
-        Task<ServiceResult<ICollection<Schedule>>> GetBookingSchedule(Guid bookingId);
+        Task<ServiceResult<ICollection<Schedule>>> GetBookingSchedule(string bookingId);
+        Task<ServiceResult<ICollection<Schedule>>> GetTherapistSchedule(string therapistId, DateOnly from, DateOnly to);
     }
 }
