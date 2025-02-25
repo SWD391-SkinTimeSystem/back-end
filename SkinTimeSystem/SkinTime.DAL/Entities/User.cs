@@ -28,12 +28,13 @@ namespace SkinTime.DAL.Entities
         [Column(name:"gender")]
         public Gender Gender { get; set; }
 
-        [Column(name:"phone_number", TypeName = "NVARCHAR")]
+        [Column(name: "phone_number", TypeName = "VARCHAR(255)")]
         public string Phone { get; set; } = string.Empty;
 
-        public string Role { get; set; } = string.Empty;
+        [Column(name: "role", TypeName = "VARCHAR(100)")]
+        public string? Role { get; set; }
 
-        public string Avatar { get; set; } = string.Empty;
+
 
         // Navigational virtual properties represent entity relationship with other entities.
         public virtual Therapist Therapists { get; set; } = null!;
