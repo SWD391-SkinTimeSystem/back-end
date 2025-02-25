@@ -118,14 +118,20 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.Item1.ServiceDetailNavigation))
                 .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.Item1.ServiceImageNavigation))
                 .ForMember(dest => dest.Feedbacks, opt => opt.MapFrom(src => src.Item2 ?? new List<(Booking?, Feedback?, User?)>())); // Nếu null, chuyển thành list rỗng
-            CreateMap<Booking, BookingServiceModel>()
-                 .ForMember(dest => dest.serviceId, opt => opt.MapFrom(src => src.Id))
-                 .ForMember(dest => dest.serviceDate, opt => opt.MapFrom(src => src.CreatedTime))
-                .ReverseMap();
-            CreateMap<BookingTransaction, TransactionModel>()
-              .ForMember(dest => dest.paymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
-              .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
-              .ReverseMap();
+            CreateMap<Booking, BokingServiceWithIdModel>()
+                 .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.ReservedTime))             
+                 .ReverseMap();
+            CreateMap<Transaction, BokingServiceWithIdModel>()
+                 .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.Method))
+                 .ReverseMap();
+            CreateMap<Schedule, BokingServiceWithIdModel>()
+            .ForMember(dest => dest.ServiceHour, opt => opt.MapFrom(src => src.ReservedStartTime))
+             .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.Date.ToDateTime(TimeOnly.MinValue)))
+            .ReverseMap();
+            //CreateMap<BookingTransaction, TransactionModel>()
+            //  .ForMember(dest => dest.paymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
+            //  .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
+            //  .ReverseMap();
             CreateMap<(Booking booking, Service service), ResBookingServiceModel>()
            .ForMember(dest => dest.bookingId, opt => opt.MapFrom(src => src.booking.Id))
            .ForMember(dest => dest.serviceId, opt => opt.MapFrom(src => src.service.Id))
@@ -133,6 +139,10 @@ namespace SkinTime.Helpers
            .ForMember(dest => dest.serviceDate, opt => opt.MapFrom(src => src.booking.ReservedTime))
            .ForMember(dest => dest.totalPrice, opt => opt.MapFrom(src => src.service.Price))
            .ForMember(dest => dest.status, opt => opt.MapFrom(src => src.booking.Status));
+
+
+
+
         }
     }
 

@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using SkinTime.DAL.Entities;
 
 namespace Cursus.Core.Options.PaymentSetting
 {
@@ -19,9 +20,9 @@ namespace Cursus.Core.Options.PaymentSetting
         public string? QueryOrderUrl { get; set; }
 
         #region ZALOPAY
-        public async Task<string> CreateZaloPayOrder(decimal? amount, string returnUrl)
+        public async Task<string> CreateZaloPayOrder(decimal? amount, string returnCallBack, string serviceName)
         {
-            var response = await CreateZaloPayQrOrderAsync(amount, returnUrl);
+            var response = await CreateZaloPayQrOrderAsync(amount, returnCallBack, serviceName);
             if (response.TryGetValue("order_url", out var orderUrl))
             {
                 return orderUrl; // URL to redirect user for ZaloPay QR code
@@ -33,20 +34,19 @@ namespace Cursus.Core.Options.PaymentSetting
         #region Request Process
         public async Task<Dictionary<string, string>> CreateZaloPayQrOrderAsync(
             decimal? amount,
-            string returnURL
+            string returnCallBack,
+            string serviceName
         )
         {
-
-            //// Chuyển đổi số tiền từ string sang double
-            AmountInUsd = Convert.ToDouble(amount, CultureInfo.InvariantCulture);
 
 
             Random rnd = new Random();
             var embed_data = new
             {
-                redirecturl = returnURL, // URL chuyển hướng sau khi thanh toán
+                redirecturl = returnCallBack,
             };
-            var items = new[] { new { } };
+            var items = new[] { new {
+            } };
             var param = new Dictionary<string, string>();
             var app_trans_id = rnd.Next(1000000);
             param.Add("app_id", AppId);
@@ -56,9 +56,9 @@ namespace Cursus.Core.Options.PaymentSetting
             param.Add("app_trans_id", DateTime.Now.ToString("yyMMdd") + "_" + app_trans_id);
             param.Add("embed_data", JsonConvert.SerializeObject(embed_data));
             param.Add("item", JsonConvert.SerializeObject(items));
-            param.Add("description", Description);
+            param.Add("description", Description + serviceName);
             param.Add("bank_code", BankCode);
-            param.Add("callback_url", returnURL);
+            param.Add("callback_url", returnCallBack);
 
             var data =
                 AppId

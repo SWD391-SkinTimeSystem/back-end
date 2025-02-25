@@ -15,20 +15,11 @@ namespace SkinTime
             services.AddDatabaseConfig(config);
             services.AddApplicationServices(config);
             services.ConfigurateAuthenticationMethod(config);
-
+            services.AddSessionService();
+            services.AddRedisService(config);
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy(
-                    name: "allowedOrigins",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                    });
-            });
 
             var app = builder.Build();
 
@@ -40,7 +31,9 @@ namespace SkinTime
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors("AllowAll");
 
+            app.UseSession();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();

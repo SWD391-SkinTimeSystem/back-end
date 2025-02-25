@@ -9,14 +9,10 @@ namespace SkinTime.DAL.Enum
 {
     public enum PaymentMethod
     {
-        [EnumMember(Value = "cash")]
-        Cash,
-        [EnumMember(Value = "bank_transfer")]
-        BankingTransfer,
-        [EnumMember(Value = "credit_card")]
-        CreaditCard,
-        [EnumMember(Value = "e_wallet")]
-        EWallet,
+        [EnumMember(Value ="VnPay")]
+        VnPay,
+        [EnumMember(Value = "ZaloPay")]
+        ZaloPay,
     }
 
     public enum PaymentStatus {

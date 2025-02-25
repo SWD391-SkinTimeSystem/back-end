@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Cursus.Core.Options.PaymentSetting;
+using Microsoft.EntityFrameworkCore;
 using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
+using SkinTime.DAL.Enum.Schedule;
 using SkinTime.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,67 +16,31 @@ namespace SkinTime.BLL.Services.BookingService
     public class BookingService : IBookingService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public BookingService(IUnitOfWork unitOfWork)
+        private readonly VNPay _vnPay;
+        private readonly ZaloPay _zaloPay;
+        public BookingService(IUnitOfWork unitOfWork,VNPay vNPay,ZaloPay zaloPay )
         {
             _unitOfWork = unitOfWork;
+            _vnPay = vNPay;
+            _zaloPay = zaloPay;
         }
-        //public async Task<(Booking, Service)> CreateNewBooking(Guid customerId, Guid serviceId, DateTime date)
-        //{
-        //    DateTime date = dateTime.Date;
-        //    TimeSpan time = dateTime.TimeOfDay;
 
-        //    var service = await _unitOfWork.Repository<Service>()
-        //    .GetByConditionAsync(s => s.Id == serviceId,
-        //  query => query.Include(s => s.ServiceDetailNavigation)
-        //                .Include(s => s.ServiceImageNavigation));
+        public async Task<string> CreateNewBooking( string returnCallBack, Guid serviceId, string bank)
+        {
+            var service = _unitOfWork.Repository<Service>().GetById(serviceId);
 
+            if (!Enum.TryParse(bank, true, out PaymentMethod paymentMethod) || !Enum.IsDefined(typeof(PaymentMethod), paymentMethod))
+            {
+                throw new InvalidOperationException("Invalid payment method.");
+            }           
+            return paymentMethod switch
+            {
+                PaymentMethod.VnPay => await _vnPay.CreateVNPayOrder((int)service.Price, returnCallBack, service.ServiceName),
+                PaymentMethod.ZaloPay => await _zaloPay.CreateZaloPayOrder((int)service.Price, returnCallBack,service.ServiceName),
+                _ => throw new InvalidOperationException("Unsupported payment bank."),
+            };
+        }
 
-        //    var booking = new Booking
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        CustomerId = customerId,
-        //        ServiceId = serviceId,
-        //        ReservedTime = dateTime,
-        //        Status = BookingStatus.NotStarted,
-        //        TotalPrice = service.Price,
-
-        //    };
-        //    await _unitOfWork.Repository<Booking>().AddAsync(booking);
-        //    var serviceDetails = service.ServiceDetailNavigation
-        //                             .Where(sd => !sd.IsDetele)
-        //                             .OrderBy(sd => sd.Step)
-        //                             .ToList();
-        //    if (serviceDetails == null)
-        //    {
-        //        var schedule = new Schedule
-        //        {
-        //            BookingId = booking.Id,
-        //            Date = date,
-        //            ReservedStartTime = time,
-        //            ReservedEndTime = time.Add(TimeSpan.FromMinutes(Duration)) // Thời gian kết thúc
-        //        };
-        //    }
-        //    if (service.ServiceDetailNavigation != null)
-        //    {
-        //        foreach (var serviceDetail in serviceDetails)
-        //        {
-        //            var schedule = new Schedule
-        //            {
-        //                BookingId = booking.Id,
-        //                ServiceDetailId = serviceDetail.Id,
-        //                Date = date,
-        //                ReservedStartTime = time,
-        //                ReservedEndTime = time.Add(TimeSpan.FromMinutes(serviceDetail.Duration))  // Thời gian kết thúc
-        //            };
-
-        //            await _unitOfWork.Repository<Schedule>().AddAsync(schedule);
-        //            await _unitOfWork.Complete();
-
-        //            date = date.AddDays(serviceDetail.DateToNextStep);
-        //        }
-
-        //    }
-        //}
 
         public async Task<ServiceResult<ICollection<Booking>>> GetAllUserBooking(string userId)
         {

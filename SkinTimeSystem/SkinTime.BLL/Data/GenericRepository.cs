@@ -200,5 +200,10 @@ namespace SkinTime.BLL.Data
         {
             await _context.AddRangeAsync(entities);
         }
+        public Task DeleteRange(IEnumerable<T> entities)
+        {
+            _context.Set<T>().RemoveRange(entities);
+            return Task.CompletedTask;
+        }
     }
 }

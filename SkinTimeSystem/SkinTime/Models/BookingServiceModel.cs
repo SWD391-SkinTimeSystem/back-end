@@ -4,8 +4,19 @@ namespace SkinTime.Models
 {
     public class BookingServiceModel
     {
-        public Guid serviceId { get; set; }
-        public DateTime serviceDate { get; set; }
+        public Guid ServiceId { get; set; }
+        public DateTime   ServiceDate { get; set; }
+        public TimeOnly  ServiceHour { get; set; }
+        public Guid TherapistId { get; set; }
+        public string ReturnURL { get; set; }
+        public string VoucherCode { get; set; }
+       public string FailureURL { get; set; }
+        public string PaymentMethod { get; set; }
+
+    }
+    public class BokingServiceWithIdModel : BookingServiceModel
+    {
+        public Guid userId { get; set; }
     }
     public class ResBookingServiceModel
     {

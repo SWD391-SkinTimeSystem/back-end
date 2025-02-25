@@ -1,5 +1,6 @@
 ﻿using Cursus.Core.Options.PaymentSetting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
 using SkinTime.BLL.Data;
@@ -10,6 +11,7 @@ using SkinTime.BLL.Services.QuestionService;
 using SkinTime.BLL.Services.ScheduleService;
 using SkinTime.BLL.Services.SkinTimeService;
 using SkinTime.BLL.Services.TherapistService;
+using SkinTime.BLL.Services.TransactionService;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
@@ -38,8 +40,19 @@ namespace SkinTime.Extensions
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IFeedbackService,  FeedbackService>();
             services.AddScoped<IQuestionService, QuestionService>();
-            
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+               
+                    });
+            });
 
+            services.AddScoped<ITransactionService, TransactionService>();
             // Auto mapper
             services.AddAutoMapper(typeof(Mapping).Assembly);
 
@@ -52,6 +65,9 @@ namespace SkinTime.Extensions
             // Cấu hình ZaloPay từ appsettings.json
             services.Configure<ZaloPay>(config.GetSection("ZaloPay"));
             services.AddScoped<ZaloPay>(sp => sp.GetRequiredService<IOptions<ZaloPay>>().Value);
+            // Cấu hình VNPay từ appsettings.json
+            services.Configure<VNPay>(config.GetSection("VNPay"));
+            services.AddScoped<VNPay>(sp => sp.GetRequiredService<IOptions<VNPay>>().Value);
             return services;
         }
     }

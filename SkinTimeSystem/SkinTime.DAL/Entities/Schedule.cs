@@ -26,7 +26,7 @@ namespace SkinTime.DAL.Entities
         [Column("reserved_time_start", TypeName = "TIME")]
         public required TimeOnly ReservedStartTime { get; set; }
 
-        public TimeSpan ReservedEndTime { get; set; }
+        public TimeOnly ReservedEndTime { get; set; }
 
         [Column("status")]
         public required ScheduleStatus Status { get; set; } = ScheduleStatus.NotStarted;

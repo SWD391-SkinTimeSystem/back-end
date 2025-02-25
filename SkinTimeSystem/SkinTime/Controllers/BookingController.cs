@@ -1,16 +1,25 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using StackExchange.Redis;
+using System.Text.Json;
+using System.Threading.Tasks;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
 using SkinTime.BLL.Services.BookingService;
 using SkinTime.BLL.Services.ScheduleService;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
+using SkinTime.Extensions;
 using SkinTime.Helpers;
 using SkinTime.Models;
+using System.Net;
 using System.Security.Claims;
+using System.Text;
 
 namespace SkinTime.Controllers
 {
@@ -19,10 +28,12 @@ namespace SkinTime.Controllers
     public class BookingController : BaseController
     {
         private readonly IBookingService _service;
+        private readonly IDatabase _database;
 
-        public BookingController(IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, IBookingService bookingService)
+        public BookingController(IDatabase database,IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, IBookingService bookingService)
         : base(mapper, emailUtils, tokenUtils)
         {
+            _database = database;
             _service = bookingService;
         }
         /// <summary>
@@ -41,35 +52,42 @@ namespace SkinTime.Controllers
 
         //    return Ok(result);
         //}
-        //[Authorize]
-        //[HttpPost]
-        //public async Task<IActionResult> BookingService(BookingServiceModel booking)
-        //{
-        //    Get the jwt authorization string from the header.
-        //    string jwt = Request.Headers.Authorization.First()!;
-        //    string user_id = _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
-        //    string token = Request.Headers.Authorization.First()!;
-        //    string id = _tokenUtils.GetDataDictionaryFromJwt(token)["id"];
+      //  [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> BookingService(BookingServiceModel booking)
+        {
+
+            // Lấy token từ request header
+            //string token = Request.Headers.Authorization.First()!;
+            //var tokenData = _tokenUtils.GetDataDictionaryFromJwt(token);
+
+            //if (!tokenData.TryGetValue("id", out string? id) || !Guid.TryParse(id, out var userId))
+            //    return BadRequest("Invalid user ID in token.");
+
+            Guid userId = Guid.Parse("08dd54be-dbf9-4433-8fae-5797b9694ffd");
+
+            // Tạo khóa Redis duy nhất
+            string redisKey = $"{userId}";
+            BokingServiceWithIdModel bokingServiceWithIdModel = new BokingServiceWithIdModel();
+            bokingServiceWithIdModel.userId = userId;
+
+            await _database.SetAsync(redisKey, booking, TimeSpan.FromMinutes(30));
+            var retrievedBooking = await _database.GetAsync<BokingServiceWithIdModel>(redisKey);        
+                     
+            var returnUrl = Url.Action("TransactionCallback", "Transaction", new { redis = redisKey }, Request.Scheme);
 
 
-        //    if (!Guid.TryParse(id, out var userId))
-        //        return BadRequest();
 
-        //    var bookingService = _service.CreateNewBooking(userId, booking.serviceId, booking.serviceDate);
+            string bookingService = await _service.CreateNewBooking( returnUrl, booking.ServiceId, booking.PaymentMethod);
 
-        //    Get information from the token.
-        //   Dictionary<string, string> tokenData = _tokenUtils.GetDataDictionaryFromJwt(jwt);
-        //    var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
+            return Ok(bookingService);
+        }
 
-        //    return await HandleServiceCall<ICollection<Booking>, ICollection<BookingViewModel>>(async () =>
-        //    {
-        //        var bookingService = _service.UpdateBookingService(booking.BookingId, booking.NewsTimeStart);
-        //        var bookingServiceDTO = _mapper.Map<BookingServiceModel>(bookingService);
-        //        return await _service.GetAllUserBooking(tokenData["id"]);
-        //    });
-        //}
+    
 
-         //   return Ok(new ApiResponse<BookingServiceModel>
+
+
+        //   return Ok(new ApiResponse<BookingServiceModel>
         /// <summary>
         ///     Get a detailed booking information using the booking id.
         /// </summary>

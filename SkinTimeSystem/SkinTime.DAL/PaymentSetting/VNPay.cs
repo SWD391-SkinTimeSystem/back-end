@@ -28,10 +28,10 @@ namespace Cursus.Core.Options.PaymentSetting
 
 
         #region VNPAY
-        public async Task<string> CreateVNPayOrder(decimal? amount, string returnUrl)
+        public async Task<string> CreateVNPayOrder(decimal? amount, string returnUrl,string serviceName)
         {
             string ipAddress = await GetIpAddress();
-            await ConfigureRequest(amount, returnUrl, ipAddress);
+            await ConfigureRequest(amount, returnUrl, ipAddress, serviceName);
             return await CreatePaymentUrlAsync();
         }
         #endregion
@@ -39,20 +39,19 @@ namespace Cursus.Core.Options.PaymentSetting
        
 
         #region Request process
-        public async Task ConfigureRequest(decimal? amount, string returnUrl, string ipAddress)
+        public async Task ConfigureRequest(decimal? amount, string returnUrl, string ipAddress, string serviceName)
         {
             _requestData.Clear();
-
             // Thêm đầy đủ các tham số vào _requestData
             AddRequestData("vnp_Version", Version);
             AddRequestData("vnp_Command", Command);
             AddRequestData("vnp_TmnCode", TmnCode);
-            AddRequestData("vnp_Amount", (amount * 100).ToString()); // Đã sửa lại đây
+            AddRequestData("vnp_Amount", (amount * 100).ToString()); 
             AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             AddRequestData("vnp_CurrCode", CurrCode);
             AddRequestData("vnp_IpAddr", ipAddress);
             AddRequestData("vnp_Locale", Locale);
-            AddRequestData("vnp_OrderInfo", "Thanh toan don hang:" + Guid.NewGuid().ToString());
+            AddRequestData("vnp_OrderInfo", "Thanh toán cho dịch vụ:"+ serviceName);
             AddRequestData("vnp_OrderType", "other");
             AddRequestData("vnp_ReturnUrl", returnUrl);
             AddRequestData("vnp_TxnRef", Guid.NewGuid().ToString());
@@ -62,11 +61,6 @@ namespace Cursus.Core.Options.PaymentSetting
         {
             StringBuilder data = new StringBuilder();
 
-            // Kiểm tra _requestData
-            foreach (var item in _requestData)
-            {
-                Console.WriteLine(item);
-            }
 
             foreach (KeyValuePair<string, string> kv in _requestData)
             {
@@ -112,7 +106,7 @@ namespace Cursus.Core.Options.PaymentSetting
         {
             IHttpContextAccessor httpContextAccessor = new HttpContextAccessor();
             var context = httpContextAccessor.HttpContext;
-            return context?.Connection.RemoteIpAddress?.ToString() ?? "Invalid IP";
+            return context?.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
         }
         #endregion
         #region Response Process
@@ -190,6 +184,8 @@ namespace Cursus.Core.Options.PaymentSetting
                         hash.Append(theByte.ToString("x2"));
                     }
                 }
+              
+                
                 return hash.ToString();
             });
         }
