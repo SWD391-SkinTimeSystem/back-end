@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Cursus.Core.Options.PaymentSetting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
 using SkinTime.BLL.Data;
@@ -47,6 +49,9 @@ namespace SkinTime.Extensions
 
             // Middlewares
 
+            // Cấu hình ZaloPay từ appsettings.json
+            services.Configure<ZaloPay>(config.GetSection("ZaloPay"));
+            services.AddScoped<ZaloPay>(sp => sp.GetRequiredService<IOptions<ZaloPay>>().Value);
             return services;
         }
     }

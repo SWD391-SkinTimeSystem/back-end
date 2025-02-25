@@ -117,6 +117,12 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.Item1.ServiceDetailNavigation))
                 .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.Item1.ServiceImageNavigation))
                 .ForMember(dest => dest.Feedbacks, opt => opt.MapFrom(src => src.Item2 ?? new List<(Booking?, Feedback?, User?)>())); // Nếu null, chuyển thành list rỗng
+
+
+            CreateMap<BookingTransaction, TransactionModel>()
+              .ForMember(dest => dest.paymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
+              .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
+              .ReverseMap();
         }
 
     }
