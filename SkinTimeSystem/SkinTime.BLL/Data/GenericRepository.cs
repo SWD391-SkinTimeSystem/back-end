@@ -22,6 +22,13 @@ namespace SkinTime.BLL.Data
         {
             _context = context;
         }
+        //public Task<IQueryable<T>> GetAll()
+        //{// hàm này là lấy tất cả các entity của thực thể nhưng không truy vấn ngay lâpj tức => mục đích là để sử dụng cho việc truy vấn sau này
+        //    return _context.Set<T>();
+        //}
+        public async Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _context.Set<T>();
 
         public async Task<ICollection<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
         {
@@ -129,8 +136,8 @@ namespace SkinTime.BLL.Data
             return await _context.Set<T>().ToListAsync();
         }
         public async Task<T?> GetByConditionAsync(
-            Expression<Func<T, bool>> filter,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
+    Expression<Func<T, bool>> filter,
+    Func<IQueryable<T>, IIncludableQueryable<T, object>>? includeProperties = null
 )
         {
             IQueryable<T> query = _context.Set<T>();
@@ -194,6 +201,11 @@ namespace SkinTime.BLL.Data
         {// thằng này đơn giản  là cập nhật entity
             EntityEntry<T> entityTracker = _context.Set<T>().Update(entity);
             return entityTracker.Entity;
+        }
+
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _context.AddRangeAsync(entities);
         }
 
         public async Task AddRangeAsync(IEnumerable<T> entities)
