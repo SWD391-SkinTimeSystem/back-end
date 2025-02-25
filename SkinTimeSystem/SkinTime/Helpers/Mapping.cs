@@ -146,6 +146,37 @@ namespace SkinTime.Helpers
 
         }
     }
+            CreateMap<User, AccountInformation>()
+                .ReverseMap();
+
+            CreateMap<Event, EventViewModel>()
+                .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dst => dst.Content, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dst => dst.Image, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dst => dst.TotalTickets, opt => opt.MapFrom(src => src.Capacity))
+                .ForMember(dst => dst.Date, opt => opt.MapFrom(src => src.EventDate))
+                .ForMember(dst => dst.StartTime, opt => opt.MapFrom(src => src.TimeStart))
+                .ForMember(dst => dst.EndTime, opt => opt.MapFrom(src => src.TimeEnd))
+                .ForMember(dst => dst.AvailableTickets, opt => opt.MapFrom(src => src.Capacity - src.TicketNavigation.Count))
+                .ForMember(dst => dst.EventStatus, opt => opt.MapFrom(src => src.Status));
+
+            CreateMap<Event, AvailableEventViewModel>()
+                .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dst => dst.StartDate, opt => opt.MapFrom(src => src.EventDate))
+                .ForMember(dst => dst.StartTime, opt => opt.MapFrom(src => src.TimeStart))
+                .ForMember(dst => dst.ImageUrl, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dst => dst.EventId, opt => opt.MapFrom(src => src.Id));
+
+
+            CreateMap<EventCreationModel, Event>()
+                .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.EventName))
+                .ForMember(dst => dst.EventDate, opt => opt.MapFrom(src => src.Date))
+                .ForMember(dst => dst.Thumbnail, opt => opt.MapFrom(src => src.EventImage))
+                .ForMember(dst => dst.TicketPrice, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dst => dst.TimeStart, opt => opt.MapFrom(src => src.StartTime))
+                .ForMember(dst => dst.TimeEnd, opt => opt.MapFrom(src => src.EndTime))
+                .ForMember(dst => dst.Status, opt => opt.MapFrom(src => "ApprovePending"));
+        }
 
 
 }

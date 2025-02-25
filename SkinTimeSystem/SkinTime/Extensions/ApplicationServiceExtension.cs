@@ -11,10 +11,11 @@ using SkinTime.BLL.Services.QuestionService;
 using SkinTime.BLL.Services.ScheduleService;
 using SkinTime.BLL.Services.SkinTimeService;
 using SkinTime.BLL.Services.TherapistService;
-using SkinTime.BLL.Services.TransactionService;
+using SkinTime.BLL.Services.EventService;
 using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
+using SkinTime.BLL.Services.TransactionService;
 
 namespace SkinTime.Extensions
 {
@@ -62,12 +63,6 @@ namespace SkinTime.Extensions
 
             // Middlewares
 
-            // Cấu hình ZaloPay từ appsettings.json
-            services.Configure<ZaloPay>(config.GetSection("ZaloPay"));
-            services.AddScoped<ZaloPay>(sp => sp.GetRequiredService<IOptions<ZaloPay>>().Value);
-            // Cấu hình VNPay từ appsettings.json
-            services.Configure<VNPay>(config.GetSection("VNPay"));
-            services.AddScoped<VNPay>(sp => sp.GetRequiredService<IOptions<VNPay>>().Value);
             return services;
         }
     }
