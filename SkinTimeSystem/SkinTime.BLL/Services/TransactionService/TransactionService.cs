@@ -109,20 +109,14 @@ namespace SkinTime.BLL.Services.TransactionService
 
             bool isSuccess = data["vnp_ResponseCode"] == "00";
             PaymentStatus status = isSuccess ? PaymentStatus.Success : PaymentStatus.Failed;
-
-            if (!Guid.TryParse(data["vnp_OrderInfo"], out var bookingId) ||
-                !Guid.TryParse(data["vnp_TxnRef"], out var transactionID) ||
-                !decimal.TryParse(data["vnp_Amount"], out decimal amount))
-            {
-                return false;
-            }
-
+            Guid transactionID = Guid.Parse(data["vnp_TxnRef"]!);
+            decimal amount = Decimal.Parse(data["vnp_Amount"]!);
             amount /= 100;
             var paymentMethod = PaymentMethod.VnPay;
 
             bool isValidVNPay = await CallBackVnPay(data["vnp_TxnRef"], data["vnp_SecureHash"], data);
 
-            await CreateTransaction(transactionID, paymentMethod, amount, status, false, null);
+            await CreateTransaction(transactionID, paymentMethod, amount, status, false, data["vnp_TxnRef"]);
 
             return isSuccess && isValidVNPay;
         }
@@ -166,7 +160,7 @@ namespace SkinTime.BLL.Services.TransactionService
             var transactionID = Guid.NewGuid();
             await CreateTransaction(transactionID, PaymentMethod.ZaloPay, amount, status, false, transactionCode);
 
-            if (isValidChecksum)
+            if (isValidChecksum && isSuccess)
             {
                 return true;
             }

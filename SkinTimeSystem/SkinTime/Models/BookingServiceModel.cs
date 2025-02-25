@@ -16,7 +16,12 @@ namespace SkinTime.Models
     }
     public class BokingServiceWithIdModel : BookingServiceModel
     {
-        public Guid userId { get; set; }
+        public Guid BookingId { get; set; }
+        public Guid UserId { get; set; }
+    }
+    public class BokingServiceStatus
+    {
+       public string Status { get; set; }
     }
     public class ResBookingServiceModel
     {

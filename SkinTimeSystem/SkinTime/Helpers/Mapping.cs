@@ -119,6 +119,7 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.Item1.ServiceImageNavigation))
                 .ForMember(dest => dest.Feedbacks, opt => opt.MapFrom(src => src.Item2 ?? new List<(Booking?, Feedback?, User?)>())); // Nếu null, chuyển thành list rỗng
             CreateMap<Booking, BokingServiceWithIdModel>()
+                .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.Id))
                  .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.ReservedTime))             
                  .ReverseMap();
             CreateMap<Transaction, BokingServiceWithIdModel>()
@@ -140,7 +141,7 @@ namespace SkinTime.Helpers
            .ForMember(dest => dest.totalPrice, opt => opt.MapFrom(src => src.service.Price))
            .ForMember(dest => dest.status, opt => opt.MapFrom(src => src.booking.Status));
 
-
+            CreateMap<BookingServiceModel, BokingServiceWithIdModel>();
 
 
         }

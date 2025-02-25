@@ -41,6 +41,10 @@ namespace SkinTime.BLL.Services.BookingService
             };
         }
 
+        public Task<ICollection<Booking>> GetAllBookingByStatus(Guid userId, string status)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<ServiceResult<ICollection<Booking>>> GetAllUserBooking(string userId)
         {

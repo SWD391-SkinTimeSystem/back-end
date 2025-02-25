@@ -29,67 +29,28 @@ namespace SkinTime.Controllers
             _database = database;
             _service = service;
         }
-        //[HttpPost]
-        //public async Task<IActionResult> CreateTransaction([FromBody] TransactionModel transaction)
-        //{
-        //    var bookingTransaction = _mapper.Map<BookingTransaction>(transaction);
-        //    var approvalUrl = await _service.CreateTransaction(bookingTransaction, transaction.returnUrl,transaction.notifyUrl);
-        //    return Redirect(approvalUrl);
-        //} 
 
         [HttpGet]
         public async Task<IActionResult> TransactionCallback(string redis)
         {
-            var bookingData = await _database.GetAsync<BookingServiceModel>(redis);
+            var bookingData = await _database.GetAsync<BokingServiceWithIdModel>(redis);
 
 
             var data = Request.Query;
-            //if (string.IsNullOrEmpty(token))
-            //    return BadRequest("Token is missing.");
-            //var tokenData = _tokenUtils.GetDataDictionaryFromJwt(token);
-
-            //// Parse từng thuộc tính từ token
-            //Guid userId = Guid.Parse(tokenData.GetValueOrDefault("UserId"));
-            //Guid serviceId = Guid.Parse(tokenData.GetValueOrDefault("ServiceId"));
-            //Guid therapistId = Guid.Parse(tokenData.GetValueOrDefault("TherapistId"));
-            //DateTime serviceDate = DateTime.Parse(tokenData.GetValueOrDefault("ServiceDate"));
-
-
-            //TimeOnly serviceHour = TimeOnly.Parse(tokenData.GetValueOrDefault("ServiceHour"));
-
-            //var returnUrl = tokenData.GetValueOrDefault("ReturnURL", "");
-            //var voucherCode = tokenData.GetValueOrDefault("VoucherCode", "");
-            //var failureUrl = tokenData.GetValueOrDefault("FailureURL", "");
-            //var paymentMethod = tokenData.GetValueOrDefault("PaymentMethod", "");
-
-            //var bookingData = new BookingServiceModel
-            //{
-            //    ServiceId = serviceId,
-            //    ServiceDate = serviceDate,
-            //    ServiceHour = serviceHour,
-            //    TherapistId = therapistId,
-            //    ReturnURL = returnUrl,
-            //    VoucherCode = voucherCode,
-            //    FailureURL = failureUrl,
-            //    PaymentMethod = paymentMethod
-            //};
-
+            
             var bookingDTO = _mapper.Map<Booking>(bookingData);
             var scheduleDTO = _mapper.Map<Schedule>(bookingData);
 
-            var paymentResult = await _service.CallbackPayment(userId, data, bookingDTO, scheduleDTO);
-
+            var paymentResult = await _service.CallbackPayment(bookingData.UserId, data, bookingDTO, scheduleDTO);
+            await _database.DeleteAsync(redis);
             if (paymentResult)
             {
-                return Redirect(returnUrl);
+                return Redirect(bookingData.ReturnURL);
             }
             else
             {
-                return Redirect(failureUrl);
+                return Redirect(bookingData.FailureURL);
             }
-
-            return Ok(); 
         }
-
     }
 }

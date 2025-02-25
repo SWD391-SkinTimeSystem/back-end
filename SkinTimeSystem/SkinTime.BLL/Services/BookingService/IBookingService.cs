@@ -1,4 +1,5 @@
-﻿using SkinTime.BLL.Commons;
+﻿using Google.Apis.Http;
+using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using System;
@@ -11,7 +12,7 @@ namespace SkinTime.BLL.Services.BookingService
 {
     public interface IBookingService
     {
-        Task<ServiceResult<ICollection<Booking>>> GetAllUserBooking(string userId);
+        Task<ICollection<Booking>> GetAllBookingByStatus(Guid userId,string status );
 
         Task<ServiceResult<Booking>> GetBookingInformation(string bookingId);
 

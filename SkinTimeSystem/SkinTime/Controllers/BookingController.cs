@@ -30,7 +30,7 @@ namespace SkinTime.Controllers
         private readonly IBookingService _service;
         private readonly IDatabase _database;
 
-        public BookingController(IDatabase database,IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, IBookingService bookingService)
+        public BookingController(IDatabase database, IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, IBookingService bookingService)
         : base(mapper, emailUtils, tokenUtils)
         {
             _database = database;
@@ -40,38 +40,39 @@ namespace SkinTime.Controllers
         ///     Get all user's booking general informations.
         /// </summary>
         /// <returns>List of created booking</returns>
-        //[Authorize]
-        //[HttpGet("{status}")]
-        //public async Task<IActionResult> GetAppointments([FromRoute] BookingStatus status)
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    if (!Guid.TryParse(userId, out var customerId))
-        //        return BadRequest("Invalid user ID format");
+        [Authorize]
+        [HttpGet("{status}")]
+        public async Task<IActionResult> GetAppointments([FromRoute] string status)
+        {
+            string authHeader = Request.Headers.Authorization.First()!;
+            string token = authHeader.Replace("Bearer ", "");
+            var tokenData = _tokenUtils.GetDataDictionaryFromJwt(token);
 
-        //    var result = await _service.GetAllUserBooking(customerId, status);
+            Guid userId = Guid.Parse(tokenData["id"]);
 
-        //    return Ok(result);
-        //}
-      //  [Authorize]
+            var result = await _service.GetAllBookingByStatus(userId, status);
+
+            return Ok(result);
+        }
+        [Authorize(Roles =  nameof(UserRole.Customer))]
         [HttpPost]
         public async Task<IActionResult> BookingService(BookingServiceModel booking)
         {
+            string authHeader = Request.Headers.Authorization.First()!;
+            string token = authHeader.Replace("Bearer ", "");
+            var tokenData = _tokenUtils.GetDataDictionaryFromJwt(token);
 
-            // Lấy token từ request header
-            //string token = Request.Headers.Authorization.First()!;
-            //var tokenData = _tokenUtils.GetDataDictionaryFromJwt(token);
+            Guid userId = Guid.Parse(tokenData["id"]);
 
-            //if (!tokenData.TryGetValue("id", out string? id) || !Guid.TryParse(id, out var userId))
-            //    return BadRequest("Invalid user ID in token.");
+            Guid bookingId = Guid.NewGuid();
+             
+            var bookingData = _mapper.Map<BokingServiceWithIdModel>(booking);
+            bookingData.BookingId = bookingId;
+            bookingData.UserId = userId;
+           
+            string redisKey = $"{bookingId}";
 
-            Guid userId = Guid.Parse("08dd54be-dbf9-4433-8fae-5797b9694ffd");
-
-            // Tạo khóa Redis duy nhất
-            string redisKey = $"{userId}";
-            BokingServiceWithIdModel bokingServiceWithIdModel = new BokingServiceWithIdModel();
-            bokingServiceWithIdModel.userId = userId;
-
-            await _database.SetAsync(redisKey, booking, TimeSpan.FromMinutes(30));
+            await _database.SetAsync(redisKey, bookingData, TimeSpan.FromMinutes(30));
             var retrievedBooking = await _database.GetAsync<BokingServiceWithIdModel>(redisKey);        
                      
             var returnUrl = Url.Action("TransactionCallback", "Transaction", new { redis = redisKey }, Request.Scheme);
