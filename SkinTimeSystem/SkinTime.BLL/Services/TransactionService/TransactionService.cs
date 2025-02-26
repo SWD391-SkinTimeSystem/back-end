@@ -191,17 +191,6 @@ namespace SkinTime.BLL.Services.TransactionService
             await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
             await _unitOfWork.Complete();
             return true;
-
-        public async Task<string> CreateTransaction(BookingTransaction bookingTransaction, string returnUrl, string notifyUrl)
-        {
-            return bookingTransaction.PaymentMethod switch
-            {
-              (BankEnum.VNPAY) => await _vnPay.CreateVNPayOrder(bookingTransaction.Amount, returnUrl),
-                (BankEnum.ZALOPAY) => await _zaloPay.CreateZaloPayOrder(bookingTransaction.Amount, returnUrl),
-                _ => throw new InvalidOperationException(
-                    "Unsupported payment bank: " 
-                ),
-            };
         }
     }
 }

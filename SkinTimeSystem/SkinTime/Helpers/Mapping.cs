@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
-using Entities;
 using SkinTime.DAL.Entities;
 using SkinTime.Models;
 using System.Net.NetworkInformation;
@@ -143,12 +142,8 @@ namespace SkinTime.Helpers
            .ForMember(dest => dest.status, opt => opt.MapFrom(src => src.booking.Status));
 
             CreateMap<BookingServiceModel, BokingServiceWithIdModel>();
-
-
-        }
-    }
             CreateMap<User, AccountInformation>()
-                .ReverseMap();
+               .ReverseMap();
 
             CreateMap<Event, EventViewModel>()
                 .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Name))
@@ -179,15 +174,14 @@ namespace SkinTime.Helpers
                 .ForMember(dst => dst.Status, opt => opt.MapFrom(src => "ApprovePending"));
 
 
-            CreateMap<BookingTransaction, TransactionModel>()
-              .ForMember(dest => dest.paymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
-              .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
+            CreateMap<Transaction, TransactionModel>()
+              .ForMember(dest => dest.paymentMethod, opt => opt.MapFrom(src => src.Method))
               .ReverseMap();
 
             CreateMap<Question, QuestionModel>()
                 .ForMember(dest => dest.No, opt => opt.MapFrom(src => src.OrderNo))
                 .ForMember(dest => dest.IdQuestion, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptions));
+                .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptionsNavigation));
             CreateMap<QuestionOption, QuestionOptionModel>();
             CreateMap<SkinType, SkintypePercentage>()
             .ForMember(dest => dest.NameSkinType, opt => opt.MapFrom(src => src.Name));
@@ -224,17 +218,17 @@ namespace SkinTime.Helpers
 
             // Map từ (Booking?, Feedback?, User?) -> FeedBackServiceModel
             CreateMap<(Booking?, Feedback?, User?), FeedBackServiceModel>()
-                .ForMember(dest => dest.CustommerName, opt => opt.MapFrom(src => src.Item3 != null ? src.Item3.FullName : "Unknown")) 
+                .ForMember(dest => dest.CustommerName, opt => opt.MapFrom(src => src.Item3 != null ? src.Item3.FullName : "Unknown"))
                 .ForMember(dest => dest.Star, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.ServiceRating : (int?)null))
-                .ForMember(dest => dest.CreatedTime, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.CreatedTime :(DateTime ?)null))
-                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.ServiceFeedback : null)); 
+                .ForMember(dest => dest.CreatedTime, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.CreatedTime : (DateTime?)null))
+                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.ServiceFeedback : null));
 
             // Map từ (Service, List<(Booking?, Feedback?, User?)>?) -> ServiceModel
             CreateMap<(Service, List<(Booking?, Feedback?, User?)>?), ServiceModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item1.Id))
                 .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Item1.ServiceName))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item1.Description))
-                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Item1.Duration))
+                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Item1.Duration ))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Item1.Thumbnail))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item1.Price))
                 .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.Item1.ServiceDetailNavigation))
@@ -254,5 +248,8 @@ namespace SkinTime.Helpers
 
         }
 
-
+    }
+         
 }
+
+

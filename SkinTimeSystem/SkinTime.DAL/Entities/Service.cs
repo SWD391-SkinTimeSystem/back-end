@@ -26,6 +26,10 @@ namespace SkinTime.DAL.Entities
         [MaxLength(255)]
         public required string Thumbnail { get; set; } = string.Empty;
 
+        [Column("duration")]
+        [MaxLength(255)]
+        public required int Duration { get; set; }
+
         [Column("price", TypeName = "DECIMAL")]
         [Precision(16,2)]
         public required decimal Price { get; set; }

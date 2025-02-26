@@ -20,7 +20,7 @@ namespace SkinTime.BLL.Data
         public DbSet<TherapistCertification> TherapistCertifications {get; set; } = null!;
 
         public DbSet<Voucher> Vouchers { get; set; } = null!;
-        public DbSet<Transaction> TicketTransactions { get; set; } = null!;
+        public DbSet<Transaction> Transactions { get; set; } = null!;
 
         public DbSet<Event> Events { get; set; } = null!;
         public DbSet<EventTicket> EventTickets { get; set; } = null!;
@@ -29,7 +29,8 @@ namespace SkinTime.BLL.Data
         public DbSet<Feedback> Feedbacks { get; set; } = null!;
         public DbSet<Schedule> Schedules { get; set; } = null!;
         public DbSet<Tracking> Trackings { get; set; } = null!;
-
+        public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
         public DbSet<SkinType> SkinTypes { get; set; } = null!;
         public DbSet<ServiceRecommendation> ServiceRecommendation { get; set; } = null!;
 

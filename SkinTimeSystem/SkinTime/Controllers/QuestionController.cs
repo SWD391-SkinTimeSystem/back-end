@@ -19,7 +19,6 @@ namespace SkinTime.Controllers
             IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities)
             : base(mapper, emailUtilities, tokenUtilities)
         {
-            _mapper = mapper;
             _service = service;
         }
 

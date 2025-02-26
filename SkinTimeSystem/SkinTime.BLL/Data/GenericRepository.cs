@@ -26,9 +26,6 @@ namespace SkinTime.BLL.Data
         //{// hàm này là lấy tất cả các entity của thực thể nhưng không truy vấn ngay lâpj tức => mục đích là để sử dụng cho việc truy vấn sau này
         //    return _context.Set<T>();
         //}
-        public async Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
-        {
-            IQueryable<T> query = _context.Set<T>();
 
         public async Task<ICollection<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
         {

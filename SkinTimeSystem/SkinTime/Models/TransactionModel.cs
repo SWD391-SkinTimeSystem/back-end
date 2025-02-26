@@ -6,7 +6,6 @@ namespace SkinTime.Models
     public class TransactionModel
     {
         public Guid userId { get; set; }
-        public Guid BookingId { get; set; }
         public BankEnum paymentMethod { get; set; }
         public decimal amount { get; set; }
         public string returnUrl { get; set; }

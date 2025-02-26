@@ -64,6 +64,9 @@ namespace SkinTime.Extensions
             // Middlewares
 
             // Cấu hình ZaloPay từ appsettings.json
+            services.Configure<VNPay>(config.GetSection("VNPay"));
+            services.AddScoped<VNPay>(sp => sp.GetRequiredService<IOptions<VNPay>>().Value);
+            // Cấu hình ZaloPay từ appsettings.json
             services.Configure<ZaloPay>(config.GetSection("ZaloPay"));
             services.AddScoped<ZaloPay>(sp => sp.GetRequiredService<IOptions<ZaloPay>>().Value);
             services.AddScoped<IEventService, EventService>();

@@ -11,6 +11,6 @@ namespace SkinTime.BLL.Services.SkinTimeService
     {
         Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService);
         Task<Service> GetTrementplant(Guid idService);
-        Task<IList<Service>> GetAllService();
+        Task<ICollection<Service>> GetAllService();
     }
 }

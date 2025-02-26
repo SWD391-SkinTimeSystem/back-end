@@ -16,6 +16,6 @@ namespace SkinTime.BLL.Services.TransactionService
       //  Task<string> CreateTransaction(BookingTransaction bookingTransaction,string returnUrl,string notifyUrl);
 
         public Task<bool> CallbackPayment(Guid userId,IQueryCollection data,Booking booking,Schedule schedule);
-        Task<string> CreateTransaction(BookingTransaction bookingTransaction,string returnUrl,string notifyUrl)
+       
     }
 }

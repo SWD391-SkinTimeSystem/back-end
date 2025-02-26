@@ -47,5 +47,7 @@ namespace SkinTime.DAL.Entities
         public virtual ICollection<Booking> BookingNavigation { get; set; } = new Collection<Booking>();
         public virtual ICollection<UserChoice> UserChoices { get; set; } = new Collection<UserChoice>();
         public virtual ICollection<EventTicket> EventTickets { get; set; } = new Collection<EventTicket>();
+        public virtual ICollection<Notification> Notifications { get; set; } = new Collection<Notification>();
+        public virtual ICollection<Message> Messages { get; set; } = new Collection<Message>();
     }
 }

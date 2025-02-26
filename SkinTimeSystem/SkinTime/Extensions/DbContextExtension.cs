@@ -350,7 +350,8 @@ namespace SkinTime.BLL.Data
                         ServiceName = LoremIpsum(1, 2, 1, 1, 1),
                         Description = LoremIpsum(10, 11, 2, 4, 1),
                         Thumbnail = string.Empty,
-                        Price = random.Next(100000,2000000),
+                        Duration = 1,
+                        Price = random.Next(100000, 2000000),
                         ServiceCategoryID = serviceCategory[random.Next(serviceCategory.Count())].Id,
                     });
                 }

@@ -18,7 +18,6 @@ namespace SkinTime.Controllers
         public ServiceController(ISkinTimeService skinTimeService, IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities) : base(mapper, emailUtilities, tokenUtilities)
         {
             _skinTimeService = skinTimeService;
-            _mapper = mapper;
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetService(Guid id)

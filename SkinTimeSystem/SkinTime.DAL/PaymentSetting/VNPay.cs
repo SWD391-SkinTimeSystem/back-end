@@ -52,7 +52,7 @@ namespace Cursus.Core.Options.PaymentSetting
             AddRequestData("vnp_CurrCode", CurrCode);
             AddRequestData("vnp_IpAddr", ipAddress);
             AddRequestData("vnp_Locale", Locale);
-            AddRequestData("vnp_OrderInfo", "Thanh toán cho dịch vụ:"+ serviceName)
+            AddRequestData("vnp_OrderInfo", "Thanh toán cho dịch vụ:" + serviceName); 
             AddRequestData("vnp_OrderType", "other");
             AddRequestData("vnp_ReturnUrl", returnUrl);
             AddRequestData("vnp_TxnRef", Guid.NewGuid().ToString());
