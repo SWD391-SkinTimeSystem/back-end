@@ -73,7 +73,7 @@ namespace SkinTime.Controllers
             string redisKey = $"{bookingId}";
 
             await _database.SetAsync(redisKey, bookingData, TimeSpan.FromMinutes(30));
-            var retrievedBooking = await _database.GetAsync<BokingServiceWithIdModel>(redisKey);        
+            //var retrievedBooking = await _database.GetAsync<BokingServiceWithIdModel>(redisKey);        
                      
             var returnUrl = Url.Action("TransactionCallback", "Transaction", new { redis = redisKey }, Request.Scheme);
 
@@ -94,7 +94,7 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <param name="id">The booking id</param>
         /// <returns>Detailed information of a booking record</returns>
-        [HttpGet("{id}")]
+        [HttpGet()]
         public async Task<ActionResult<BookingDetailViewModel>> GetBookingDetails(string id)
         {
             return await HandleServiceCall<Booking, BookingDetailViewModel>(async () =>
