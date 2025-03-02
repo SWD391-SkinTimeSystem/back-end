@@ -1,0 +1,42 @@
+services:
+  skintime:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnectionMySQL=Server=mysql;Database=skintime_db;User=root;Password=minhtri;
+      - Redis__Connection=redis:6379
+    ports:
+      - "8080:8080"    # HTTP
+      - "2222:2222" # SSH
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: minhtri
+      MYSQL_DATABASE: skintime_db
+      MYSQL_USER: skintime_user
+      MYSQL_PASSWORD: minhtri
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mysql_data:
+  redis_data:

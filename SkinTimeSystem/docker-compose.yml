@@ -1,0 +1,6 @@
+services:
+  skintime:
+    image: ${DOCKER_REGISTRY-}skintime
+    build:
+      context: .
+      dockerfile: SkinTime/Dockerfile
