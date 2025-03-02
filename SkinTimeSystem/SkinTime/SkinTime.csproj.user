@@ -11,5 +11,6 @@
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_DbContextTypeFullName>SkinTime.BLL.Data.ApplicationDbContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
+    <NameOfLastUsedPublishProfile>D:\CoursewareFPT\Semester-7\SWD392\Project-Backend\back-end\SkinTimeSystem\SkinTime\Properties\PublishProfiles\SkinTime20250301231710.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

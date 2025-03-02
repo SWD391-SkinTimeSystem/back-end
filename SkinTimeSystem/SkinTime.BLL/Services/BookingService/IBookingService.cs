@@ -12,9 +12,9 @@ namespace SkinTime.BLL.Services.BookingService
 {
     public interface IBookingService
     {
-        Task<ICollection<Booking>> GetAllBookingByStatus(Guid userId,string status );
+        Task<ICollection<Booking>> GetAppointments(Guid userId,string status );
 
-        Task<ServiceResult<Booking>> GetBookingInformation(string bookingId);
+        Task<ServiceResult<Booking>> GetBookingInformation(Guid bookingId);
 
         /// <summary>
         ///     <pra>
