@@ -4,7 +4,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnectionMySQL=Server=mysql;Database=skintime_db;User=root;Password=yourpassword;
+      - ConnectionStrings__DefaultConnectionMySQL=Server=mysql;Database=skintime_db;User=root;Password=minhtri;
       - Redis__Connection=redis:6379
     ports:
       - "8080:8080"    # HTTP

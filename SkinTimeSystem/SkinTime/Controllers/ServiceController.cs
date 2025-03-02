@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
+using SkinTime.BLL.Commons;
 using SkinTime.BLL.Services.SkinTimeService;
 using SkinTime.DAL.Entities;
 using SkinTime.Helpers;
@@ -32,13 +33,13 @@ namespace SkinTime.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllService()
         {
-            return await HandleApiCallAsync(async () =>
+            return await HandleServiceCall<ICollection<ServiceModel>>(async () =>
             {
-                var service = _skinTimeService.GetAllService;
-                var serviceDTO = _mapper.Map<ServiceModel>(service);
-                return serviceDTO;
+                var services = await _skinTimeService.GetAllService();
+                return ServiceResult<ICollection<Service>>.Success(services);
             });
         }
+
         [HttpGet("treatment-plan/{id}")]// 35. Lấy danh sách thông tin của treatment plan 
         public async Task<IActionResult> GetTreatmentPlan(Guid id)
         {

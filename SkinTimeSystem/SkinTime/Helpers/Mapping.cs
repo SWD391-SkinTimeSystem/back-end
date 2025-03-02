@@ -94,13 +94,13 @@ namespace SkinTime.Helpers
             CreateMap<Service, ServiceModel>()
                 .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.ServiceDetailNavigation))
                 .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.ServiceImageNavigation))
-                .ForMember(dest => dest.Feedbacks, opt => opt.Ignore());
+                .ForMember(dest => dest.Feedbacks, opt => opt.Ignore()).ReverseMap();
 
             // Map từ ServiceDetail -> ServiceDetailModel
-            CreateMap<ServiceDetail, ServiceDetailModel>();
+            CreateMap<ServiceDetail, ServiceDetailModel>().ReverseMap(); ;
 
             // Map từ ServiceImage -> ServiceImageModel
-            CreateMap<ServiceImage, ServiceImageModel>();
+            CreateMap<ServiceImage, ServiceImageModel>().ReverseMap(); ;
 
             // Map từ (Booking?, Feedback?, User?) -> FeedBackServiceModel
             CreateMap<(Booking?, Feedback?, User?), FeedBackServiceModel>()
