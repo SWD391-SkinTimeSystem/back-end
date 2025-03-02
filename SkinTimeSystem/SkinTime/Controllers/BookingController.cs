@@ -74,7 +74,7 @@ namespace SkinTime.Controllers
                 var bookingData = _mapper.Map<BokingServiceWithIdModel>(booking);
                 bookingData.BookingId = bookingId;
                 bookingData.UserId = userId;
-
+                
                 string redisKey = $"{bookingId}";
 
                 await _database.SetAsync(redisKey, bookingData, TimeSpan.FromMinutes(30));

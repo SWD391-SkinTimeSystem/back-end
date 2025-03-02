@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using SkinTime.DAL.Entities;
+using SkinTime.DAL.Enum.EventEnums;
 using SkinTime.Models;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -67,6 +68,27 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptionsNavigation));
 
             CreateMap<QuestionOption, QuestionOptionModel>();
+
+            CreateMap<EventTicket, TicketViewModel>()
+                .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.EventId))
+                .ForMember(dest => dest.TicketId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Otp, opt => opt.MapFrom(src => src.TicketCode))
+                .ForMember(dest => dest.QRCode, opt => opt.MapFrom(src => src.QRCode))
+                .ForMember(dest => dest.EventName, opt => opt.MapFrom(src => src.EventNavigation.Name))
+                .ForMember(dest => dest.PurchaseDate, opt => opt.MapFrom(src => src.CreatedTime))
+                .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.PaidAmount))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+            CreateMap<TicketRegistrationModel, TicketRegistrationCacheModel>();
+
+            CreateMap<TicketRegistrationCacheModel, EventTicket>()
+                .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.EventId))
+                .ForMember(dest => dest.UserID, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(x => EventTicketStatus.Paid))
+                .ForMember(dest => dest.PaidAmount, opt => opt.MapFrom(src => src.TotalAmount))
+                .ForMember(dest => dest.TicketCode, opt => opt.MapFrom(src => src.Ticket_Otp))
+                .ForMember(dest => dest.QRCode, opt => opt.MapFrom(src => src.Base64_QrCode));
 
             CreateMap<SkinType, SkintypePercentage>()
             .ForMember(dest => dest.NameSkinType, opt => opt.MapFrom(src => src.Name));

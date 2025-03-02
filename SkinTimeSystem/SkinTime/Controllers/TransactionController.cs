@@ -52,5 +52,32 @@ namespace SkinTime.Controllers
                 return Redirect(bookingData.FailureURL);
             }
         }
+        
+        [HttpGet("ticket-callback")]
+        public async Task<IActionResult> TicketTransactionCallback(string redis)
+        {
+            var ticketData = await _database.GetAsync<TicketRegistrationCacheModel>(redis);
+
+            if (ticketData == null)
+            {
+                return NotFound();
+            }
+
+            var data = Request.Query;
+
+            EventTicket ticket = _mapper.Map<EventTicket>(ticketData);
+
+            var paymentResult = await _service.CallbackTicketPayment(data, ticket);
+            await _database.DeleteAsync(redis);
+
+            if (paymentResult.IsSuccess)
+            {
+                return Redirect(ticketData.SuccessCallbackUrl);
+            }
+            else
+            {
+                return Redirect(ticketData.FailureCallbackUrl);
+            }
+        }
     }
 }

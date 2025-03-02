@@ -16,6 +16,7 @@ using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
 using SkinTime.BLL.Services.TransactionService;
+using SkinTime.BLL.Services.TicketService;
 
 namespace SkinTime.Extensions
 {
@@ -41,6 +42,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IFeedbackService,  FeedbackService>();
             services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<ITicketService, TicketService>();
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",

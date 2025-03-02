@@ -1,6 +1,7 @@
 using Cursus.Core.Options.PaymentSetting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SkinTime.BLL.Commons;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using SkinTime.DAL.Enum.Schedule;
@@ -57,6 +58,33 @@ namespace SkinTime.BLL.Services.TransactionService
 
         }
 
+        public async Task<ServiceResult> CallbackTicketPayment(IQueryCollection data, EventTicket ticket)
+        {
+            if (data.ContainsKey("vnp_BankCode"))
+            {
+                if (!await HandleVnPayCallback(data))
+                {
+                    return ServiceResult.Failed(ServiceError.ValidationFailed("Error with VnPay")); ;
+                }
+            }
+
+            if ( data.ContainsKey("bankcode")
+                   && ( data["bankode"].ToString() == "" || data["bankode"].ToString() == "zalopayapp" || data["bankode"].ToString() == "CC")
+               )
+            {
+                bool zaloPayResult = await HandleZaloPayCallback(data);
+                if (!zaloPayResult)
+                {
+                    return ServiceResult.Failed(ServiceError.ValidationFailed("Error with ZaloPay"));
+                }
+            }
+
+            var addedTicket = await _unitOfWork.Repository<EventTicket>().AddAsync(ticket);
+            await _unitOfWork.Complete();
+
+            return ServiceResult.Success(addedTicket);
+        }
+
         public async Task AddBookingData(Guid userId, Booking booking, Schedule schedule)
         {
 
@@ -92,8 +120,6 @@ namespace SkinTime.BLL.Services.TransactionService
             await _unitOfWork.Complete();
 
         }
-
-
 
         #region VNPAY
         private async Task<bool> HandleVnPayCallback(IQueryCollection data)
@@ -191,6 +217,11 @@ namespace SkinTime.BLL.Services.TransactionService
             await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
             await _unitOfWork.Complete();
             return true;
+        }
+
+        public Task<bool> CallbackPayment(Guid itemId, object entity, IQueryCollection data)
+        {
+            throw new NotImplementedException();
         }
     }
 }
