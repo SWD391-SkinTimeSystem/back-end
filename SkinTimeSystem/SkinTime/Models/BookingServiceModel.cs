@@ -1,4 +1,5 @@
 ﻿using SkinTime.DAL.Enum;
+using System.Text.Json.Serialization;
 
 namespace SkinTime.Models
 {
@@ -21,16 +22,39 @@ namespace SkinTime.Models
     }
     public class BokingServiceStatus
     {
-       public string Status { get; set; }
+        public string Id { get; set; }
+        public string Status { get; set; }
+        public DateTime Date { get; set; }
+        public string TherapistName {  get; set; }
+        public string ServiceName { get; set; }
+        public string Thumbnail { get; set; }
+        public bool IsTretmentPlan{ get; set; }
+        public TimeOnly TimeStart { get; set; }
+        public string Description { get; set; }
+
     }
-    public class ResBookingServiceModel
+    public class BookingDetailModel 
     {
-        public Guid bookingId { get; set; }
-        public Guid serviceId { get; set; }
-        public string serviceName { get; set; }
-        public DateTime serviceDate { get; set; }
-        public decimal totalPrice { get; set; }
-        public BookingStatus status { get; set; }
+        public Guid Id { get; set; }
+        public string CheckInCode { get; set; }
+        public required string TherapistName { get; set; }
+        public string Thumbnail { get; set; }
+        public required string ServiceName { get; set; }
+
+        public  string Status { get; set; }
+
+        public int TotalStep { get; set; }
+        public string Description { get; set; }
+        public ICollection<BookingStepDetails> Details { get; set; }
+
+    }
+
+    public class BookingStepDetails
+    {
+        public required string ServiceDetailsName { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly StartEnd { get; set; }
+        public DateTime ReservedDate { get; set; }
     }
 
     public class UpdateBookingModel

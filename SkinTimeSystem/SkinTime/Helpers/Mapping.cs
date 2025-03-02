@@ -4,6 +4,7 @@ using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum.EventEnums;
 using SkinTime.Models;
 using System.Net.NetworkInformation;
+using System.Text;
 
 namespace SkinTime.Helpers
 {
@@ -33,11 +34,11 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.UserNavigation.Avatar))
                 .ForMember(dest => dest.Biography, opt => opt.MapFrom(src => src.BIO))
                 .ForMember(dest => dest.CertificationsUrl, opt => opt.MapFrom(src => src.CertificationNavigation.IsNullOrEmpty() ?
-                default :src.CertificationNavigation.Select(x => x.FileUrl)))
+                default : src.CertificationNavigation.Select(x => x.FileUrl)))
                 .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.BookingNavigation.IsNullOrEmpty() ?
                 default : src.BookingNavigation.Select(x => x.FeedbackNavigation)));
 
-            CreateMap<Schedule,ScheduleViewModel>()
+            CreateMap<Schedule, ScheduleViewModel>()
                 .ForMember(dest => dest.ServiceStepId, opt => opt.MapFrom(src => src.ServiceDetailId))
                 .ForMember(dest => dest.ServiceStepName, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Name))
                 .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceDetailNavigation.ServiceID))
@@ -115,13 +116,13 @@ namespace SkinTime.Helpers
             CreateMap<Service, ServiceModel>()
                 .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.ServiceDetailNavigation))
                 .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.ServiceImageNavigation))
-                .ForMember(dest => dest.Feedbacks, opt => opt.Ignore());
+                .ForMember(dest => dest.Feedbacks, opt => opt.Ignore()).ReverseMap();
 
             // Map từ ServiceDetail -> ServiceDetailModel
-            CreateMap<ServiceDetail, ServiceDetailModel>();
+            CreateMap<ServiceDetail, ServiceDetailModel>().ReverseMap(); ;
 
             // Map từ ServiceImage -> ServiceImageModel
-            CreateMap<ServiceImage, ServiceImageModel>();
+            CreateMap<ServiceImage, ServiceImageModel>().ReverseMap(); ;
 
             // Map từ (Booking?, Feedback?, User?) -> FeedBackServiceModel
             CreateMap<(Booking?, Feedback?, User?), FeedBackServiceModel>()
@@ -142,7 +143,7 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.Feedbacks, opt => opt.MapFrom(src => src.Item2 ?? new List<(Booking?, Feedback?, User?)>())); // Nếu null, chuyển thành list rỗng
             CreateMap<Booking, BokingServiceWithIdModel>()
                 .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.Id))
-                 .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.ReservedTime))             
+                 .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.ReservedTime))
                  .ReverseMap();
             CreateMap<Transaction, BokingServiceWithIdModel>()
                  .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.Method))
@@ -151,18 +152,6 @@ namespace SkinTime.Helpers
             .ForMember(dest => dest.ServiceHour, opt => opt.MapFrom(src => src.ReservedStartTime))
              .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.Date.ToDateTime(TimeOnly.MinValue)))
             .ReverseMap();
-            //CreateMap<BookingTransaction, TransactionModel>()
-            //  .ForMember(dest => dest.paymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
-            //  .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.BookingId))
-            //  .ReverseMap();
-            CreateMap<(Booking booking, Service service), ResBookingServiceModel>()
-           .ForMember(dest => dest.bookingId, opt => opt.MapFrom(src => src.booking.Id))
-           .ForMember(dest => dest.serviceId, opt => opt.MapFrom(src => src.service.Id))
-           .ForMember(dest => dest.serviceName, opt => opt.MapFrom(src => src.service.ServiceName))
-           .ForMember(dest => dest.serviceDate, opt => opt.MapFrom(src => src.booking.ReservedTime))
-           .ForMember(dest => dest.totalPrice, opt => opt.MapFrom(src => src.service.Price))
-           .ForMember(dest => dest.status, opt => opt.MapFrom(src => src.booking.Status));
-
             CreateMap<BookingServiceModel, BokingServiceWithIdModel>();
             CreateMap<User, AccountInformation>()
                .ReverseMap();
@@ -250,7 +239,7 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item1.Id))
                 .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Item1.ServiceName))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item1.Description))
-                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Item1.Duration ))
+                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Item1.Duration))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Item1.Thumbnail))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item1.Price))
                 .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.Item1.ServiceDetailNavigation))
@@ -267,11 +256,61 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.ServiceDetailName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.Step))
                 .ForMember(dest => dest.DurationInMinutes, opt => opt.MapFrom(src => src.Duration));
+            CreateMap<Booking, BokingServiceStatus>()
+                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.ReservedTime))
+                .ForMember(dest => dest.TimeStart, opt => opt.MapFrom(src =>
+                      src.ScheduleNavigation
+                      .Where(s => s.ServiceDetailNavigation.Step == 1)
+                      .Select(s => s.ReservedStartTime)
+                      .FirstOrDefault()
+                       ))
+                .ForMember(dest => dest.IsTretmentPlan, opt => opt.MapFrom(src =>
+               src.ServiceNavigation.ServiceDetailNavigation != null && src.ServiceNavigation.ServiceDetailNavigation.Any()
+                            ))
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ServiceNavigation.Thumbnail))
+                .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src =>
+                 src.TherapistNavigation != null && src.TherapistNavigation.UserNavigation != null
+                 ? src.TherapistNavigation.UserNavigation.FullName
+                  : "Not yet"))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceNavigation.Description))
+                .ReverseMap();
+
+
+            CreateMap<Booking, BookingDetailModel>()
+    .ForMember(dest => dest.CheckInCode, opt => opt.MapFrom(src =>
+        Convert.ToBase64String(Encoding.UTF8.GetBytes(src.Id.ToString())).Substring(0, 8)
+    ))
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+    .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src =>
+        src.TherapistNavigation != null && src.TherapistNavigation.UserNavigation != null
+            ? src.TherapistNavigation.UserNavigation.FullName
+            : "Not yet"
+    ))
+    .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
+    .ForMember(dest => dest.TotalStep, opt => opt.MapFrom(src =>
+        src.ServiceNavigation.ServiceDetailNavigation != null
+            ? src.ServiceNavigation.ServiceDetailNavigation.Count
+            : 0
+    ))
+    .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceNavigation.Description))
+        .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ServiceNavigation.Thumbnail))
+    .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.ScheduleNavigation))
+    .ReverseMap();
+
+            CreateMap<Schedule, BookingStepDetails>()
+                .ForMember(dest => dest.ServiceDetailsName, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Name))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.ReservedStartTime))
+                .ForMember(dest => dest.StartEnd, opt => opt.MapFrom(src => src.ReservedEndTime))
+                .ForMember(dest => dest.ReservedDate, opt => opt.MapFrom(src => src.Date.ToDateTime(TimeOnly.MinValue)))
+                .ReverseMap();
+
 
         }
 
     }
-         
+
 }
 
 
