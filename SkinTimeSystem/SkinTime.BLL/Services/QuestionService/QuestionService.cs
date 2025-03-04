@@ -21,7 +21,7 @@ namespace SkinTime.BLL.Services.QuestionService
         public Task<ICollection<Question>> GetAllQuestion() =>_unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptionsNavigation);
         
 
-        public async Task<(Dictionary<SkinType, double> SkinTypes, List<Service> Services)> GetServiceRecommments(Guid userId, List<Guid> listResult)
+        public async Task<(Dictionary<SkinType, double> SkinTypes, List<Service> Services)> GetServiceRecommments(List<Guid> listResult)
         {
 
             var allSkinTypes = await _unitOfWork.Repository<SkinType>().ListAsync();
