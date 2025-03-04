@@ -11,6 +11,6 @@ namespace SkinTime.BLL.Services.QuestionService
     public interface IQuestionService
     {
         Task<ICollection<Question>> GetAllQuestion();
-        Task<(Dictionary<SkinType, double> SkinTypes, List<Service>? Services)> GetServiceRecommments(Guid userId, List<Guid> listResult);
+        Task<(Dictionary<SkinType, double> SkinTypes, List<Service>? Services)> GetServiceRecommments( List<Guid> listResult);
     }
 }

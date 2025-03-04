@@ -23,14 +23,6 @@ namespace SkinTime.BLL.Services.QuestionService
 
         public async Task<(Dictionary<SkinType, double> SkinTypes, List<Service> Services)> GetServiceRecommments(Guid userId, List<Guid> listResult)
         {
-            var userChoices = listResult.Select(qid => new UserChoice
-            {
-                UserID = userId,
-                QuestionOptionID = qid,
-                CreatedTime = DateTime.Now
-            }).ToList();
-            await _unitOfWork.Repository<UserChoice>().AddRangeAsync(userChoices);
-            await _unitOfWork.Complete();
 
             var allSkinTypes = await _unitOfWork.Repository<SkinType>().ListAsync();
 

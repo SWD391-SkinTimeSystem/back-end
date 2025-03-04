@@ -43,7 +43,7 @@ namespace SkinTime.Controllers
         {
             return await HandleApiCallAsync(async () =>
             {
-                var serviceRecomment = await _service.GetServiceRecommments(answer.UserId, answer.ResultIds);
+                var serviceRecomment = await _service.GetServiceRecommments(answer.ResultIds);
                 var serviceRecommendation = _mapper.Map<AnalysisModel>(serviceRecomment);
                 return serviceRecommendation;
             });
