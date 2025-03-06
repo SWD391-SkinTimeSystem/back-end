@@ -25,7 +25,7 @@ namespace SkinTime.Models
         public int CustomerId { get; set; }
 
         [JsonIgnore] // Ngăn vòng lặp khi serialize
-        public virtual User? Customer { get; set; }
+        public virtual SkinTime.DAL.Entities.User? Customer { get; set; }
     }
 
 

@@ -9,6 +9,7 @@ using SkinTime.BLL.Services.TransactionService;
 using SkinTime.DAL.Entities;
 using SkinTime.Extensions;
 using SkinTime.Models;
+using SkinTime.Models.Ticket;
 using StackExchange.Redis;
 using System.Net;
 using System.Transactions;

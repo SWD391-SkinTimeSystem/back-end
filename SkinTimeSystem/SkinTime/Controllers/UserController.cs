@@ -10,6 +10,7 @@ using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using SkinTime.Models;
+using SkinTime.Models.User;
 using System.IO;
 using System.Text;
 
@@ -41,14 +42,17 @@ namespace SkinTime.Controllers
         public async Task<IActionResult> UpdateUser([FromBody] AccountUpdateInformation user)
         {
             // Get user id from jwt token.
-            string jwt = Request.Headers.Authorization.First()!;
-            string user_id = _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
+            string user_id = base.GetUserIdFromJwt();
 
             var userUpdate = _mapper.Map<User>(user);
             await _services.UpdateUser(user_id,userUpdate);
             return Ok();
         }
 
+        /// <summary>
+        ///     Get account information for all user in the system. (This should be limited to admin)
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyCollection<AccountInformation>>> GetUserAccountList()
@@ -56,16 +60,19 @@ namespace SkinTime.Controllers
             return await HandleServiceCall<IReadOnlyCollection<User>, IReadOnlyCollection<AccountInformation>>(_services.GetUsersAsReadOnly);
         }
 
+        /// <summary>
+        ///     Return the currently authenticated user information.
+        /// </summary>
+        /// <returns>The user account information</returns>
+        [Authorize]
         [HttpGet]
+        [ProducesResponseType<ApiResponse<AccountInformation>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<AccountInformation>> GetUserAccount()
         {
-            // Get user id from jwt token.
-            string jwt = Request.Headers.Authorization.First()!;
-            string user_id = _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
-
             return await HandleServiceCall<User, AccountInformation>(async () =>
             {
-                return await _services.GetUser(user_id);
+                return await _services.GetUser(base.GetUserIdFromJwt());
             });
         }
 
@@ -76,6 +83,8 @@ namespace SkinTime.Controllers
         /// <returns>The result of the operation, the data will be the newly created user id.</returns>
         [AllowAnonymous]
         [HttpPost("register")]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse>> RegisterCustomerAccount([FromBody] CustomerRegistration registrationInfo)
         {
             return await HandleServiceCall(async () =>
@@ -90,9 +99,7 @@ namespace SkinTime.Controllers
                 var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email.html");
                 await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content.Replace("[0]", registrationInfo.Fullname));
 
-                ApiResponse response = new ApiResponse(true, "Successfully created the user account", result.Data!.Id);
-
-                return ServiceResult.Success(response);
+                return ServiceResult.Success(result.Data!.Id);
             });
         }
 

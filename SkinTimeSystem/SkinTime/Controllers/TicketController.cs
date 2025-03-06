@@ -7,7 +7,7 @@ using SharedLibrary.TokenUtilities;
 using SkinTime.BLL.Data;
 using SkinTime.BLL.Services.TicketService;
 using SkinTime.Extensions;
-using SkinTime.Models;
+using SkinTime.Models.Ticket;
 using StackExchange.Redis;
 
 namespace SkinTime.Controllers

@@ -133,6 +133,35 @@ namespace SkinTime.BLL.Services.ScheduleService
             return ServiceResult<Schedule>.Failed(ServiceError.NotFound($"Can not find schedule entity with id {scheduleId}"));
         }
 
+        public async Task<ServiceResult<IDictionary<TimeOnly, bool>>> GetScheduleForDate(DateOnly date)
+        {
+            IDictionary<TimeOnly, bool> availability = new Dictionary<TimeOnly, bool>();
+
+            IEnumerable<Schedule> filtered = await _unitOfWork
+                .Repository<Schedule>().ListAsync(x => x.Status != ScheduleStatus.Canceled);
+
+            int amountOfTherapist = (await _unitOfWork.Repository<Therapist>()
+                .ListAsync(x => x.Status == TherapistStatus.Available))
+                .Count();
+
+            TimeOnly startOfDay = TimeOnly.Parse("9:00:00");
+            TimeOnly endOfDay = TimeOnly.Parse("17:00:00");
+
+            for (TimeOnly y = startOfDay; y <= endOfDay; y = y.AddMinutes(30))
+            {
+                // If the current time is over the checking time, the slot is automatically un available.
+                DateTime checking = date.ToDateTime(y);
+                if (DateTime.UtcNow >  checking)
+                {
+                    availability[y] = false;
+                }
+
+                availability[y] = filtered.Count(x => x.ReservedStartTime <= y && y < x.ReservedEndTime) <= amountOfTherapist;
+            }
+
+            return ServiceResult<IDictionary<TimeOnly, bool>>.Success(availability);
+        }
+
         public async Task<ServiceResult<ICollection<Schedule>>> GetTherapistSchedule(string therapistId, DateOnly from, DateOnly to)
         {
             if (!Guid.TryParse(therapistId, out Guid parsedId))
