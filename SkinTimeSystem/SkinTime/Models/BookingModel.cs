@@ -1,4 +1,6 @@
 ﻿using System.Text.Json.Serialization;
+using SkinTime.Models.Feedback;
+using SkinTime.Models.Schedule;
 
 namespace SkinTime.Models
 {

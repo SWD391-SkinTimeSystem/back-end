@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
+using SkinTime.BLL.Commons;
 using SkinTime.BLL.Services.QuestionService;
 using SkinTime.DAL.Entities;
 using SkinTime.Models;
+using SkinTime.Models.Question;
 
 namespace SkinTime.Controllers
 {
@@ -27,28 +29,46 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <returns>The list of questions</returns>
         [HttpGet]
+        [ProducesResponseType<ApiResponse<ICollection<QuestionModel>>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllQuestion()
         {
-            return await HandleApiCallAsync(async () =>
+            return await HandleServiceCall<ICollection<QuestionModel>>(async () =>
             {
-                var allQuestion = await _service.GetAllQuestion();
-                var allQuestionDTO = _mapper.Map<List<QuestionModel>>(allQuestion);
-                return allQuestionDTO;
+                return ServiceResult.Success(await _service.GetAllQuestion());
             });
-           
         }
 
+        /// <summary>
+        ///     Update quiz questions and choices.
+        /// </summary>
+        /// <param name="questions">list of question and choices</param>
+        /// <returns>200 status response if ok, else bad request.</returns>
+        //[Authorize(Roles = "Therapist")]
+        [HttpPost]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateQuestionList([FromBody] ICollection<QuestionCreationModel> questions)
+        {
+            Func<Task<ServiceResult>> function = async() => {
+                return await _service.UpdateAllQuestion(_mapper.Map<ICollection<Question>>(questions));
+            };
+
+            return await HandleServiceCall(function);
+        }
+
+        /// <summary>
+        ///     Get the user sin types and recommended services based on the user selected quiz choices. 
+        /// </summary>
+        /// <param name="answer">The list of choices user has selected.</param>
+        /// <returns>skin types in percentages and list of recommended services.</returns>
         [HttpPost("recommendations")]
+        [ProducesResponseType<ApiResponse<AnalysisModel>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetServiceRecommments([FromBody] AnswerModel answer)
         {
-            return await HandleApiCallAsync(async () =>
+            return await HandleServiceCall<AnalysisModel>(async () =>
             {
-                var serviceRecomment = await _service.GetServiceRecommments(answer.ResultIds);
-                var serviceRecommendation = _mapper.Map<AnalysisModel>(serviceRecomment);
-                return serviceRecommendation;
+                return ServiceResult.Success(await _service.GetServiceRecommments(answer.ResultIds));
             });
-
         }
-
     }
 }

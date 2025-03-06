@@ -8,6 +8,7 @@ using SkinTime.BLL.Commons;
 using SkinTime.BLL.Services.FeedbackService;
 using SkinTime.DAL.Entities;
 using SkinTime.Models;
+using SkinTime.Models.Feedback;
 
 namespace SkinTime.Controllers
 {

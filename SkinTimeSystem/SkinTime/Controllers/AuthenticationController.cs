@@ -7,6 +7,7 @@ using SkinTime.BLL.Commons;
 using SkinTime.BLL.Services.AuthenticationService;
 using SkinTime.DAL.Entities;
 using SkinTime.Models;
+using SkinTime.Models.Authentication;
 
 namespace SkinTime.Controllers
 {
@@ -120,7 +121,7 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <param name="tokens"></param>
         /// <returns></returns>
-        [HttpPost("refresh-tokens")]
+        [HttpPost("refresh-token")]
         public async Task<ActionResult> RefreshAccessToken([FromBody] AuthenticationTokens tokens)
         {
             // Validate refreshtoken.
@@ -158,22 +159,14 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <remarks>We can send an email that will redirect user to the page that's call this endpoint.</remarks>
         /// <param name="id">The user id</param>
-        /// <returns></returns>
-        [HttpGet("verify")]
-        public async Task<ActionResult<ApiResponse>> VerifyUserAccount(string id)
+        /// <returns>200 if success, else 400</returns>
+        [HttpPost("verify")]
+        public async Task<ActionResult<ApiResponse>> VerifyUserAccount([FromBody] string id)
         {
             return await HandleServiceCall(async () =>
             {
-                ServiceResult result = await _authService.VerifyUserAccount(id);
-
-                if (result.IsSuccess)
-                {
-                    return ServiceResult.Success(new ApiResponse(true, "successfully verified user account"));
-                }
-
-                else return result;
+               return await _authService.VerifyUserAccount(id);
             });
         }
-
     }
 }

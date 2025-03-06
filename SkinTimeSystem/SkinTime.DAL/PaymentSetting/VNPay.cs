@@ -36,7 +36,6 @@ namespace Cursus.Core.Options.PaymentSetting
         }
         #endregion
 
-       
 
         #region Request process
         public async Task ConfigureRequest(decimal? amount, string returnUrl, string ipAddress, string serviceName)

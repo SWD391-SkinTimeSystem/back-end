@@ -3,6 +3,13 @@ using Microsoft.IdentityModel.Tokens;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum.EventEnums;
 using SkinTime.Models;
+using SkinTime.Models.Event;
+using SkinTime.Models.Feedback;
+using SkinTime.Models.Question;
+using SkinTime.Models.Schedule;
+using SkinTime.Models.Therapist;
+using SkinTime.Models.Ticket;
+using SkinTime.Models.User;
 using System.Net.NetworkInformation;
 using System.Text;
 
@@ -68,6 +75,12 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptionsNavigation));
 
             CreateMap<QuestionOption, QuestionOptionModel>();
+
+            CreateMap<QuestionCreationModel, Question>()
+                .ForMember(dest => dest.QuestionOptionsNavigation, opt => opt.MapFrom(src => src.Choices));
+
+            CreateMap<QuestionChoiceCreationModel, QuestionOption>()
+                .ForMember(dest => dest.SkinTypeID, opt => opt.MapFrom(src => src.SkinType));
 
             CreateMap<EventTicket, TicketViewModel>()
                 .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.EventId))

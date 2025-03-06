@@ -8,6 +8,7 @@ using SkinTime.BLL.Services.EventService;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum.EventEnums;
 using SkinTime.Models;
+using SkinTime.Models.Event;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 

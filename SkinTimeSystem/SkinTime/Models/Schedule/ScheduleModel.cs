@@ -2,7 +2,7 @@
 using SkinTime.DAL.Enum.Schedule;
 using System.Text.Json.Serialization;
 
-namespace SkinTime.Models
+namespace SkinTime.Models.Schedule
 {
     public class ScheduleViewModel
     {
@@ -21,7 +21,7 @@ namespace SkinTime.Models
         [JsonPropertyName("step_id")]
         public required Guid ServiceStepId { get; set; }
         [JsonPropertyName("step_name")]
-        public required string ServiceStepName {  get; set; }
+        public required string ServiceStepName { get; set; }
         [JsonPropertyName("step_order")]
         public required int Step { get; set; }
 
