@@ -82,13 +82,7 @@ namespace SkinTime.Controllers
 
                 var returnUrl = Url.Action("TransactionCallback", "Transaction", new { redis = redisKey }, Request.Scheme);
 
-
-
-                string requestPayment = await _service.CreateNewBooking(returnUrl, booking.ServiceId, booking.PaymentMethod);
-
-                return ServiceResult.Success(requestPayment);
-
-
+                return await _service.CreateNewBooking(returnUrl, booking.ServiceId, booking.PaymentMethod);
             });
             
         }

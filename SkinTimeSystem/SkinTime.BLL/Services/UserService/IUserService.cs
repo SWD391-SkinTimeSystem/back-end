@@ -14,7 +14,7 @@ namespace SkinTime.BLL.Services.UserService
         Task<ServiceResult<User>> GetUser(string id);
         Task CreateUser(User user);
         Task<ServiceResult<User>> DeleteUser(string user);
-        Task UpdateUser(string id,User user);
+        Task<ServiceResult> UpdateUser(string id,User user);
 
         Task<ServiceResult<IReadOnlyCollection<User>>> GetUsersAsReadOnly();
         Task<ServiceResult<User>> CreateUserAccount(User customerInformation);
