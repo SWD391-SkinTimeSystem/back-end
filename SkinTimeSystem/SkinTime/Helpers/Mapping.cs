@@ -43,9 +43,9 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.UserNavigation.FullName))
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.UserNavigation.Avatar))
                 .ForMember(dest => dest.Biography, opt => opt.MapFrom(src => src.BIO))
-                .ForMember(dest => dest.CertificationsUrl, opt => opt.MapFrom(src => src.CertificationNavigation.IsNullOrEmpty() ?
+                .ForMember(dest => dest.CertificationsUrl, opt => opt.MapFrom(src => src.CertificationNavigation.Count == 0 ?
                 default : src.CertificationNavigation.Select(x => x.FileUrl)))
-                .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.BookingNavigation.IsNullOrEmpty() ?
+                .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.BookingNavigation.Count == 0 ?
                 default : src.BookingNavigation.Select(x => x.FeedbackNavigation).Where(x => x != null)));
 
             CreateMap<Schedule, ScheduleViewModel>()

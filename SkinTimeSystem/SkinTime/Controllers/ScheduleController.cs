@@ -63,8 +63,6 @@ namespace SkinTime.Controllers
                     {
                         viewModel.Availability[x][y] = !result.Data!
                         .Any(s => s.Date == x && (s.ReservedStartTime <= y && y < s.ReservedEndTime));
-
-                        Console.WriteLine($"{x} - {y} : {result.Data.Count(s => s.Date == x && (s.ReservedStartTime <= y && y <= s.ReservedEndTime))}");
                     }
                 }
 

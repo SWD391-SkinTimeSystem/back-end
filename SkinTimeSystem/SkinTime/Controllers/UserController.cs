@@ -38,15 +38,16 @@ namespace SkinTime.Controllers
             });
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] AccountUpdateInformation user)
         {
-            // Get user id from jwt token.
-            string user_id = base.GetUserIdFromJwt();
-
-            var userUpdate = _mapper.Map<User>(user);
-            await _services.UpdateUser(user_id,userUpdate);
-            return Ok();
+            return await HandleServiceCall(async () =>
+            {
+                // Get user id from jwt token.
+                return await _services.UpdateUser(base.GetUserIdFromJwt(),_mapper.Map<User>(user));
+            });
+            
         }
 
         /// <summary>
@@ -119,20 +120,24 @@ namespace SkinTime.Controllers
         [HttpPost("account")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountRegistration registrationInfo)
         {
-            User userInformation = _mapper.Map<User>(registrationInfo);
 
-            userInformation.Role = Enum.Parse<UserRole>(registrationInfo.Role);
+            return await HandleServiceCall(async () =>
+            {
+                User userInformation = _mapper.Map<User>(registrationInfo);
 
-            await _services.CreateUserAccount(userInformation);
+                userInformation.Role = Enum.Parse<UserRole>(registrationInfo.Role);
+                var result = await _services.CreateUserAccount(userInformation);
 
-            var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email_staff.html");
-            content = content.Replace("[1]", registrationInfo.Username).Replace("[2]", registrationInfo.Password);
-            
-            await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content);
+                if (result.IsSuccess)
+                {
+                    var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email_staff.html");
+                    content = content.Replace("[1]", registrationInfo.Username).Replace("[2]", registrationInfo.Password);
 
-            ApiResponse<string> response = new(true, "Successfully created user account.");
+                    await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content);
+                }
 
-            return Created((string) null!,response);
+                return ServiceResult.Success();
+            });
         }
     }
 }
