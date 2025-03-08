@@ -1,4 +1,4 @@
-﻿namespace SkinTime.Models
+﻿namespace SkinTime.Models.Question
 {
     public class QuestionModel
     {
@@ -7,11 +7,4 @@
         public List<QuestionOptionModel> QuestionOptions { get; set; }
         public string IdQuestion { get; set; }
     }
-
-    public class QuestionOptionModel
-    {
-        public string Content { get; set; }        
-        public string Id { get; set; }            
-    }
-
 }

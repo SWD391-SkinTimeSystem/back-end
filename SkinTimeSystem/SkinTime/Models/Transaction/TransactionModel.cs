@@ -1,7 +1,7 @@
 ﻿using SkinTime.DAL.Enum;
 using System.Security.Policy;
 
-namespace SkinTime.Models
+namespace SkinTime.Models.Transaction
 {
     public class TransactionModel
     {

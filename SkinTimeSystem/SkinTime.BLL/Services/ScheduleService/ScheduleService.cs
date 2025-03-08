@@ -156,7 +156,7 @@ namespace SkinTime.BLL.Services.ScheduleService
                     availability[y] = false;
                 }
 
-                availability[y] = filtered.Count(x => x.ReservedStartTime <= y && y < x.ReservedEndTime) <= amountOfTherapist;
+                availability[y] = filtered.Count(x => x.ReservedStartTime <= y && y <= x.ReservedEndTime) <= amountOfTherapist;
             }
 
             return ServiceResult<IDictionary<TimeOnly, bool>>.Success(availability);

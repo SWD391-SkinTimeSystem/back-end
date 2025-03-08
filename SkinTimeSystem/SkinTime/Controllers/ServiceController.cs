@@ -7,7 +7,7 @@ using SkinTime.BLL.Commons;
 using SkinTime.BLL.Services.SkinTimeService;
 using SkinTime.DAL.Entities;
 using SkinTime.Helpers;
-using SkinTime.Models;
+using SkinTime.Models.Service;
 
 namespace SkinTime.Controllers
 {

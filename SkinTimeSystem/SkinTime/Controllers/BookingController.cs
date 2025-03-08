@@ -16,11 +16,11 @@ using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using SkinTime.Extensions;
 using SkinTime.Helpers;
-using SkinTime.Models;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
 using SkinTime.BLL.Commons;
+using SkinTime.Models.Booking;
 
 namespace SkinTime.Controllers
 {

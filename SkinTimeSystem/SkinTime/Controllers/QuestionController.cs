@@ -8,6 +8,7 @@ using SkinTime.BLL.Commons;
 using SkinTime.BLL.Services.QuestionService;
 using SkinTime.DAL.Entities;
 using SkinTime.Models;
+using SkinTime.Models.Analysis;
 using SkinTime.Models.Question;
 
 namespace SkinTime.Controllers

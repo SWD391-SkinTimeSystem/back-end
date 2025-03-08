@@ -28,9 +28,9 @@ namespace SkinTime.Models.Therapist
         public required ICollection<string> Specialization { get; set; } = new List<string> { "This property does not exist from database!", };
 
         [JsonPropertyName("rating")]
-        public float Rating => Reviews.IsNullOrEmpty() ? 0 : Reviews.Select(x => x.Rating).Average();
+        public float Rating => Reviews.Where(x => x != null).Average(x => x.Rating);
 
         [JsonPropertyName("reviews")]
-        public required ICollection<TherapistFeedbackViewModel> Reviews { get; set; }
+        public required ICollection<TherapistFeedbackViewModel> Reviews { get; set; } = new List<TherapistFeedbackViewModel>();
     }
 }
