@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum.EventEnums;
+using SkinTime.Models;
 using SkinTime.Models.Analysis;
 using SkinTime.Models.Booking;
 using SkinTime.Models.Event;
@@ -349,6 +350,12 @@ namespace SkinTime.Helpers
             ).ReverseMap(); 
 
           
+
+            CreateMap<Service, PopularServicesViewModel>()
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(x => x.Id))
+                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(x => x.ServiceName))
+                .ForMember(dest => dest.BookingCount, opt => opt.MapFrom(x => x.BookingNavigation.Count()))
+                .ForMember(dest => dest.TotalRevenue, opt => opt.MapFrom(x => x.BookingNavigation.Sum(x => x.TotalPayment)));
         }
 
     }

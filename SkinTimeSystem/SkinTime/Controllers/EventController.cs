@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
 using SkinTime.BLL.Services.EventService;
+using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum.EventEnums;
 using SkinTime.Models;
@@ -19,11 +20,15 @@ namespace SkinTime.Controllers
     public class EventController : BaseController
     {
         private readonly IEventService _services;
+        private readonly IMapper _mapper;
+        private readonly IEmailUtilities _emailUtilities;
 
         public EventController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, IEventService services)
             : base(mapper, emailUtilities, tokenUtilities)
         {
-                _services = services;
+            _services = services;
+            _mapper = mapper;
+            _emailUtilities = emailUtilities;
         }
 
         [HttpGet("available")]
@@ -40,6 +45,7 @@ namespace SkinTime.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<Event>>> GetEventInformation(Guid id)
         {
+            var target = await _services.GetEventWithId(id);
 
             return await HandleServiceCall<EventViewModel>(async () =>
             {
@@ -52,19 +58,19 @@ namespace SkinTime.Controllers
         public async Task<IActionResult> CreatEvent([FromBody] EventCreationModel eventInformation)
         {
             return await HandleServiceCall<EventViewModel>(async () =>
-            {
+        {
                 return await _services.CreateNewEvent(_mapper.Map<Event>(eventInformation));
             });
         }
 
         [HttpPost("state")]
         public async Task<IActionResult> UpdateEventState([FromBody] EventStatusUpdateModel info)
-        {
+            {
             return await HandleServiceCall<EventViewModel>(async () =>
             {
                 return await _services.UpdateEventStatus(info.Id, Enum.Parse<EventStatus>(info.Status));
             });
-        }
+            }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> CreatEvent(string id)

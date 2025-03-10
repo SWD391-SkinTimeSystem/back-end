@@ -14,7 +14,7 @@ namespace SkinTime.DAL.Entities
     {
         [Column("paid_amount", TypeName = "Decimal")]
         [Precision(16,2)]
-        public decimal? PaidAmount {  get; set; }
+        public decimal PaidAmount {  get; set; }
 
         [Column("qr_code", TypeName = "VARCHAR")]
         [MaxLength(50)]

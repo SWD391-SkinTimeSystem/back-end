@@ -17,6 +17,7 @@ using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
 using SkinTime.BLL.Services.TransactionService;
 using SkinTime.BLL.Services.TicketService;
+using SkinTime.BLL.Services.StatisticService;
 
 namespace SkinTime.Extensions
 {
@@ -42,6 +43,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IFeedbackService,  FeedbackService>();
             services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ITicketService, TicketService>();
             services.AddCors(options =>
             {
@@ -54,8 +56,8 @@ namespace SkinTime.Extensions
                
                     });
             });
+            services.AddScoped<IStatisticService, StatisticService>();
 
-            services.AddScoped<ITransactionService, TransactionService>();
             // Auto mapper
             services.AddAutoMapper(typeof(Mapping).Assembly);
 

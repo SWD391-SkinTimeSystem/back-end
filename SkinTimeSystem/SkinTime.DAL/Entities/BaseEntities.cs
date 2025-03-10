@@ -13,7 +13,7 @@ namespace SkinTime.DAL.Entities
         [Column("id")]
         public Guid Id { get; set; }
 
-       [Column("created_at")]
+        [Column("created_at")]
         public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
 
         [Column("last_update")]
