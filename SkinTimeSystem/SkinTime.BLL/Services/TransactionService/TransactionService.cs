@@ -223,5 +223,35 @@ namespace SkinTime.BLL.Services.TransactionService
         {
             throw new NotImplementedException();
         }
+
+
+        public string DeterminePaymentService(IQueryCollection data)
+        {
+            if (data.ContainsKey("vnp_BankCode"))
+            {
+                return "vnpay";
+            }
+            else if (data.ContainsKey("bankcode"))
+            {
+                return "zalopay";
+            }
+            else
+            {
+                return "unknown";
+            }
+        }
+
+        public async Task<ServiceResult> CallbackRefundPayment(IQueryCollection data)
+        {
+            switch (DeterminePaymentService(data))
+            {
+                case "vnpay":
+                    return ServiceResult.Success();
+                case "zalopay":
+                    return ServiceResult.Success();
+                default:
+                    return ServiceResult.Failed(ServiceError.ValidationFailed("Unknown payment type"));
+            }
+        }
     }
 }

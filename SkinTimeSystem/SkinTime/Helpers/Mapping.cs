@@ -32,12 +32,29 @@ namespace SkinTime.Helpers
 
             CreateMap<User, AccountInformation>().ReverseMap();
 
+            CreateMap<FeedbackCreationModel, Feedback>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
+
+            CreateMap<Feedback, BookingFeedbackViewModel>()
+                .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.CreatedTime))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId));
+
             CreateMap<Feedback, TherapistFeedbackViewModel>()
                 .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.TherapistRating))
                 .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => src.TherapistFeedback))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.FullName));
+
+            CreateMap<Feedback, ServiceFeedbackViewModel>()
+                .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.Username))
+                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => (src.TherapistRating + src.ServiceRating) / 2.0f)) // Trung bình rating
+                .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => $"{src.TherapistFeedback} | {src.ServiceFeedback}".Trim()))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.BookingNavigation.ReservedTime)))
+                .ReverseMap();
 
             CreateMap<Therapist, TherapistViewModel>()
                 .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.UserNavigation.FullName))

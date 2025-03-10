@@ -13,6 +13,7 @@ namespace SkinTime.BLL.Services.SkinTimeService
     public class SkinTimeService : ISkinTimeService
     {
         private readonly IUnitOfWork _unitOfWork;
+
         public SkinTimeService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;

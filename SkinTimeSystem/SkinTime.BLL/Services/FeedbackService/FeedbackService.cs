@@ -31,10 +31,10 @@ namespace SkinTime.BLL.Services.FeedbackService
                     .Failed(ServiceError.NotExisted("The booking information not found for the given id"));
             }
 
-            if (booking.Status != DAL.Enum.BookingStatus.Canceled || booking.Status != DAL.Enum.BookingStatus.Completed)
+            if (booking.Status != DAL.Enum.BookingStatus.Canceled && booking.Status != DAL.Enum.BookingStatus.Completed)
             {
                 return ServiceResult<Feedback>
-                    .Failed(ServiceError.NotExisted("The booking information not found for the given id"));
+                    .Failed(ServiceError.NotExisted("This booking is not valid for a feedback creation"));
             }
 
             if (booking.FeedbackNavigation != null)
@@ -43,8 +43,7 @@ namespace SkinTime.BLL.Services.FeedbackService
                     .Failed(ServiceError.Existed("Feedback already existed, you can only delete or update."));
             }
 
-            booking.FeedbackNavigation = feedback;
-            _unitOfWork.Repository<Booking>().Update(booking);
+            await _unitOfWork.Repository<Feedback>().AddAsync(feedback);
             await _unitOfWork.Complete();
 
             return ServiceResult<Feedback>.Success(booking.FeedbackNavigation);

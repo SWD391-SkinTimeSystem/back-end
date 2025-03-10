@@ -29,7 +29,7 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <param name="feedback"></param>
         /// <returns>A <see cref="ApiResponse"/> if success, an error response if failed.</returns>
-        [Authorize(Roles = "Customer")]
+        //[Authorize(Roles = "Customer")]
         [HttpPost("booking/create")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -68,7 +68,7 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <param name="id">customer's user id as a string</param>
         /// <returns>An <see cref="ApiResponse{T}"/> with a list of all booking feedback made by user with provided id.</returns>
-        [Authorize(Roles = "Customer")]
+        //[Authorize(Roles = "Customer")]
         [HttpGet("customer/{id}")]
         [ProducesResponseType<ApiResponse<ICollection<BookingFeedbackViewModel>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]

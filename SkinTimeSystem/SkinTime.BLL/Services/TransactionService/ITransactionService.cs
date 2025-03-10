@@ -21,5 +21,7 @@ namespace SkinTime.BLL.Services.TransactionService
         public Task<bool> CallbackPayment(Guid itemId, object entity, IQueryCollection data);
 
         public Task<ServiceResult> CallbackTicketPayment(IQueryCollection data, EventTicket ticket);
+
+        public Task<ServiceResult> CallbackRefundPayment(IQueryCollection data);
     }
 }

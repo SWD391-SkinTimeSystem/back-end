@@ -34,6 +34,13 @@ namespace Cursus.Core.Options.PaymentSetting
             await ConfigureRequest(amount, returnUrl, ipAddress, serviceName);
             return await CreatePaymentUrlAsync();
         }
+
+        public async Task<string> CreateVNPayRefundOrder(decimal amount, string transaction_id, string returnUrl)
+        {
+            string ipAddress = await GetIpAddress();
+            await ConfigureRefundRequest(amount, transaction_id, returnUrl, ipAddress);
+            return await CreatePaymentUrlAsync();
+        }
         #endregion
 
 
@@ -55,6 +62,25 @@ namespace Cursus.Core.Options.PaymentSetting
             AddRequestData("vnp_OrderType", "other");
             AddRequestData("vnp_ReturnUrl", returnUrl);
             AddRequestData("vnp_TxnRef", Guid.NewGuid().ToString());
+        }
+
+        public async Task ConfigureRefundRequest(decimal amount, string transaction_id, string returnUrl, string ipAddress)
+        {
+            _requestData.Clear();
+            // Thêm đầy đủ các tham số vào _requestData
+            AddRequestData("vnp_Version", Version);
+            AddRequestData("vnp_Command", "refund");
+            AddRequestData("vnp_TmnCode", TmnCode);
+            AddRequestData("vnp_TransactionType", "2");
+
+            AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+            AddRequestData("vnp_CurrCode", CurrCode);
+            AddRequestData("vnp_IpAddr", ipAddress);
+            AddRequestData("vnp_Locale", Locale);
+            AddRequestData("vnp_OrderInfo", "Thanh toán hoàn tiền");
+            AddRequestData("vnp_OrderType", "other");
+            AddRequestData("vnp_ReturnUrl", returnUrl);
+            AddRequestData("vnp_TxnRef", transaction_id);
         }
 
         public async Task<string> CreateRequestUrl(string baseUrl, string vnp_HashSecret)
