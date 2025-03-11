@@ -164,11 +164,26 @@ namespace SkinTime.Helpers
             CreateMap<Transaction, BokingServiceWithIdModel>()
                  .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.Method))
                  .ReverseMap();
+            // Mapping cho Schedule -> BokingServiceWithIdModel
             CreateMap<Schedule, BokingServiceWithIdModel>()
-            .ForMember(dest => dest.ServiceHour, opt => opt.MapFrom(src => src.ReservedStartTime))
-             .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.Date.ToDateTime(TimeOnly.MinValue)))
-            .ReverseMap();
-            CreateMap<BookingServiceModel, BokingServiceWithIdModel>();
+                .ForMember(dest => dest.ServiceHour, opt => opt.MapFrom(src => TimeOnly.FromTimeSpan(src.ReservedStartTime.ToTimeSpan())))  // TimeOnly -> TimeOnly
+                .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.Date.ToDateTime(TimeOnly.MinValue))))  // DateOnly -> DateOnly
+                .ReverseMap()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.ServiceDate.ToDateTime(TimeOnly.MinValue))))  // DateOnly -> DateOnly
+                .ForMember(dest => dest.ReservedStartTime, opt => opt.MapFrom(src => TimeOnly.FromTimeSpan(src.ServiceHour.ToTimeSpan())));  // TimeOnly -> TimeOnly
+
+            // Fix lỗi `DateOnly -> DateTime` khi map với Booking entity
+            CreateMap<DateOnly, DateTime>().ConvertUsing(src => src.ToDateTime(TimeOnly.MinValue));
+            CreateMap<DateTime, DateOnly>().ConvertUsing(src => DateOnly.FromDateTime(src));
+
+            // Fix lỗi `TimeOnly -> DateTime`
+            CreateMap<TimeOnly, TimeSpan>().ConvertUsing(src => src.ToTimeSpan());
+            CreateMap<TimeSpan, TimeOnly>().ConvertUsing(src => TimeOnly.FromTimeSpan(src));
+        
+
+
+
+        CreateMap<BookingServiceModel, BokingServiceWithIdModel>();
             CreateMap<User, AccountInformation>()
                .ReverseMap();
 

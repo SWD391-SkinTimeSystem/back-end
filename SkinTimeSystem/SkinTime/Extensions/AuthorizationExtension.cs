@@ -25,6 +25,7 @@ namespace SkinTime.Extensions
                         ValidateIssuerSigningKey = true,
                         ValidateActor = false,
                         ValidateAudience = false,
+                        ValidateLifetime = true,
                     };
 
                     options.Events = new JwtBearerEvents

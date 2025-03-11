@@ -95,28 +95,25 @@ namespace SkinTime.BLL.Services.TransactionService
             await _unitOfWork.Repository<Booking>().AddAsync(booking);
 
 
-            var serviceDetails = service.ServiceDetailNavigation
-                                        .Where(sd => !sd.IsDetele)
-                                        .OrderBy(sd => sd.Step)
-                                        .ToList();
+            var firstStepServiceDetail = service.ServiceDetailNavigation
+    .Where(sd => !sd.IsDetele)
+    .OrderBy(sd => sd.Step)
+    .FirstOrDefault();
 
-            foreach (var serviceDetail in serviceDetails)
+            var newSchedule = new Schedule
             {
-                var newSchedule = new Schedule
-                {
-                    Id = Guid.NewGuid(),
-                    BookingId = booking.Id,
-                    ServiceDetailId = serviceDetail.Id,
-                    Status = ScheduleStatus.NotStarted,
-                    ReservedStartTime = schedule.ReservedStartTime,
-                    ReservedEndTime = schedule.ReservedStartTime.Add(TimeSpan.FromMinutes(serviceDetail.Duration)),
-                    Date = schedule.Date.AddDays(serviceDetail.DateToNextStep),
-                };
+                Id = Guid.NewGuid(),
+                BookingId = booking.Id,
+                ServiceDetailId = firstStepServiceDetail.Id,
+                Status = ScheduleStatus.NotStarted,
 
-                await _unitOfWork.Repository<Schedule>().AddAsync(newSchedule);
-                newSchedule.Date = newSchedule.Date.AddDays(serviceDetail.DateToNextStep);
-            }
+                ReservedStartTime = schedule.ReservedStartTime,  // TimeOnly giữ nguyên
+                ReservedEndTime = TimeOnly.FromTimeSpan(schedule.ReservedStartTime.ToTimeSpan().Add(TimeSpan.FromMinutes(firstStepServiceDetail.Duration))), // Cộng thêm thời gian dịch vụ
 
+                Date =  schedule.Date
+            };
+
+            await _unitOfWork.Repository<Schedule>().AddAsync(newSchedule);
             await _unitOfWork.Complete();
 
         }

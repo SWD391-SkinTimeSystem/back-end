@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
+using SkinTime.DAL.Enum.EventEnums;
 
 namespace SkinTime.BLL.Data
 {
@@ -663,37 +664,83 @@ namespace SkinTime.BLL.Data
                 await context.SaveChangesAsync();
             }
 
-            // Seed Events
+            // 11. Seed Events
             if (!context.Events.Any())
             {
-                await context.Events.AddAsync(new Event
+                var events = new[]
                 {
-                    Name = "Hội thảo du lịch nghỉ dưỡng chăm sóc bản thân 2025",
-                    Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
-                    Capacity = 100,
-                    EventDate = DateOnly.Parse("2025/11/20"),
-                    Location = "Hall Alpha",
-                    TicketPrice = 100000,
-                    TimeStart = TimeOnly.Parse("12:00:00"),
-                    TimeEnd = TimeOnly.Parse("14:00:00")
-                });
+    new Event
+    {
+        Name = "Hội thảo du lịch nghỉ dưỡng chăm sóc bản thân 2025",
+        Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
+        Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWL6c8Zvkl4lQdlWDTBmrAUzk8WDACENRDRg&s",
+        Capacity = 100,
+        Status = EventStatus.Approved,
+        EventDate = DateOnly.Parse("2025/11/20"),
+        Location = "Hall Alpha",
+        TicketPrice = 100000,
+        TimeStart = TimeOnly.Parse("12:00:00"),
+        TimeEnd = TimeOnly.Parse("14:00:00")
+    },
+    new Event
+    {
+        Name = "Chuyên đề về lợi ích của hệ thống chăm sóc da",
+        Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
+        Capacity = 250,
+        Thumbnail = "https://file.hstatic.net/200000311493/file/84_99971645a56349b8901748a211a6ca2b_grande.png",
+        EventDate = DateOnly.Parse("2025/11/22"),
+                Status = EventStatus.Approved,
+        Location = "Hall Alpha",
+        TicketPrice = 150000,
+        TimeStart = TimeOnly.Parse("07:00:00"),
+        TimeEnd = TimeOnly.Parse("09:00:00")
+    },
+    new Event
+    {
+        Name = "Triển lãm công nghệ làm đẹp 2025",
+        Description = "Sự kiện展示 các công nghệ làm đẹp tiên tiến nhất",
+        Thumbnail = "https://nhipcauthuonghieu.vn/wp-content/uploads/2024/07/25715.jpg",
+        Capacity = 150,
+                Status = EventStatus.Approved,
+        EventDate = DateOnly.Parse("2025/11/25"),
+        Location = "Hall Beta",
+        TicketPrice = 200000,
+        TimeStart = TimeOnly.Parse("09:00:00"),
+        TimeEnd = TimeOnly.Parse("12:00:00")
+    },
+    new Event
+    {
+        Name = "Hội nghị sức khỏe và dinh dưỡng",
+        Description = "Tìm hiểu về chế độ ăn uống lành mạnh và khoa học",
+        Thumbnail = "https://i1-suckhoe.vnecdn.net/2022/07/13/young-asian-woman-holding-dumb-1785-8765-1657695811.jpg?w=1020&h=0&q=100&dpr=1&fit=crop&s=QcyeHgcnKb203eW6XGCyNQ",
+        Capacity = 200,
+                Status = EventStatus.Approved,
+        EventDate = DateOnly.Parse("2025/11/28"),
+        Location = "Hall Gamma",
+        TicketPrice = 120000,
+        TimeStart = TimeOnly.Parse("14:00:00"),
+        TimeEnd = TimeOnly.Parse("16:30:00")
+    },
+    new Event
+    {
+        Name = "Workshop yoga và thiền định",
+        Description = "Trải nghiệm các bài tập thư giãn và cân bằng cơ thể",
+        Thumbnail = "https://balanceyogavilla.com/wp-content/uploads/2024/02/balance-yoga-villa-workshop-hoi-tho-mo-rong-tam-tri-3.jpg",
+        Capacity = 80,
+                Status = EventStatus.Approved,
+        EventDate = DateOnly.Parse("2025/11/30"),
+        Location = "Studio Delta",
+        TicketPrice = 80000,
+        TimeStart = TimeOnly.Parse("06:00:00"),
+        TimeEnd = TimeOnly.Parse("08:00:00")
+    }
+};
 
-                await context.Events.AddAsync(new Event
-                {
-                    Name = "Chuyên đề về lợi ích của hệ thống chăm sóc da",
-                    Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
-                    Capacity = 250,
-                    EventDate = DateOnly.Parse("2025/11/22"),
-                    Location = "Hall Alpha",
-                    TicketPrice = 150000,
-                    TimeStart = TimeOnly.Parse("07:00:00"),
-                    TimeEnd = TimeOnly.Parse("09:00:00")
-                });
-
+                await context.Events.AddRangeAsync(events);
                 await context.SaveChangesAsync();
             }
 
-            
+
         }
     }
 }

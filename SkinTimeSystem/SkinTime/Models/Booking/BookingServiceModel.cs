@@ -6,7 +6,7 @@ namespace SkinTime.Models.Booking
     public class BookingServiceModel
     {
         public Guid ServiceId { get; set; }
-        public DateTime ServiceDate { get; set; }
+        public DateOnly ServiceDate { get; set; }
         public TimeOnly ServiceHour { get; set; }
         public Guid TherapistId { get; set; }
         public string ReturnURL { get; set; }
