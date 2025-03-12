@@ -138,7 +138,7 @@ namespace SkinTime.BLL.Services.ScheduleService
             IDictionary<TimeOnly, bool> availability = new Dictionary<TimeOnly, bool>();
 
             IEnumerable<Schedule> filtered = await _unitOfWork
-                .Repository<Schedule>().ListAsync(x => x.Status != ScheduleStatus.Canceled);
+                .Repository<Schedule>().ListAsync(x => x.Status != ScheduleStatus.Canceled && x.Date == date);
 
             int amountOfTherapist = (await _unitOfWork.Repository<Therapist>()
                 .ListAsync(x => x.Status == TherapistStatus.Available))
