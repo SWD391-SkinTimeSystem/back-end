@@ -36,6 +36,18 @@ namespace SkinTime.BLL.Services.TherapistService
         /// </returns>
         Task<ServiceResult<ICollection<Therapist>>> GetAvailableTherapist(DateOnly date, TimeOnly startTime, int duration);
 
+        /// <summary>
+        ///     This method is the same as <see cref="GetAvailableTherapist()"/> but will instead return the first available therapist.
+        /// </summary>
+        /// <param name="date">The date to find the available therapist</param>
+        /// <param name="startTime">The time to get the therapist</param>
+        /// <param name="duration">The service duration</param>
+        /// <returns>
+        ///     An asynchronous task that represent the find operation.
+        ///     the result of the task is a <seealso cref="Therapist"/>.
+        /// </returns>
+        Task<ServiceResult<Therapist>> GetFirstAvailableTherapist(DateOnly date, TimeOnly startTime, int duration);
+
         Task<ServiceResult<Guid>> AddTherapist(Therapist therapist);
 
         Task<ServiceResult<Guid>> UpdateTherapist(Guid id, Therapist information);

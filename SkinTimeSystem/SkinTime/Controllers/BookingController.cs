@@ -16,11 +16,11 @@ using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using SkinTime.Extensions;
 using SkinTime.Helpers;
-using SkinTime.Models;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
 using SkinTime.BLL.Commons;
+using SkinTime.Models.Booking;
 
 namespace SkinTime.Controllers
 {
@@ -82,13 +82,7 @@ namespace SkinTime.Controllers
 
                 var returnUrl = Url.Action("TransactionCallback", "Transaction", new { redis = redisKey }, Request.Scheme);
 
-
-
-                string requestPayment = await _service.CreateNewBooking(returnUrl, booking.ServiceId, booking.PaymentMethod);
-
-                return ServiceResult.Success(requestPayment);
-
-
+                return await _service.CreateNewBooking(returnUrl, booking.ServiceId, booking.PaymentMethod);
             });
             
         }

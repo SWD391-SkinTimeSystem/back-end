@@ -14,7 +14,7 @@ namespace SkinTime.BLL.Data
         public DbSet<Service> Services { get; set; } = null!;
         public DbSet<ServiceDetail> ServiceDetails { get; set; } = null!;
         public DbSet<ServiceImage> ServiceImages { get; set; } = null!;
-
+        public DbSet<QuestionOptionSkintype> QuestionOptionSkintypes { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Therapist> Therapists { get; set; } = null!;
         public DbSet<TherapistCertification> TherapistCertifications {get; set; } = null!;

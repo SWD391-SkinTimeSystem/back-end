@@ -7,7 +7,7 @@ using SkinTime.BLL.Commons;
 using SkinTime.BLL.Services.SkinTimeService;
 using SkinTime.DAL.Entities;
 using SkinTime.Helpers;
-using SkinTime.Models;
+using SkinTime.Models.Service;
 
 namespace SkinTime.Controllers
 {
@@ -23,13 +23,21 @@ namespace SkinTime.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetService(Guid id)
         {
-            return await HandleApiCallAsync(async () =>
+            return await HandleServiceCall<ServiceModel>(async () =>
             {
                 var service = await _skinTimeService.GetService(id);
-                var serviceDTO = _mapper.Map<ServiceModel>(service);
-                return serviceDTO;
+
+                if (service.Item1 == null)
+                {
+                    return ServiceResult.Failed(ServiceError.NotFound("Can not find service with provided id"));
+                }
+                else
+                {
+                    return ServiceResult.Success(service);
+                }
             });
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllService()
         {
@@ -45,7 +53,7 @@ namespace SkinTime.Controllers
         {
             return await HandleApiCallAsync(async () =>
             {
-                var treatmentPlan = await _skinTimeService.GetTrementplant(id);
+                var treatmentPlan = await _skinTimeService.GetTreatmentplant(id);
                 var treatmentPlanDTO =  _mapper.Map<TreatmentPlanModel>(treatmentPlan);
                 return treatmentPlanDTO;
             });

@@ -85,73 +85,48 @@ namespace SkinTime.BLL.Data
             return Convert.ToBase64String(savedPasswordHash);
         }
 
-        private static string LoremIpsum(int minWords, int maxWords, int minSentences, int maxSentences, int numParagraphs)
-        {
-            var words = new[] {"lorem", "ipsum", "dolor", "sit", "amet", "consectetuer",
-                "adipiscing", "elit", "sed", "diam", "nonummy", "nibh", "euismod",
-                "tincidunt", "ut", "laoreet", "dolore", "magna", "aliquam", "erat"};
-
-            var rand = new Random();
-            int numSentences = rand.Next(maxSentences - minSentences) + minSentences + 1;
-            int numWords = rand.Next(maxWords - minWords) + minWords + 1;
-
-            StringBuilder result = new StringBuilder();
-
-            for (int p = 0; p < numParagraphs; p++)
-            {
-                for (int s = 0; s < numSentences; s++)
-                {
-                    for (int w = 0; w < numWords; w++)
-                    {
-                        if (w > 0) { result.Append(" "); }
-                        result.Append(words[rand.Next(words.Length)]);
-                    }
-                    result.Append(". ");
-                }
-                result.Append("\n");
-            }
-
-            return result.ToString();
-        }
 
         private static async Task TrySeed(ApplicationDbContext context, IConfiguration configuration)
         {
             Random random = new Random();
 
-            // Seed Users
+            // 1. Seed Users
             if (!context.Users.Any())
             {
-                string passwordString = "Password";
-                var password = CreateUserPassword(passwordString);
+                string defaultPassword = "Password";
+                var hashedPassword = CreateUserPassword(defaultPassword);
 
+                // Admin
                 await context.Users.AddAsync(new User
                 {
-                    Username = "admin",
-                    Password = CreateUserPassword(configuration.GetValue<string>("Admin:Password")!),
-                    Email = configuration.GetValue<string>("Admin:Email")!,
-                    Gender = Gender.Other,
+                    Username = "Admin",
+                    Password = CreateUserPassword(configuration.GetValue<string>("Admin:Password") ?? "Admin123"),
+                    Email = configuration.GetValue<string>("Admin:Email") ?? "admin@example.com",
+                    Gender = Gender.Male,
                     Role = UserRole.Admin
                 });
 
+                // Manager
                 await context.Users.AddAsync(new User
                 {
-                    Username = "manager",
+                    Username = "Manager",
                     FullName = "Tran Nguyen Quoc Viet",
-                    Password = password,
-                    Email = "sample#example.com",
+                    Password = hashedPassword,
+                    Email = "sample@example.com",
                     Gender = Gender.Female,
                     Role = UserRole.Manager
                 });
 
+                // Staff
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
                     Username = "Staff_01",
-                    FullName = "Hannah",
+                    FullName = "Anh Thư",
                     Avatar = string.Empty,
                     Gender = Gender.Female,
-                    Email = "staff01#example.com",
-                    Password = password,
+                    Email = "staff01@gmail.com",
+                    Password = hashedPassword,
                     Phone = "324563447",
                     DateOfBirth = DateOnly.Parse("1980/12/31"),
                     Role = UserRole.Staff
@@ -161,25 +136,26 @@ namespace SkinTime.BLL.Data
                 {
                     Id = Guid.NewGuid(),
                     Username = "Staff_02",
-                    FullName = "Gregorry Hainz",
+                    FullName = "Bảo Ngọc",
                     Avatar = string.Empty,
                     Gender = Gender.Female,
-                    Email = "example07#gmail.com",
-                    Password = password,
+                    Email = "example07@gmail.com",
+                    Password = hashedPassword,
                     Phone = "1693837522",
                     DateOfBirth = DateOnly.Parse("2000/05/25"),
                     Role = UserRole.Staff
                 });
 
+                // Therapists
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
                     Username = "Therapist_1",
-                    FullName = "Jacky Chan",
+                    FullName = "Gia Huy",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
-                    Email = "example04#gmail.com",
-                    Password = password,
+                    Email = "example04@gmail.com",
+                    Password = hashedPassword,
                     Phone = "9912448336",
                     DateOfBirth = DateOnly.Parse("1997/04/20"),
                     Role = UserRole.Therapist,
@@ -199,8 +175,8 @@ namespace SkinTime.BLL.Data
                     FullName = "Nguyen Van Lai",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
-                    Email = "example05#gmail.com",
-                    Password = password,
+                    Email = "example05@gmail.com",
+                    Password = hashedPassword,
                     Phone = "8912448336",
                     DateOfBirth = DateOnly.Parse("1997/04/20"),
                     Role = UserRole.Therapist,
@@ -217,18 +193,18 @@ namespace SkinTime.BLL.Data
                 {
                     Id = Guid.NewGuid(),
                     Username = "Therapist_03",
-                    FullName = "Harley Ferdinand",
+                    FullName = "Khánh Linh",
                     Avatar = string.Empty,
                     Gender = Gender.Female,
-                    Email = "example_therapist_1#gmail.com",
-                    Password = password,
+                    Email = "example_therapist_1@gmail.com",
+                    Password = hashedPassword,
                     Phone = "7429486726",
                     DateOfBirth = DateOnly.Parse("1980/11/30"),
                     Role = UserRole.Therapist,
                     TherapistNavigation = new Therapist
                     {
                         Id = Guid.NewGuid(),
-                        BIO = "This is Ms.Harley Ferdinand",
+                        BIO = "This is Ms. Harley Ferdinand",
                         ExperienceYears = 1,
                         Status = TherapistStatus.Available
                     }
@@ -238,32 +214,33 @@ namespace SkinTime.BLL.Data
                 {
                     Id = Guid.NewGuid(),
                     Username = "Therapist_5",
-                    FullName = "Tommy Vercetti",
+                    FullName = "Đức Minh",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
-                    Email = "example_therapist_2#gmail.com",
-                    Password = password,
+                    Email = "example_therapist_2@gmail.com",
+                    Password = hashedPassword,
                     Phone = "188928777",
                     DateOfBirth = DateOnly.Parse("1991/11/30"),
                     Role = UserRole.Therapist,
                     TherapistNavigation = new Therapist
                     {
                         Id = Guid.NewGuid(),
-                        BIO = "This is Mr.Tommy Vercetti",
+                        BIO = "This is Mr. Tommy Vercetti",
                         ExperienceYears = 2,
                         Status = TherapistStatus.Available
                     }
                 });
 
+                // Customers
                 await context.Users.AddAsync(new User
                 {
                     Id = Guid.NewGuid(),
                     Username = "Customer_01",
-                    FullName = "Un Ascii Key",
+                    FullName = "Tuấn Kiệt",
                     Avatar = string.Empty,
                     Gender = Gender.Female,
-                    Email = "example01#gmail.com",
-                    Password = password,
+                    Email = "example01@gmail.com",
+                    Password = hashedPassword,
                     Phone = "0194302421",
                     DateOfBirth = DateOnly.Parse("2004/12/02"),
                     Role = UserRole.Customer
@@ -273,11 +250,11 @@ namespace SkinTime.BLL.Data
                 {
                     Id = Guid.NewGuid(),
                     Username = "Customer_02",
-                    FullName = "Jack Teal",
+                    FullName = "Ngọc Sơn",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
-                    Email = "example02#gmail.com",
-                    Password = password,
+                    Email = "example02@gmail.com",
+                    Password = hashedPassword,
                     Phone = "0997442823",
                     DateOfBirth = DateOnly.Parse("2004/12/02"),
                     Role = UserRole.Customer
@@ -287,11 +264,11 @@ namespace SkinTime.BLL.Data
                 {
                     Id = Guid.NewGuid(),
                     Username = "Customer_03",
-                    FullName = "User Customer 3",
+                    FullName = "Hữu Phước",
                     Avatar = string.Empty,
                     Gender = Gender.Male,
-                    Email = "example03#gmail.com",
-                    Password = password,
+                    Email = "example03@gmail.com",
+                    Password = hashedPassword,
                     Phone = "0997442823",
                     DateOfBirth = DateOnly.Parse("2003/08/11"),
                     Role = UserRole.Customer
@@ -300,400 +277,427 @@ namespace SkinTime.BLL.Data
                 await context.SaveChangesAsync();
             }
 
-            // Seed SkinTypes
-            if (!context.SkinTypes.Any())
-            {
-                string[] skins = { "Bình thường", "Dầu", "Khô", "Kết hợp", "Nhạy cảm", "Trưởng thành" };
-                foreach (var skin in skins)
-                {
-                    await context.SkinTypes.AddAsync(new SkinType
-                    {
-                        Name = skin,
-                        Description = LoremIpsum(1, 5, 1, 3, 1)
-                    });
-                }
-                await context.SaveChangesAsync();
-            }
-
-            // Seed ServiceCategories
+            // 2. Seed ServiceCategories
             if (!context.ServiceCategories.Any())
             {
-                List<string> serviceCategories = new List<string> { "Facial", "Body", "Microdermabrasion", "Chemical Peels", "Laser Skin Resurfacing", "Dermaplaning", "Hydrafacial" };
-                foreach (string category in serviceCategories)
-                {
-                    await context.ServiceCategories.AddAsync(new ServiceCategory
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = category,
-                        Status = ServiceCategoryStatus.Enabled
-                    });
-                }
+                var categories = new List<ServiceCategory>
+        {
+            new ServiceCategory { Id = Guid.NewGuid(), Name = "Massage Kỹ Thuật Cao", Status = ServiceCategoryStatus.Enabled },
+            new ServiceCategory { Id = Guid.NewGuid(), Name = "Chăm Sóc Da Mặt", Status = ServiceCategoryStatus.Enabled },
+            new ServiceCategory { Id = Guid.NewGuid(), Name = "Chăm Sóc Cơ Thể", Status = ServiceCategoryStatus.Enabled },
+            new ServiceCategory { Id = Guid.NewGuid(), Name = "Dịch Vụ Tẩy Lông", Status = ServiceCategoryStatus.Enabled },
+            new ServiceCategory { Id = Guid.NewGuid(), Name = "Xông Hơi", Status = ServiceCategoryStatus.Enabled }
+        };
+
+                await context.ServiceCategories.AddRangeAsync(categories);
                 await context.SaveChangesAsync();
             }
 
-            // Seed Services
+            // 3. Seed SkinTypes
+            if (!context.SkinTypes.Any())
+            {
+                var skinTypes = new[]
+                {
+            new SkinType { Name = "Da khô", Description = "Da khô có tuyến bã nhờn hoạt động kém, dễ bị bong tróc và thiếu ẩm..." },
+            new SkinType { Name = "Da dầu", Description = "Da dầu có tuyến bã nhờn hoạt động mạnh, dễ bị bóng nhờn và nổi mụn..." },
+            new SkinType { Name = "Da hỗn hợp", Description = "Da hỗn hợp có vùng chữ T dầu và các vùng khác khô hoặc thường..." },
+            new SkinType { Name = "Da nhạy cảm", Description = "Da nhạy cảm dễ bị kích ứng với các yếu tố môi trường và mỹ phẩm..." },
+            new SkinType { Name = "Da thường", Description = "Da thường cân bằng giữa dầu và độ ẩm, ít gặp vấn đề..." }
+        };
+
+                await context.SkinTypes.AddRangeAsync(skinTypes);
+                await context.SaveChangesAsync();
+            }
+
+            // 4. Seed Services
             if (!context.Services.Any())
             {
                 var serviceCategories = context.ServiceCategories.ToArray();
-
-                await context.Services.AddAsync(new Service
+                if (serviceCategories.Length < 5)
                 {
-                    ServiceName = "Dịch vụ chăm sóc da cơ bản",
-                    Description = "Làm sạch da và cung cấp độ ẩm cần thiết cho làn da khỏe mạnh.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 1,
-                    Price = 500000,
-                    ServiceCategoryID = serviceCategories[0].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ trị mụn chuyên sâu",
-                    Description = "Điều trị mụn hiệu quả, giảm viêm và ngăn ngừa mụn tái phát.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 1,
-                    Price = 1200000,
-                    ServiceCategoryID = serviceCategories[1].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ làm trắng da",
-                    Description = "Giúp da sáng mịn và đều màu hơn.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 2,
-                    Price = 1500000,
-                    ServiceCategoryID = serviceCategories[0].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ trẻ hóa da",
-                    Description = "Giảm nếp nhăn và tăng độ đàn hồi cho da.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 1,
-                    Price = 2000000,
-                    ServiceCategoryID = serviceCategories[1].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ tẩy tế bào chết",
-                    Description = "Loại bỏ lớp da chết, giúp da thông thoáng.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn=CCRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 1,
-                    Price = 400000,
-                    ServiceCategoryID = serviceCategories[0].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ massage mặt",
-                    Description = "Thư giãn và cải thiện tuần hoàn máu.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn=CCRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 1,
-                    Price = 600000,
-                    ServiceCategoryID = serviceCategories[1].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ chăm sóc da cao cấp",
-                    Description = "Kết hợp nhiều liệu pháp cho làn da hoàn hảo.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn=CCRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 2,
-                    Price = 2500000,
-                    ServiceCategoryID = serviceCategories[0].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ điều trị nám",
-                    Description = "Giảm thâm nám và cải thiện sắc tố da.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn=CCRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 1,
-                    Price = 1800000,
-                    ServiceCategoryID = serviceCategories[1].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ dưỡng da sâu",
-                    Description = "Cung cấp dưỡng chất cần thiết cho da.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn=CCRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 1,
-                    Price = 900000,
-                    ServiceCategoryID = serviceCategories[0].Id
-                });
-
-                await context.Services.AddAsync(new Service
-                {
-                    ServiceName = "Dịch vụ chăm sóc vùng mắt",
-                    Description = "Giảm quầng thâm và nếp nhăn quanh mắt.",
-                    Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn=CCRBYYFhUjvNhBJ9SwQTv8X3PyQVtd-EejwOMQ&s",
-                    Duration = 1,
-                    Price = 700000,
-                    ServiceCategoryID = serviceCategories[1].Id
-                });
-
-                await context.SaveChangesAsync();
-            }
-            // Seed Bookings and Feedbacks
-            if (!context.Feedbacks.Any())
-            {
-                // Lấy danh sách bookings
-                var bookings = context.Bookings.ToArray();
-
-                // Nếu chưa có booking, tạo mới 5 booking
-                if (!bookings.Any())
-                {
-                    // Lấy danh sách khách hàng (Customers)
-                    var customers = context.Users
-                        .Where(u => u.Role == UserRole.Customer)
-                        .ToArray();
-
-                    // Lấy danh sách Id của Therapist mà User có Role là Therapist
-                    var therapistIds = context.Therapists
-                        .Include(t => t.UserNavigation)
-                        .Where(t => t.UserNavigation != null && t.UserNavigation.Role == UserRole.Therapist)
-                        .Select(t => t.Id)
-                        .ToArray();
-
-                    // Lấy danh sách dịch vụ
-                    var services = context.Services.ToArray();
-
-                    // Kiểm tra dữ liệu đầu vào
-                    if (customers.Length == 0)
-                    {
-                        throw new Exception("Không tìm thấy khách hàng để tạo Booking.");
-                    }
-                    if (therapistIds.Length == 0)
-                    {
-                        throw new Exception("Không tìm thấy Therapist nào có Role là Therapist để tạo Booking.");
-                    }
-                    if (services.Length == 0)
-                    {
-                        throw new Exception("Không tìm thấy dịch vụ để tạo Booking.");
-                    }
-
-
-                    // Tạo 5 Booking mới
-                    for (int i = 0; i < 5; i++)
-                    {
-                        var service = services[random.Next(services.Length)];
-                        await context.Bookings.AddAsync(new Booking
-                        {
-                            Id = Guid.NewGuid(),
-                            CustomerId = customers[random.Next(customers.Length)].Id,
-                            TherapistId = therapistIds[random.Next(therapistIds.Length)], // Sử dụng therapistIds thay vì therapists
-                            ServiceId = service.Id,
-                            ReservedTime = DateTime.Now.AddDays(random.Next(1, 30)).AddHours(random.Next(8, 17)),
-                            Status = BookingStatus.Completed,
-                            TotalPrice = service.Price,
-                            TotalPayment = service.Price // Assuming full payment for simplicity
-                        });
-                    }
-
-                    // Lưu các Booking vào database
-                    await context.SaveChangesAsync();
-
-                    // Lấy lại danh sách bookings sau khi thêm mới
-                    bookings = context.Bookings.ToArray();
+                    throw new Exception("Không đủ ServiceCategories để seeding Services. Cần ít nhất 5 danh mục.");
                 }
 
-                // Kiểm tra xem có đủ 5 booking để tạo feedbacks không
-                if (bookings.Length < 5)
-                {
-                    throw new Exception("Số lượng Booking không đủ để tạo Feedbacks.");
-                }
-
-                // Tạo 5 Feedback cho 5 Booking
-                var feedbacks = new List<Feedback>
-    {
-        new Feedback
+                var services = new List<Service>
         {
-            BookingId = bookings[0].Id,
-            TherapistRating = 4,
-            ServiceRating = 5,
-            TherapistFeedback = "Nhân viên rất chuyên nghiệp và thân thiện",
-            ServiceFeedback = "Dịch vụ tuyệt vời, da tôi cải thiện rõ rệt"
-        },
-        new Feedback
-        {
-            BookingId = bookings[1].Id,
-            TherapistRating = 3,
-            ServiceRating = 4,
-            TherapistFeedback = "Kỹ thuật viên ok nhưng cần giao tiếp tốt hơn",
-            ServiceFeedback = "Dịch vụ tốt, không gian thư giãn"
-        },
-        new Feedback
-        {
-            BookingId = bookings[2].Id,
-            TherapistRating = 5,
-            ServiceRating = 5,
-            TherapistFeedback = "Nhân viên rất tận tâm, kỹ thuật tuyệt vời",
-            ServiceFeedback = "Dịch vụ hoàn hảo, đáng giá từng đồng"
-        },
-        new Feedback
-        {
-            BookingId = bookings[3].Id,
-            TherapistRating = 4,
-            ServiceRating = 3,
-            TherapistFeedback = "Kỹ thuật viên nhiệt tình",
-            ServiceFeedback = "Dịch vụ ổn nhưng thời gian hơi ngắn"
-        },
-        new Feedback
-        {
-            BookingId = bookings[4].Id,
-            TherapistRating = 5,
-            ServiceRating = 4,
-            TherapistFeedback = "Nhân viên cực kỳ chuyên nghiệp",
-            ServiceFeedback = "Dịch vụ tốt nhưng giá hơi cao"
-        }
-    };
+            // Da khô
+            new Service { ServiceName = "Dịch vụ dưỡng ẩm sâu", Description = "Cung cấp dưỡng chất và khóa ẩm lâu dài cho da khô.", Thumbnail = "https://easysalon.vn/wp-content/uploads/2021/04/bang-gia-dich-vu-Spa-2.jpg", Duration = 1, Price = 800000, ServiceCategoryID = serviceCategories[0].Id },
+            new Service { ServiceName = "Dịch vụ tái tạo da với mặt nạ collagen", Description = "Giảm bong tróc và tăng độ đàn hồi.", Thumbnail = "https://cdn.dealtoday.vn/img/s800x400/0341ba775a40443d85e685ef19c790ab.jpg?sign=OVhemMvb6L5yOXMFOsSjxw", Duration = 1, Price = 1200000, ServiceCategoryID = serviceCategories[0].Id },
+            new Service { ServiceName = "Dịch vụ làm sạch nhẹ nhàng", Description = "Loại bỏ bụi bẩn mà không làm khô da.", Thumbnail = "https://cdn.dealtoday.vn/img/c280x280/LBelle-Beauty-Lay-nhan-mun-va-dien-di-lanh-phuc-hoi-avt_17092024160739.jpg?sign=cC_ZykqWSGqY2KOLsTW8IQ", Duration = 1, Price = 500000, ServiceCategoryID = serviceCategories[0].Id },
+            new Service { ServiceName = "Dịch vụ trẻ hóa với vitamin E", Description = "Cải thiện độ căng bóng và chống oxy hóa.", Thumbnail = "https://benhvienthammynaman.com/wp-content/uploads/2023/06/truyen-vitamin-tre-hoa-da-mat-1.jpg", Duration = 1, Price = 1500000, ServiceCategoryID = serviceCategories[0].Id },
 
-                // Thêm tất cả Feedbacks vào context
-                await context.Feedbacks.AddRangeAsync(feedbacks);
+            // Da dầu
+            new Service { ServiceName = "Dịch vụ kiểm soát nhờn", Description = "Giảm tiết dầu và se khít lỗ chân lông.", Thumbnail = "https://o2skin.vn/wp-content/uploads/2024/05/hinh-anh-gioi-thieu-dich-vu-mat-na-dieu-tri-mun-va-kiem-soat-nhon-3.png", Duration = 1, Price = 900000, ServiceCategoryID = serviceCategories[1].Id },
+            new Service { ServiceName = "Dịch vụ trị mụn chuyên sâu", Description = "Giảm viêm và ngăn ngừa mụn tái phát.", Thumbnail = "https://anabelspa.vn/wp-content/uploads/2023/06/dieu-tri-mun-chuyen-sau-500x467.jpg", Duration = 1, Price = 1200000, ServiceCategoryID = serviceCategories[1].Id },
+            new Service { ServiceName = "Dịch vụ tẩy tế bào chết hóa học", Description = "Loại bỏ tế bào chết và kiểm soát dầu thừa.", Thumbnail = "https://www.elle.vn/app/uploads/2020/08/13/411653/da-dau-1.jpg", Duration = 1, Price = 800000, ServiceCategoryID = serviceCategories[1].Id },
+            new Service { ServiceName = "Dịch vụ làm sạch sâu với than hoạt tính", Description = "Hút nhờn và giảm mụn đầu đen.", Thumbnail = "https://haianhspa.com.vn/wp-content/uploads/2020/03/IMG_8937-1536x1024.jpg", Duration = 1, Price = 1000000, ServiceCategoryID = serviceCategories[1].Id },
 
-                // Lưu các Feedbacks vào database
-                await context.SaveChangesAsync();
-            }
-            // Seed ServiceDetails
-            if (!context.ServiceDetails.Any())
-            {
-                var services = context.Services.ToArray();
+            // Da hỗn hợp
+            new Service { ServiceName = "Dịch vụ cân bằng độ ẩm vùng chữ T", Description = "Giảm nhờn vùng trán và dưỡng ẩm vùng má.", Thumbnail = "https://bloganchoi.com/wp-content/uploads/2016/09/vung-chu-t-la-gi.jpg", Duration = 1, Price = 1000000, ServiceCategoryID = serviceCategories[2].Id },
+            new Service { ServiceName = "Dịch vụ trị mụn cục bộ", Description = "Đặc trị mụn ở vùng trán và cằm.", Thumbnail = "https://blissbeauty.vn/wp-content/uploads/2023/03/7.png", Duration = 1, Price = 1200000, ServiceCategoryID = serviceCategories[2].Id },
+            new Service { ServiceName = "Dịch vụ làm sạch 2 bước", Description = "Làm sạch dầu vùng chữ T và giữ ẩm vùng má.", Thumbnail = "https://linhtranspa.com/wp-content/uploads/2021/05/dich-vu-cham-soc-da-mat-chuyen-sau-2.jpg", Duration = 1, Price = 800000, ServiceCategoryID = serviceCategories[2].Id },
+            new Service { ServiceName = "Dịch vụ tẩy da chết enzyme", Description = "Loại bỏ tế bào chết nhẹ nhàng và không gây khô da.", Thumbnail = "https://thammymisstram.vn/wp-content/uploads/2021/08/tay-da-chet-bang-enzyme.jpg", Duration = 1, Price = 900000, ServiceCategoryID = serviceCategories[2].Id }
+        };
 
-                var service1 = services[0];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Làm sạch da", Description = "Loại bỏ bụi bẩn và dầu thừa.", Duration = 30, UnitPrice = 300000, ServiceID = service1.Id, DateToNextStep = 5, Step = 1 });
-                service1.Price += 300000;
-
-                var service2 = services[1];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Điều trị mụn", Description = "Sử dụng công nghệ trị mụn.", Duration = 60, UnitPrice = 800000, ServiceID = service2.Id, DateToNextStep = 7, Step = 1 });
-                service2.Price += 800000;
-
-                var service3 = services[2];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Dưỡng trắng", Description = "Cải thiện độ sáng da.", Duration = 45, UnitPrice = 900000, ServiceID = service3.Id, DateToNextStep = 10, Step = 1 });
-                service3.Price += 900000;
-
-                var service4 = services[3];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Trẻ hóa", Description = "Kích thích collagen.", Duration = 60, UnitPrice = 1200000, ServiceID = service4.Id, DateToNextStep = 8, Step = 1 });
-                service4.Price += 1200000;
-
-                var service5 = services[4];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Tẩy tế bào", Description = "Làm sạch sâu.", Duration = 20, UnitPrice = 200000, ServiceID = service5.Id, DateToNextStep = 3, Step = 1 });
-                service5.Price += 200000;
-
-                var service6 = services[5];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Massage", Description = "Thư giãn cơ mặt.", Duration = 30, UnitPrice = 350000, ServiceID = service6.Id, DateToNextStep = 5, Step = 1 });
-                service6.Price += 350000;
-
-                var service7 = services[6];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Chăm sóc sâu", Description = "Đắp mặt nạ cao cấp.", Duration = 60, UnitPrice = 1500000, ServiceID = service7.Id, DateToNextStep = 12, Step = 1 });
-                service7.Price += 1500000;
-
-                var service8 = services[7];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Trị nám", Description = "Giảm sắc tố.", Duration = 45, UnitPrice = 1000000, ServiceID = service8.Id, DateToNextStep = 7, Step = 1 });
-                service8.Price += 1000000;
-
-                var service9 = services[8];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Dưỡng chất", Description = "Cung cấp vitamin.", Duration = 40, UnitPrice = 500000, ServiceID = service9.Id, DateToNextStep = 6, Step = 1 });
-                service9.Price += 500000;
-
-                var service10 = services[9];
-                await context.ServiceDetails.AddAsync(new ServiceDetail { Name = "Chăm sóc mắt", Description = "Giảm quầng thâm.", Duration = 30, UnitPrice = 400000, ServiceID = service10.Id, DateToNextStep = 4, Step = 1 });
-                service10.Price += 400000;
-
+                await context.Services.AddRangeAsync(services);
                 await context.SaveChangesAsync();
             }
 
-            // Seed ServiceRecommendation
+            // 5. Seed ServiceRecommendations
             if (!context.ServiceRecommendation.Any())
             {
                 var skinTypes = context.SkinTypes.ToArray();
                 var services = context.Services.ToArray();
 
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[0].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[1].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[2].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[3].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[4].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[5].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[6].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[7].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[8].Id });
-                await context.ServiceRecommendation.AddAsync(new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[9].Id });
+                if (skinTypes.Length < 3)
+                {
+                    throw new Exception("Không đủ SkinTypes để seeding ServiceRecommendations. Cần ít nhất 3 loại da.");
+                }
+                if (services.Length < 10)
+                {
+                    throw new Exception("Không đủ Services để seeding ServiceRecommendations. Cần ít nhất 10 dịch vụ.");
+                }
 
+                var recommendations = new[]
+                {
+            new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[0].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[1].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[2].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[3].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[4].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[5].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[6].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[7].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[8].Id },
+            new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[9].Id }
+        };
+
+                await context.ServiceRecommendation.AddRangeAsync(recommendations);
                 await context.SaveChangesAsync();
             }
 
-            // Seed Questions
+            // 6. Seed Questions
             if (!context.Questions.Any())
             {
-                await context.Questions.AddAsync(new Question { Content = "Da bạn thuộc loại nào?", OrderNo = 1 });
-                await context.Questions.AddAsync(new Question { Content = "Bạn có thường xuyên bị mụn không?", OrderNo = 2 });
-                await context.Questions.AddAsync(new Question { Content = "Da bạn có nhạy cảm không?", OrderNo = 3 });
-                await context.Questions.AddAsync(new Question { Content = "Bạn có bị nám da không?", OrderNo = 4 });
-                await context.Questions.AddAsync(new Question { Content = "Da bạn có khô không?", OrderNo = 5 });
-                await context.Questions.AddAsync(new Question { Content = "Bạn có cần làm sáng da không?", OrderNo = 6 });
-                await context.Questions.AddAsync(new Question { Content = "Bạn có thường xuyên makeup không?", OrderNo = 7 });
-                await context.Questions.AddAsync(new Question { Content = "Da bạn có dầu nhiều không?", OrderNo = 8 });
-                await context.Questions.AddAsync(new Question { Content = "Bạn có bị quầng thâm mắt không?", OrderNo = 9 });
-                await context.Questions.AddAsync(new Question { Content = "Bạn muốn trẻ hóa da không?", OrderNo = 10 });
+                var questions = new[]
+                {
+            new Question { Content = "Da bạn cảm thấy?", OrderNo = 1 },
+            new Question { Content = "Bạn bị mụn và mụn đầu đen?", OrderNo = 2 },
+            new Question { Content = "Bạn bị mụn?", OrderNo = 3 },
+            new Question { Content = "Bạn thích làn da của mình khi nó?", OrderNo = 4 },
+            new Question { Content = "Bạn sẽ bớt lo lắng về làn da của mình hơn nếu?", OrderNo = 5 }
+        };
 
+                await context.Questions.AddRangeAsync(questions);
                 await context.SaveChangesAsync();
             }
 
-            // Seed QuestionOptions
+            // 7. Seed QuestionOptions và QuestionOptionSkintypes
             if (!context.QuestionOptions.Any())
             {
                 var questions = context.Questions.ToArray();
                 var skinTypes = context.SkinTypes.ToArray();
 
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Da dầu", QuestionID = questions[0].Id, SkinTypeID = skinTypes[0].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, rất thường xuyên", QuestionID = questions[1].Id, SkinTypeID = skinTypes[1].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, rất nhạy cảm", QuestionID = questions[2].Id, SkinTypeID = skinTypes[2].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, bị nám nhiều", QuestionID = questions[3].Id, SkinTypeID = skinTypes[0].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, da rất khô", QuestionID = questions[4].Id, SkinTypeID = skinTypes[1].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, muốn sáng hơn", QuestionID = questions[5].Id, SkinTypeID = skinTypes[2].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, makeup hàng ngày", QuestionID = questions[6].Id, SkinTypeID = skinTypes[0].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, dầu nhiều", QuestionID = questions[7].Id, SkinTypeID = skinTypes[1].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, quầng thâm rõ", QuestionID = questions[8].Id, SkinTypeID = skinTypes[2].Id });
-                await context.QuestionOptions.AddAsync(new QuestionOption { Content = "Có, muốn trẻ hóa", QuestionID = questions[9].Id, SkinTypeID = skinTypes[0].Id });
+                var questionOptions = new[]
+                {
+            new QuestionOption { Content = "A. Khô, bình tĩnh và dễ chăm sóc", QuestionID = questions[0].Id },
+            new QuestionOption { Content = "B. Bóng, nhờn và có một chút vấn đề", QuestionID = questions[0].Id },
+            new QuestionOption { Content = "C. Vùng trán và mũi của tôi trơn", QuestionID = questions[0].Id },
+            new QuestionOption { Content = "D. Căng sau khi tôi rửa bằng chất tẩy rửa không tự nhiên", QuestionID = questions[0].Id },
+            new QuestionOption { Content = "A. Luôn luôn", QuestionID = questions[1].Id },
+            new QuestionOption { Content = "B. Rất hiếm khi", QuestionID = questions[1].Id },
+            new QuestionOption { Content = "C. Vào thời điểm kinh nguyệt của tôi", QuestionID = questions[1].Id },
+            new QuestionOption { Content = "D. Thỉnh thoảng", QuestionID = questions[1].Id },
+            new QuestionOption { Content = "A. Trên trán, dọc theo đường chân tóc và trên cằm", QuestionID = questions[2].Id },
+            new QuestionOption { Content = "B. Rất hiếm khi", QuestionID = questions[2].Id },
+            new QuestionOption { Content = "C. Thường là khi tôi không rửa mặt bằng chất tẩy rửa tự nhiên", QuestionID = questions[2].Id },
+            new QuestionOption { Content = "D. Một lần một tháng", QuestionID = questions[2].Id },
+            new QuestionOption { Content = "A. Không có mụn", QuestionID = questions[3].Id },
+            new QuestionOption { Content = "B. Cảm thấy sạch", QuestionID = questions[3].Id },
+            new QuestionOption { Content = "C. Không đỏ và viêm", QuestionID = questions[3].Id },
+            new QuestionOption { Content = "D. Trông khỏe mạnh", QuestionID = questions[3].Id },
+            new QuestionOption { Content = "A. Tôi sử dụng các sản phẩm chăm sóc da tự nhiên hai lần một ngày", QuestionID = questions[4].Id },
+            new QuestionOption { Content = "B. Da tôi không có cảm giác nhờn", QuestionID = questions[4].Id },
+            new QuestionOption { Content = "C. Tôi yêu làn da và bản thân mình", QuestionID = questions[4].Id },
+            new QuestionOption { Content = "D. Tôi không có mụn hoặc mụn đầu đen", QuestionID = questions[4].Id }
+        };
 
+                await context.QuestionOptions.AddRangeAsync(questionOptions);
+                await context.SaveChangesAsync();
+
+                var savedOptions = context.QuestionOptions.ToArray();
+                var optionSkinTypes = new[] {
+    // Question 0 options (index 0-3)
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[0].Id, SkinTypeID = skinTypes[0].Id }, // A. Khô -> Da khô
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[0].Id, SkinTypeID = skinTypes[4].Id }, // A. Dễ chăm sóc -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[1].Id, SkinTypeID = skinTypes[1].Id }, // B. Bóng, nhờn -> Da dầu
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[1].Id, SkinTypeID = skinTypes[2].Id }, // B. Nhờn -> Da hỗn hợp
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[2].Id, SkinTypeID = skinTypes[2].Id }, // C. Trán, mũi trơn -> Da hỗn hợp
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[2].Id, SkinTypeID = skinTypes[1].Id }, // C. Trơn -> Da dầu
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[3].Id, SkinTypeID = skinTypes[3].Id }, // D. Căng sau rửa -> Da nhạy cảm
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[3].Id, SkinTypeID = skinTypes[0].Id }, // D. Căng -> Da khô
+
+    // Question 1 options (index 4-7)
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[4].Id, SkinTypeID = skinTypes[1].Id }, // A. Luôn luôn (mụn) -> Da dầu
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[4].Id, SkinTypeID = skinTypes[2].Id }, // A. Luôn luôn -> Da hỗn hợp
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[5].Id, SkinTypeID = skinTypes[4].Id }, // B. Rất hiếm khi -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[5].Id, SkinTypeID = skinTypes[0].Id }, // B. Hiếm mụn -> Da khô
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[6].Id, SkinTypeID = skinTypes[2].Id }, // C. Khi kinh nguyệt -> Da hỗn hợp
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[6].Id, SkinTypeID = skinTypes[1].Id }, // C. Khi kinh nguyệt -> Da dầu
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[7].Id, SkinTypeID = skinTypes[3].Id }, // D. Thỉnh thoảng -> Da nhạy cảm
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[7].Id, SkinTypeID = skinTypes[4].Id }, // D. Thỉnh thoảng -> Da thường
+
+    // Question 2 options (index 8-11)
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[8].Id, SkinTypeID = skinTypes[2].Id }, // A. Trán, cằm -> Da hỗn hợp
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[8].Id, SkinTypeID = skinTypes[1].Id }, // A. Trán, cằm -> Da dầu
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[9].Id, SkinTypeID = skinTypes[4].Id }, // B. Rất hiếm khi -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[9].Id, SkinTypeID = skinTypes[0].Id }, // B. Hiếm khi -> Da khô
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[10].Id, SkinTypeID = skinTypes[3].Id }, // C. Không rửa tự nhiên -> Da nhạy cảm
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[10].Id, SkinTypeID = skinTypes[0].Id }, // C. Không rửa -> Da khô
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[11].Id, SkinTypeID = skinTypes[1].Id }, // D. Một lần/tháng -> Da dầu
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[11].Id, SkinTypeID = skinTypes[2].Id }, // D. Một lần/tháng -> Da hỗn hợp
+
+    // Question 3 options (index 12-15)
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[12].Id, SkinTypeID = skinTypes[4].Id }, // A. Không mụn -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[12].Id, SkinTypeID = skinTypes[0].Id }, // A. Không mụn -> Da khô
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[13].Id, SkinTypeID = skinTypes[4].Id }, // B. Cảm thấy sạch -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[13].Id, SkinTypeID = skinTypes[0].Id }, // B. Sạch -> Da khô
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[14].Id, SkinTypeID = skinTypes[3].Id }, // C. Không đỏ, viêm -> Da nhạy cảm
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[14].Id, SkinTypeID = skinTypes[4].Id }, // C. Không viêm -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[15].Id, SkinTypeID = skinTypes[4].Id }, // D. Trông khỏe mạnh -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[15].Id, SkinTypeID = skinTypes[0].Id }, // D. Khỏe mạnh -> Da khô
+
+    // Question 4 options (index 16-19)
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[16].Id, SkinTypeID = skinTypes[4].Id }, // A. Chăm sóc tự nhiên -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[16].Id, SkinTypeID = skinTypes[3].Id }, // A. Chăm sóc -> Da nhạy cảm
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[17].Id, SkinTypeID = skinTypes[0].Id }, // B. Không nhờn -> Da khô
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[17].Id, SkinTypeID = skinTypes[4].Id }, // B. Không nhờn -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[18].Id, SkinTypeID = skinTypes[4].Id }, // C. Yêu làn da -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[18].Id, SkinTypeID = skinTypes[0].Id }, // C. Yêu làn da -> Da khô
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[19].Id, SkinTypeID = skinTypes[4].Id }, // D. Không mụn -> Da thường
+    new QuestionOptionSkintype { QuestionOptionId = savedOptions[19].Id, SkinTypeID = skinTypes[0].Id }  // D. Không mụn -> Da khô
+};
+
+                await context.QuestionOptionSkintypes.AddRangeAsync(optionSkinTypes);
                 await context.SaveChangesAsync();
             }
 
-            // Seed Events
+            // 8. Seed Bookings với 4 trạng thái và Feedbacks
+            if (!context.Bookings.Any())
+            {
+                var customers = context.Users.Where(u => u.Role == UserRole.Customer).ToArray();
+                var therapistIds = context.Therapists
+                    .Include(t => t.UserNavigation)
+                    .Where(t => t.UserNavigation != null && t.UserNavigation.Role == UserRole.Therapist)
+                    .Select(t => t.Id)
+                    .ToArray();
+                var services = context.Services.ToArray();
+
+                if (customers.Length < 3) throw new Exception("Không đủ khách hàng để seeding Bookings. Cần ít nhất 3.");
+                if (therapistIds.Length < 4) throw new Exception("Không đủ Therapist để seeding Bookings. Cần ít nhất 4.");
+                if (services.Length < 10) throw new Exception("Không đủ Services để seeding Bookings. Cần ít nhất 10.");
+
+                var bookings = new List<Booking>
+        {
+            // NotStarted
+            new Booking
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = customers[0].Id,
+                TherapistId = therapistIds[0],
+                ServiceId = services[0].Id,
+                ReservedTime = DateTime.Now.AddDays(5).AddHours(10),
+                Status = BookingStatus.NotStarted,
+                TotalPrice = services[0].Price,
+                TotalPayment = 0 // Chưa thanh toán
+            },
+            // Doing
+            new Booking
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = customers[1].Id,
+                TherapistId = therapistIds[1],
+                ServiceId = services[1].Id,
+                ReservedTime = DateTime.Now.AddHours(-1), // Đang thực hiện
+                Status = BookingStatus.Doing,
+                TotalPrice = services[1].Price,
+                TotalPayment = services[1].Price / 2 // Thanh toán một nửa
+            },
+            // Completed (có Feedback)
+            new Booking
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = customers[2].Id,
+                TherapistId = therapistIds[2],
+                ServiceId = services[2].Id,
+                ReservedTime = DateTime.Now.AddDays(-2).AddHours(14),
+                Status = BookingStatus.Completed,
+                TotalPrice = services[2].Price,
+                TotalPayment = services[2].Price
+            },
+            // Canceled
+            new Booking
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = customers[0].Id,
+                TherapistId = therapistIds[3],
+                ServiceId = services[3].Id,
+                ReservedTime = DateTime.Now.AddDays(-1).AddHours(9),
+                Status = BookingStatus.Canceled,
+                TotalPrice = services[3].Price,
+                TotalPayment = 0 // Không thanh toán vì hủy
+            },
+            // Completed thứ hai (có Feedback)
+            new Booking
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = customers[1].Id,
+                TherapistId = therapistIds[0],
+                ServiceId = services[4].Id,
+                ReservedTime = DateTime.Now.AddDays(-3).AddHours(15),
+                Status = BookingStatus.Completed,
+                TotalPrice = services[4].Price,
+                TotalPayment = services[4].Price
+            }
+        };
+
+                await context.Bookings.AddRangeAsync(bookings);
+                await context.SaveChangesAsync();
+            }
+
+            // 9. Seed Feedbacks cho các Booking đã Completed
+            if (!context.Feedbacks.Any())
+            {
+                var completedBookings = context.Bookings
+                    .Where(b => b.Status == BookingStatus.Completed)
+                    .ToArray();
+
+                if (completedBookings.Length < 2) throw new Exception("Không đủ Booking Completed để seeding Feedbacks. Cần ít nhất 2.");
+
+                var feedbacks = new[]
+                {
+            new Feedback
+            {
+                BookingId = completedBookings[0].Id,
+                TherapistRating = 4,
+                ServiceRating = 5,
+                TherapistFeedback = "Nhân viên rất chuyên nghiệp và thân thiện",
+                ServiceFeedback = "Dịch vụ tuyệt vời, da tôi cải thiện rõ rệt"
+            },
+            new Feedback
+            {
+                BookingId = completedBookings[1].Id,
+                TherapistRating = 5,
+                ServiceRating = 4,
+                TherapistFeedback = "Kỹ thuật viên rất tận tâm",
+                ServiceFeedback = "Dịch vụ tốt nhưng giá hơi cao"
+            }
+        };
+
+                await context.Feedbacks.AddRangeAsync(feedbacks);
+                await context.SaveChangesAsync();
+            }
+
+            // 10. Seed ServiceDetails
+            if (!context.ServiceDetails.Any())
+            {
+                var services = context.Services.ToArray();
+                if (services.Length < 10) throw new Exception("Không đủ Services để seeding ServiceDetails.");
+
+                var serviceDetails = new[]
+                {
+            new ServiceDetail { Name = "Làm sạch da", Description = "Loại bỏ bụi bẩn và dầu thừa.", Duration = 30, UnitPrice = 300000, ServiceID = services[0].Id, DateToNextStep = 5, Step = 1 },
+            new ServiceDetail { Name = "Điều trị mụn", Description = "Sử dụng công nghệ trị mụn.", Duration = 60, UnitPrice = 800000, ServiceID = services[1].Id, DateToNextStep = 7, Step = 1 },
+            new ServiceDetail { Name = "Dưỡng trắng", Description = "Cải thiện độ sáng da.", Duration = 45, UnitPrice = 900000, ServiceID = services[2].Id, DateToNextStep = 10, Step = 1 },
+            new ServiceDetail { Name = "Trẻ hóa", Description = "Kích thích collagen.", Duration = 60, UnitPrice = 1200000, ServiceID = services[3].Id, DateToNextStep = 8, Step = 1 },
+            new ServiceDetail { Name = "Tẩy tế bào", Description = "Làm sạch sâu.", Duration = 20, UnitPrice = 200000, ServiceID = services[4].Id, DateToNextStep = 3, Step = 1 },
+            new ServiceDetail { Name = "Massage", Description = "Thư giãn cơ mặt.", Duration = 30, UnitPrice = 350000, ServiceID = services[5].Id, DateToNextStep = 5, Step = 1 },
+            new ServiceDetail { Name = "Chăm sóc sâu", Description = "Đắp mặt nạ cao cấp.", Duration = 60, UnitPrice = 1500000, ServiceID = services[6].Id, DateToNextStep = 12, Step = 1 },
+            new ServiceDetail { Name = "Trị nám", Description = "Giảm sắc tố.", Duration = 45, UnitPrice = 1000000, ServiceID = services[7].Id, DateToNextStep = 7, Step = 1 },
+            new ServiceDetail { Name = "Dưỡng chất", Description = "Cung cấp vitamin.", Duration = 40, UnitPrice = 500000, ServiceID = services[8].Id, DateToNextStep = 6, Step = 1 },
+            new ServiceDetail { Name = "Chăm sóc mắt", Description = "Giảm quầng thâm.", Duration = 30, UnitPrice = 400000, ServiceID = services[9].Id, DateToNextStep = 4, Step = 1 }
+        };
+
+                foreach (var detail in serviceDetails)
+                {
+                    var service = services.First(s => s.Id == detail.ServiceID);
+                    service.Price += detail.UnitPrice;
+                }
+
+                await context.ServiceDetails.AddRangeAsync(serviceDetails);
+                await context.SaveChangesAsync();
+            }
+
+            // 11. Seed Events
             if (!context.Events.Any())
             {
-                await context.Events.AddAsync(new Event
+                var events = new[]
                 {
-                    Name = "Hội thảo du lịch nghỉ dưỡng chăm sóc bản thân 2025",
-                    Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
-                    Capacity = 100,
-                    EventDate = DateOnly.Parse("2025/11/20"),
-                    Location = "Hall Alpha",
-                    TicketPrice = 100000,
-                    TimeStart = TimeOnly.Parse("12:00:00"),
-                    TimeEnd = TimeOnly.Parse("14:00:00")
-                });
+        new Event
+        {
+            Name = "Hội thảo du lịch nghỉ dưỡng chăm sóc bản thân 2025",
+            Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
+            Thumbnail = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWL6c8Zvkl4lQdlWDTBmrAUzk8WDACENRDRg&s",
+            Capacity = 100,
+            EventDate = DateOnly.Parse("2025/11/20"),
+            Location = "Hall Alpha",
+            TicketPrice = 100000,
+            TimeStart = TimeOnly.Parse("12:00:00"),
+            TimeEnd = TimeOnly.Parse("14:00:00")
+        },
+        new Event
+        {
+            Name = "Chuyên đề về lợi ích của hệ thống chăm sóc da",
+            Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
+            Capacity = 250,
+            Thumbnail = "https://file.hstatic.net/200000311493/file/84_99971645a56349b8901748a211a6ca2b_grande.png",
+            EventDate = DateOnly.Parse("2025/11/22"),
+            Location = "Hall Alpha",
+            TicketPrice = 150000,
+            TimeStart = TimeOnly.Parse("07:00:00"),
+            TimeEnd = TimeOnly.Parse("09:00:00")
+        },
+        new Event
+        {
+            Name = "Triển lãm công nghệ làm đẹp 2025",
+            Description = "Sự kiện展示 các công nghệ làm đẹp tiên tiến nhất",
+            Thumbnail = "https://nhipcauthuonghieu.vn/wp-content/uploads/2024/07/25715.jpg",
+            Capacity = 150,
+            EventDate = DateOnly.Parse("2025/11/25"),
+            Location = "Hall Beta",
+            TicketPrice = 200000,
+            TimeStart = TimeOnly.Parse("09:00:00"),
+            TimeEnd = TimeOnly.Parse("12:00:00")
+        },
+        new Event
+        {
+            Name = "Hội nghị sức khỏe và dinh dưỡng",
+            Description = "Tìm hiểu về chế độ ăn uống lành mạnh và khoa học",
+            Thumbnail = "https://i1-suckhoe.vnecdn.net/2022/07/13/young-asian-woman-holding-dumb-1785-8765-1657695811.jpg?w=1020&h=0&q=100&dpr=1&fit=crop&s=QcyeHgcnKb203eW6XGCyNQ",
+            Capacity = 200,
+            EventDate = DateOnly.Parse("2025/11/28"),
+            Location = "Hall Gamma",
+            TicketPrice = 120000,
+            TimeStart = TimeOnly.Parse("14:00:00"),
+            TimeEnd = TimeOnly.Parse("16:30:00")
+        },
+        new Event
+        {
+            Name = "Workshop yoga và thiền định",
+            Description = "Trải nghiệm các bài tập thư giãn và cân bằng cơ thể",
+            Thumbnail = "https://balanceyogavilla.com/wp-content/uploads/2024/02/balance-yoga-villa-workshop-hoi-tho-mo-rong-tam-tri-3.jpg",
+            Capacity = 80,
+            EventDate = DateOnly.Parse("2025/11/30"),
+            Location = "Studio Delta",
+            TicketPrice = 80000,
+            TimeStart = TimeOnly.Parse("06:00:00"),
+            TimeEnd = TimeOnly.Parse("08:00:00")
+        }
+    };
 
-                await context.Events.AddAsync(new Event
-                {
-                    Name = "Chuyên đề về lợi ích của hệ thống chăm sóc da",
-                    Description = "Đây là nội dung mẫu được đánh máy nhằm mục đích tạo văn bản mẫu",
-                    Capacity = 250,
-                    EventDate = DateOnly.Parse("2025/11/22"),
-                    Location = "Hall Alpha",
-                    TicketPrice = 150000,
-                    TimeStart = TimeOnly.Parse("07:00:00"),
-                    TimeEnd = TimeOnly.Parse("09:00:00")
-                });
-
+                await context.Events.AddRangeAsync(events);
                 await context.SaveChangesAsync();
             }
-
-            
         }
     }
 }

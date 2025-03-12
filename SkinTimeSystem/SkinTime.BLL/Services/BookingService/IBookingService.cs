@@ -26,7 +26,7 @@ namespace SkinTime.BLL.Services.BookingService
         /// </summary>
         /// <param name="bookingInformation"></param>
         /// <returns>The service result represent operation result. The data will be the newly created booking entity.</returns>
-        Task<string> CreateNewBooking(string returnURL, Guid serviceId, string bank);
+        Task<ServiceResult<string>> CreateNewBooking(string returnURL, Guid serviceId, string bank);
 
         Task<ServiceResult<Booking>> UpdateBookingInformation(string id, Booking bookingInformation);
     }

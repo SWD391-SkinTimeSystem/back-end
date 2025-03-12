@@ -18,6 +18,71 @@ namespace SkinTime.BLL.Services.QuestionService
             _unitOfWork = unitOfWork;
         }
 
+        public Task<ServiceResult> CreateQuestion(Question question)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ServiceResult> CreateQuestions(ICollection<Question> questions)
+        {
+            // Validation
+            if (questions.Any(x => x.QuestionOptionsNavigation.Count == 0))
+            {
+                return ServiceResult.Failed(ServiceError.ValidationFailed("There is questions with 0 choice"));
+            }
+
+            ICollection<Question> current =  await _unitOfWork.Repository<Question>().GetAllAsync();
+
+            foreach (Question question in questions)
+            {
+                if (current.FirstOrDefault(q => q.Id == question.Id) != null)
+                {
+                    return ServiceResult.Failed(ServiceError.ValidationFailed("Can not add question with an existing id!"));
+                }
+                else
+                {
+                    // Add new question
+                    await _unitOfWork.Repository<Question>().AddAsync(question);
+                }
+            }
+            await _unitOfWork.Complete();
+            return ServiceResult.Success();
+        }
+
+        public Task<ServiceResult> UpdateQuestion(Question questions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ServiceResult> UpdateAllQuestion(ICollection<Question> questions)
+        {
+            if (questions.Any(x => x.QuestionOptionsNavigation.Count == 0))
+            {
+                return ServiceResult.Failed(ServiceError.ValidationFailed("There is questions with 0 choice"));
+            }
+
+            // WARNING: THIS WILL DELETE EVERY SINGLE RECORD OF QUESTION AND OPTIONS IN THE DATABASE!!!!
+            foreach (var question in await _unitOfWork.Repository<Question>().GetAllAsync())
+            {
+                _unitOfWork.Repository<Question>().Delete(question);
+            }
+
+            // Add new records to the database
+            foreach (var question in questions)
+            {
+                await _unitOfWork.Repository<Question>().AddAsync(question);
+            }
+
+            await _unitOfWork.Complete();
+
+            return ServiceResult.Success();
+        }
+
+        public Task<ServiceResult> DeleteQuestion(Question questions)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<ICollection<Question>> GetAllQuestion() =>_unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptionsNavigation);
         
 
@@ -27,8 +92,11 @@ namespace SkinTime.BLL.Services.QuestionService
             var allSkinTypes = await _unitOfWork.Repository<SkinType>().ListAsync();
 
             var questionOptions = await _unitOfWork.Repository<QuestionOption>()
-                //.ListAsync(qo => listResult.Contains(qo.Id), null, qo => qo.Include(q => q.SkinType));
-                .ListAsync(x => x.Include(x => x.SkinTypeNavigation), qo => listResult.Contains(qo.Id));
+     .ListAsync(
+         x => x.Include(qo => qo.QuestionOptionSkintypes), // Include bảng liên kết nếu cần
+         qo => listResult.Contains(qo.Id) // Lọc theo listResult
+     );
+
 
             if (!questionOptions.Any())
             {
@@ -36,8 +104,10 @@ namespace SkinTime.BLL.Services.QuestionService
             }
 
             var skinTypeCounts = questionOptions
-                .GroupBy(qo => qo.SkinTypeNavigation)
-                .ToDictionary(g => g.Key, g => g.Count()); 
+      .SelectMany(qo => qo.QuestionOptionSkintypes)
+      .GroupBy(qos => qos.SkinTypeNavigation)      
+      .ToDictionary(g => g.Key, g => g.Count());    
+
 
             int totalSelections = skinTypeCounts.Values.Sum();
 
@@ -70,6 +140,5 @@ namespace SkinTime.BLL.Services.QuestionService
             return (skinTypePercentages, services.ToList());
 
         }
-
     }
 }

@@ -9,6 +9,7 @@ using SkinTime.BLL.Services.ScheduleService;
 using SkinTime.DAL.Entities;
 using SkinTime.Helpers;
 using SkinTime.Models;
+using SkinTime.Models.Schedule;
 
 namespace SkinTime.Controllers
 {
@@ -30,7 +31,9 @@ namespace SkinTime.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("therapist/{id}/availability")]
-        public async Task<ActionResult<TherapistAvailabilityViewModel>> GetTherapistAvailabilitySchedule(string id)
+        [ProducesResponseType<ApiResponse<TherapistAvailabilityViewModel>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<string>>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTherapistAvailabilitySchedule(string id)
         {
             return await HandleServiceCall(async () =>
             {
@@ -46,15 +49,33 @@ namespace SkinTime.Controllers
                 TherapistAvailabilityViewModel viewModel = new TherapistAvailabilityViewModel
                 {
                     TherapistId = Guid.Parse(id),
-                    Availability = new Dictionary<DateOnly, ICollection<TimeOnly>>(),
+                    Availability = new Dictionary<DateOnly, IDictionary<TimeOnly, bool>>(),
                 };
+
+                TimeOnly startOfDay = TimeOnly.Parse("9:00:00");
+                TimeOnly endOfDay = TimeOnly.Parse("17:00:00");
 
                 for (DateOnly x = currentDate; x <= currentDate.AddDays(6); x = x.AddDays(1) )
                 {
-                    viewModel.Availability[x] = result.Data!.Select(x => x.ReservedStartTime).ToList();
+                    viewModel.Availability[x] = new Dictionary<TimeOnly, bool>();
+
+                    for (TimeOnly y = startOfDay; y <= endOfDay; y = y.AddMinutes(30))
+                    {
+                        viewModel.Availability[x][y] = !result.Data!
+                        .Any(s => s.Date == x && (s.ReservedStartTime <= y && y < s.ReservedEndTime));
+                    }
                 }
 
                 return ServiceResult.Success(viewModel);
+            });
+        }
+
+        [HttpGet("availability")]
+        public async Task<IActionResult> GetAvailabilityForDate([FromQuery] DateOnly date)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.GetScheduleForDate(date);
             });
         }
 
@@ -83,6 +104,7 @@ namespace SkinTime.Controllers
         /// <param name="id"></param>
         /// <returns>The user scheduled resevation (not available slot)</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType<ApiResponse<ScheduleViewModel>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<ScheduleViewModel>> GetScheduleWithId(Guid id)
         {
             return await HandleServiceCall<Schedule, ScheduleViewModel>( async () =>

@@ -25,20 +25,28 @@ namespace SkinTime.BLL.Services.BookingService
             _zaloPay = zaloPay;
         }
 
-        public async Task<string> CreateNewBooking(string returnCallBack, Guid serviceId, string bank)
+        public async Task<ServiceResult<string>> CreateNewBooking(string returnCallBack, Guid serviceId, string bank)
         {
             var service = _unitOfWork.Repository<Service>().GetById(serviceId);
 
             if (!Enum.TryParse(bank, true, out PaymentMethod paymentMethod) || !Enum.IsDefined(typeof(PaymentMethod), paymentMethod))
             {
-                throw new InvalidOperationException("Invalid payment method.");
+                return ServiceResult<string>.Failed(ServiceError.ValidationFailed("Unsupported payment type"));
             }
-            return paymentMethod switch
+
+            string? result = null;
+
+            switch (paymentMethod)
             {
-                PaymentMethod.VnPay => await _vnPay.CreateVNPayOrder((int)service.Price, returnCallBack, service.ServiceName),
-                PaymentMethod.ZaloPay => await _zaloPay.CreateZaloPayOrder((int)service.Price, returnCallBack, service.ServiceName),
-                _ => throw new InvalidOperationException("Unsupported payment bank."),
-            };
+                case PaymentMethod.VnPay:
+                     result = await _vnPay.CreateVNPayOrder((int)service!.Price, returnCallBack, service.ServiceName);
+                    return ServiceResult<string>.Success(result);
+                case PaymentMethod.ZaloPay:
+                    result = await _zaloPay.CreateZaloPayOrder((int)service!.Price, returnCallBack, service.ServiceName);
+                    return ServiceResult<string>.Success(result);
+            }
+
+            return ServiceResult<string>.Failed(ServiceError.ValidationFailed("Unsupported payment type"));
         }
 
         public async Task<ICollection<Booking>> GetAppointments(Guid userId, string status)

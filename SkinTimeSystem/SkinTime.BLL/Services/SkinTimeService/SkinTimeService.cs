@@ -45,7 +45,7 @@ namespace SkinTime.BLL.Services.SkinTimeService
         }
 
 
-        public async Task<Service?> GetTrementplant(Guid idService)
+        public async Task<Service?> GetTreatmentplant(Guid idService)
         {
             return await _unitOfWork.Repository<Service>()
                 .GetByConditionAsync(

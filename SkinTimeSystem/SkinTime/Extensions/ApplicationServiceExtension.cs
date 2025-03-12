@@ -17,6 +17,8 @@ using SkinTime.DAL.Interfaces;
 using SkinTime.Helpers;
 using SkinTime.BLL.Services.TransactionService;
 using SkinTime.BLL.Services.TicketService;
+using Hangfire;
+using Hangfire.MySql;
 
 namespace SkinTime.Extensions
 {
@@ -43,6 +45,19 @@ namespace SkinTime.Extensions
             services.AddScoped<IFeedbackService,  FeedbackService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITicketService, TicketService>();
+            services.AddHangfire(hangfireConfig => hangfireConfig
+                         .UseStorage(new MySqlStorage(
+        config.GetConnectionString("DefaultConnectionMySQL"),
+        new MySqlStorageOptions  
+        {
+            QueuePollInterval = TimeSpan.FromSeconds(15),
+            JobExpirationCheckInterval = TimeSpan.FromHours(1),
+            CountersAggregateInterval = TimeSpan.FromMinutes(5),
+            PrepareSchemaIfNecessary = true
+        })
+    )
+);
+            services.AddHangfireServer();
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",

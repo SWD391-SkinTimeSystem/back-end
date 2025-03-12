@@ -43,5 +43,12 @@ namespace SkinTime.BLL.Services.ScheduleService
         Task<ServiceResult<ICollection<Schedule>>> GetUserSchedules(Guid userId);
         Task<ServiceResult<ICollection<Schedule>>> GetBookingSchedule(string bookingId);
         Task<ServiceResult<ICollection<Schedule>>> GetTherapistSchedule(string therapistId, DateOnly from, DateOnly to);
+
+        /// <summary>
+        ///     Return the availability for the <paramref name="date"/>.
+        /// </summary>
+        /// <param name="date">The date to get schedule</param>
+        /// <returns></returns>
+        Task<ServiceResult<IDictionary<TimeOnly, bool>>> GetScheduleForDate(DateOnly date);
     }
 }

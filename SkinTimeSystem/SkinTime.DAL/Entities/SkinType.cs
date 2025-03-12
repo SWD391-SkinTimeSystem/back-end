@@ -18,5 +18,7 @@ namespace SkinTime.DAL.Entities
         [MaxLength(250)]
         public string? Description { get; set; }
         public virtual ICollection<ServiceRecommendation> Recommendations { get; set; } = new List<ServiceRecommendation>();
+
+        public virtual ICollection<QuestionOptionSkintype> QuestionOptionSkintypes { get; set; } = new List<QuestionOptionSkintype>();
     }
 }

@@ -13,15 +13,11 @@ namespace SkinTime.DAL.Entities
         [Column("content", TypeName = "NVARCHAR(250)")]
         public required string Content {  get; set; }
 
-        [Column("skin_type_id")]
-        [ForeignKey(nameof(SkinType))]
-        public required Guid SkinTypeID { get; set; }
-
         [Column("question_id")]
         [ForeignKey(nameof(SkinType))]
         public required Guid QuestionID { get; set; }
 
-        public virtual SkinType SkinTypeNavigation { get; set; } = null!;
-        
+        public virtual ICollection<QuestionOptionSkintype> QuestionOptionSkintypes { get; set; } = new List<QuestionOptionSkintype>();
+
     }
 }

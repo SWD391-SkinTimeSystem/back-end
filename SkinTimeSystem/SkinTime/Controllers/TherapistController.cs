@@ -7,6 +7,7 @@ using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Entities;
 using SkinTime.Helpers;
 using SkinTime.Models;
+using SkinTime.Models.Therapist;
 
 namespace SkinTime.Controllers
 {
@@ -27,6 +28,7 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <returns>The 200 Ok action result with data as list of therapist.</returns>
         [HttpGet]
+        [ProducesResponseType<ApiResponse<ICollection<TherapistViewModel>>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<ApiResponse<ICollection<TherapistViewModel>>>> GetTherapistList()
         {
             return await HandleServiceCall<ICollection<TherapistViewModel>>(async () =>
@@ -36,18 +38,20 @@ namespace SkinTime.Controllers
         }
 
         /// <summary>
-        ///     Find all available therapist based on the given date, time and the service duration.
+        ///     Find first available therapist based on the given date, time and the service duration.
         /// </summary>
         /// <param name="date">the date to check (ex: "2025/11/25")</param>
         /// <param name="time">the time to check (ex: "14:15:00")</param>
         /// <param name="duration">the duration of the service</param>
         /// <returns>A list of therapist that match the given criteria</returns>
         [HttpGet("available")]
-        public async Task<ActionResult<ICollection<TherapistViewModel>>> GetAvailableTherapistForDay(DateOnly date, TimeOnly time, int duration)
+        [ProducesResponseType<ApiResponse<TherapistViewModel>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<string>>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAvailableTherapistForDay(DateOnly date, TimeOnly time, int duration)
         {
-            return await HandleServiceCall<ICollection<Therapist>, ICollection<TherapistViewModel>>(async () =>
+            return await HandleServiceCall<TherapistViewModel>(async () =>
             {
-                return await _service.GetAvailableTherapist(date, time, duration);
+                return await _service.GetFirstAvailableTherapist(date, time, duration);
             });
 
         }

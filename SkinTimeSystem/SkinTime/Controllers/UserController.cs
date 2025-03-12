@@ -10,6 +10,7 @@ using SkinTime.BLL.Services.UserService;
 using SkinTime.DAL.Entities;
 using SkinTime.DAL.Enum;
 using SkinTime.Models;
+using SkinTime.Models.User;
 using System.IO;
 using System.Text;
 
@@ -37,18 +38,22 @@ namespace SkinTime.Controllers
             });
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] AccountUpdateInformation user)
         {
-            // Get user id from jwt token.
-            string jwt = Request.Headers.Authorization.First()!;
-            string user_id = _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
-
-            var userUpdate = _mapper.Map<User>(user);
-            await _services.UpdateUser(user_id,userUpdate);
-            return Ok();
+            return await HandleServiceCall(async () =>
+            {
+                // Get user id from jwt token.
+                return await _services.UpdateUser(base.GetUserIdFromJwt(),_mapper.Map<User>(user));
+            });
+            
         }
 
+        /// <summary>
+        ///     Get account information for all user in the system. (This should be limited to admin)
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("list")]
         public async Task<ActionResult<IReadOnlyCollection<AccountInformation>>> GetUserAccountList()
@@ -56,16 +61,19 @@ namespace SkinTime.Controllers
             return await HandleServiceCall<IReadOnlyCollection<User>, IReadOnlyCollection<AccountInformation>>(_services.GetUsersAsReadOnly);
         }
 
+        /// <summary>
+        ///     Return the currently authenticated user information.
+        /// </summary>
+        /// <returns>The user account information</returns>
+        [Authorize]
         [HttpGet]
+        [ProducesResponseType<ApiResponse<AccountInformation>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<AccountInformation>> GetUserAccount()
         {
-            // Get user id from jwt token.
-            string jwt = Request.Headers.Authorization.First()!;
-            string user_id = _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
-
             return await HandleServiceCall<User, AccountInformation>(async () =>
             {
-                return await _services.GetUser(user_id);
+                return await _services.GetUser(base.GetUserIdFromJwt());
             });
         }
 
@@ -76,6 +84,8 @@ namespace SkinTime.Controllers
         /// <returns>The result of the operation, the data will be the newly created user id.</returns>
         [AllowAnonymous]
         [HttpPost("register")]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse>> RegisterCustomerAccount([FromBody] CustomerRegistration registrationInfo)
         {
             return await HandleServiceCall(async () =>
@@ -90,9 +100,7 @@ namespace SkinTime.Controllers
                 var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email.html");
                 await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content.Replace("[0]", registrationInfo.Fullname));
 
-                ApiResponse response = new ApiResponse(true, "Successfully created the user account", result.Data!.Id);
-
-                return ServiceResult.Success(response);
+                return ServiceResult.Success(result.Data!.Id);
             });
         }
 
@@ -112,20 +120,24 @@ namespace SkinTime.Controllers
         [HttpPost("account")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountRegistration registrationInfo)
         {
-            User userInformation = _mapper.Map<User>(registrationInfo);
 
-            userInformation.Role = Enum.Parse<UserRole>(registrationInfo.Role);
+            return await HandleServiceCall(async () =>
+            {
+                User userInformation = _mapper.Map<User>(registrationInfo);
 
-            await _services.CreateUserAccount(userInformation);
+                userInformation.Role = Enum.Parse<UserRole>(registrationInfo.Role);
+                var result = await _services.CreateUserAccount(userInformation);
 
-            var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email_staff.html");
-            content = content.Replace("[1]", registrationInfo.Username).Replace("[2]", registrationInfo.Password);
-            
-            await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content);
+                if (result.IsSuccess)
+                {
+                    var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email_staff.html");
+                    content = content.Replace("[1]", registrationInfo.Username).Replace("[2]", registrationInfo.Password);
 
-            ApiResponse<string> response = new(true, "Successfully created user account.");
+                    await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content);
+                }
 
-            return Created((string) null!,response);
+                return ServiceResult.Success();
+            });
         }
     }
 }

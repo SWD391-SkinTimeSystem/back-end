@@ -56,7 +56,6 @@ namespace SkinTime.BLL.Services.TherapistService
 
         public async Task<ServiceResult<ICollection<Therapist>>> GetAvailableTherapist(DateOnly date, TimeOnly startTime, int duration)
         {
-
             TimeOnly endTime = startTime.AddMinutes(duration);
             
             // This is one of a hell thingamabob function, please do not touch.
@@ -72,6 +71,30 @@ namespace SkinTime.BLL.Services.TherapistService
             .Include(b => b.CertificationNavigation), predicate);
 
             return ServiceResult<ICollection<Therapist>>.Success(result.ToList());
+        }
+
+        public async Task<ServiceResult<Therapist>> GetFirstAvailableTherapist(DateOnly date, TimeOnly startTime, int duration)
+        {
+            TimeOnly endTime = startTime.AddMinutes(duration);
+
+            // This is one of a hell thingamabob function, please do not touch.
+            Expression<Func<Therapist, bool>> predicate = x => x.Status == TherapistStatus.Available
+            && (x.BookingNavigation.Count == 0 || !x.BookingNavigation
+                .Any(b => b.ScheduleNavigation
+                    .Any(s => s.ReservedStartTime <= endTime && startTime <= s.ReservedEndTime)));
+
+            IEnumerable<Therapist> result = await _unitOfWork.Repository<Therapist>().ListAsync(x => x
+            .Include(b => b.UserNavigation)
+            .Include(b => b.BookingNavigation).ThenInclude(b => b.FeedbackNavigation)
+            .Include(b => b.BookingNavigation).ThenInclude(b => b.ScheduleNavigation)
+            .Include(b => b.CertificationNavigation), predicate);
+
+            if (result.Any())
+            {
+                return ServiceResult<Therapist>.Success(result.First());
+            }
+
+            return ServiceResult<Therapist>.Failed(ServiceError.ValidationFailed("can not find any available therapist"));
         }
 
         public async Task<ServiceResult<Therapist>> GetTherapistWithId(Guid id)

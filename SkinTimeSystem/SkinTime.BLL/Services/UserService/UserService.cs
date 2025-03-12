@@ -73,7 +73,7 @@ namespace SkinTime.BLL.Services.UserService
             return ServiceResult<User>.Failed(ServiceError.ValidationFailed("The provided user id format does not match."));
         }
 
-        public async Task UpdateUser(string id, User user)
+        public async Task<ServiceResult> UpdateUser(string id, User user)
         {
             if (Guid.TryParse(id, out var parsedGuid))
             {
@@ -81,8 +81,9 @@ namespace SkinTime.BLL.Services.UserService
 
                 if (existingUser == null)
                 {
-                    throw new Exception("Unknown user with provided Id.");
+                    return ServiceResult.Failed(ServiceError.NotFound("Unknown user with provided Id."));
                 }
+
                 existingUser.Username = user.Username;
                 existingUser.Email = user.Email;
                 existingUser.Phone = user.Phone;
@@ -93,7 +94,11 @@ namespace SkinTime.BLL.Services.UserService
 
                 _unitOfWork.Repository<User>().Update(existingUser);
                 await _unitOfWork.Complete();
+
+                return ServiceResult.Success();
             }
+
+            return ServiceResult.Failed(ServiceError.ValidationFailed("Can not parse user id to a valid format"));
         }
 
         public async Task<ServiceResult<IReadOnlyCollection<User>>> GetUsersAsReadOnly()
