@@ -4,7 +4,7 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
-    <ProjectGuid>32b3c8ff-b743-49fa-8dce-0b3ef6f666c5</ProjectGuid>
+    <ProjectGuid>b8e0682b-27f2-4f78-99ed-39d327d56acb</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>skintime</DockerServiceName>

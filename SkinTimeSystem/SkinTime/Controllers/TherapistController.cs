@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Services.TherapistService;
-using SkinTime.BLL.Services.UserService;
-using SkinTime.DAL.Entities;
+using SkinTime.DTOs;
+using SkinTime.DTOs.Therapist;
 using SkinTime.Helpers;
-using SkinTime.Models;
-using SkinTime.Models.Therapist;
 
 namespace SkinTime.Controllers
 {

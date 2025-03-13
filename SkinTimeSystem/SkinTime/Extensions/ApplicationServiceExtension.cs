@@ -1,24 +1,19 @@
-﻿using Cursus.Core.Options.PaymentSetting;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Data;
-using SkinTime.BLL.Services.AuthenticationService;
-using SkinTime.BLL.Services.BookingService;
-using SkinTime.BLL.Services.FeedbackService;
-using SkinTime.BLL.Services.QuestionService;
-using SkinTime.BLL.Services.ScheduleService;
-using SkinTime.BLL.Services.SkinTimeService;
-using SkinTime.BLL.Services.TherapistService;
-using SkinTime.BLL.Services.EventService;
-using SkinTime.BLL.Services.UserService;
-using SkinTime.DAL.Interfaces;
-using SkinTime.Helpers;
-using SkinTime.BLL.Services.TransactionService;
-using SkinTime.BLL.Services.TicketService;
 using Hangfire;
 using Hangfire.MySql;
+using Services.Implement;
+using Services.Interfaces;
+using Repositories.GenericRepository;
+using Repositories.UnitOfWork;
+using Services.PaymentSetting;
+using SharedLibrary.EmailUtilities;
+using SkinTime.Helpers;
+using Repositories.ConcreteRepository.Interface;
+using System.Security.Cryptography;
+using Repositories.ConcreteRepository.Implement;
+
 
 namespace SkinTime.Extensions
 {
@@ -29,7 +24,7 @@ namespace SkinTime.Extensions
             IConfiguration config
         )
         {// khai báo tất cả các service ở đây => tìm hiểu midderware, tìm hiểu thêm về addscoped vs addtransient vs addsingleton
-            
+
             // Repositories and Unit of work.
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -42,13 +37,15 @@ namespace SkinTime.Extensions
             services.AddScoped<ISkinTimeService, SkinTimeService>();
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IScheduleService, ScheduleService>();
-            services.AddScoped<IFeedbackService,  FeedbackService>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
+            services.AddScoped<ICache, Cache>();
             services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ITicketService, TicketService>();
             services.AddHangfire(hangfireConfig => hangfireConfig
                          .UseStorage(new MySqlStorage(
         config.GetConnectionString("DefaultConnectionMySQL"),
-        new MySqlStorageOptions  
+        new MySqlStorageOptions
         {
             QueuePollInterval = TimeSpan.FromSeconds(15),
             JobExpirationCheckInterval = TimeSpan.FromHours(1),
@@ -66,11 +63,11 @@ namespace SkinTime.Extensions
                         policy.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader();
-               
+
                     });
             });
+            services.AddScoped<IStatisticService, StatisticService>();
 
-            services.AddScoped<ITransactionService, TransactionService>();
             // Auto mapper
             services.AddAutoMapper(typeof(Mapping).Assembly);
 
@@ -87,7 +84,7 @@ namespace SkinTime.Extensions
             services.Configure<ZaloPay>(config.GetSection("ZaloPay"));
             services.AddScoped<ZaloPay>(sp => sp.GetRequiredService<IOptions<ZaloPay>>().Value);
             services.AddScoped<IEventService, EventService>();
-            
+
             return services;
         }
     }

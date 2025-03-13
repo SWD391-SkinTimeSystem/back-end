@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
+using BusinessObject.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Commons;
-using SkinTime.BLL.Services.QuestionService;
-using SkinTime.DAL.Entities;
-using SkinTime.Models;
-using SkinTime.Models.Analysis;
-using SkinTime.Models.Question;
+using SkinTime.DTOs;
+using SkinTime.DTOs.Analysis;
+using SkinTime.DTOs.Question;
 
 namespace SkinTime.Controllers
 {
@@ -50,7 +50,8 @@ namespace SkinTime.Controllers
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateQuestionList([FromBody] ICollection<QuestionCreationModel> questions)
         {
-            Func<Task<ServiceResult>> function = async() => {
+            Func<Task<ServiceResult>> function = async () =>
+            {
                 return await _service.UpdateAllQuestion(_mapper.Map<ICollection<Question>>(questions));
             };
 

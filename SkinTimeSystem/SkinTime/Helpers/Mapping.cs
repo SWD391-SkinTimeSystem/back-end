@@ -1,18 +1,19 @@
 ﻿using AutoMapper;
+using BusinessObject.Entities;
+using BusinessObject.Enum;
+using BusinessObject.EventEnums;
 using Microsoft.IdentityModel.Tokens;
-using SkinTime.DAL.Entities;
-using SkinTime.DAL.Enum.EventEnums;
-using SkinTime.Models.Analysis;
-using SkinTime.Models.Booking;
-using SkinTime.Models.Event;
-using SkinTime.Models.Feedback;
-using SkinTime.Models.Question;
-using SkinTime.Models.Schedule;
-using SkinTime.Models.Service;
-using SkinTime.Models.Therapist;
-using SkinTime.Models.Ticket;
-using SkinTime.Models.Transaction;
-using SkinTime.Models.User;
+using SkinTime.DTOs;
+using SkinTime.DTOs.Analysis;
+using SkinTime.DTOs.Booking;
+using SkinTime.DTOs.Event;
+using SkinTime.DTOs.Feedback;
+using SkinTime.DTOs.Question;
+using SkinTime.DTOs.Schedule;
+using SkinTime.DTOs.Service;
+using SkinTime.DTOs.Therapist;
+using SkinTime.DTOs.Ticket;
+using SkinTime.DTOs.User;
 using System.Net.NetworkInformation;
 using System.Text;
 
@@ -32,12 +33,29 @@ namespace SkinTime.Helpers
 
             CreateMap<User, AccountInformation>().ReverseMap();
 
+            CreateMap<FeedbackCreationModel, Feedback>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()));
+
+            CreateMap<Feedback, BookingFeedbackViewModel>()
+                .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.CreatedTime))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId));
+
             CreateMap<Feedback, TherapistFeedbackViewModel>()
                 .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.TherapistRating))
                 .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => src.TherapistFeedback))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.FullName));
+
+            CreateMap<Feedback, ServiceFeedbackViewModel>()
+                .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.Username))
+                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => (src.TherapistRating + src.ServiceRating) / 2.0f)) // Trung bình rating
+                .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => $"{src.TherapistFeedback} | {src.ServiceFeedback}".Trim()))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.BookingNavigation.ReservedTime)))
+                .ReverseMap();
 
             CreateMap<Therapist, TherapistViewModel>()
                 .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.UserNavigation.FullName))
@@ -82,8 +100,8 @@ namespace SkinTime.Helpers
             CreateMap<QuestionCreationModel, Question>()
                 .ForMember(dest => dest.QuestionOptionsNavigation, opt => opt.MapFrom(src => src.Choices));
 
-            CreateMap<QuestionChoiceCreationModel, QuestionOption>()
-                .ForMember(dest => dest.SkinTypeID, opt => opt.MapFrom(src => src.SkinType));
+            //CreateMap<QuestionChoiceCreationModel, QuestionOption>()
+            //    .ForMember(dest => dest.SkinTypeID, opt => opt.MapFrom(src => src.SkinType));
 
             CreateMap<EventTicket, TicketViewModel>()
                 .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.EventId))
@@ -157,20 +175,7 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.Item1.ServiceDetailNavigation))
                 .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.Item1.ServiceImageNavigation))
                 .ForMember(dest => dest.Feedbacks, opt => opt.MapFrom(src => src.Item2 ?? new List<(Booking?, Feedback?, User?)>())); // Nếu null, chuyển thành list rỗng
-            CreateMap<Booking, BokingServiceWithIdModel>()
-                .ForMember(dest => dest.BookingId, opt => opt.MapFrom(src => src.Id))
-                 .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.ReservedTime))
-                 .ReverseMap();
-            CreateMap<Transaction, BokingServiceWithIdModel>()
-                 .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.Method))
-                 .ReverseMap();
-            CreateMap<Schedule, BokingServiceWithIdModel>()
-            .ForMember(dest => dest.ServiceHour, opt => opt.MapFrom(src => src.ReservedStartTime))
-             .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.Date.ToDateTime(TimeOnly.MinValue)))
-            .ReverseMap();
-            CreateMap<BookingServiceModel, BokingServiceWithIdModel>();
-            CreateMap<User, AccountInformation>()
-               .ReverseMap();
+           
 
             CreateMap<Event, EventViewModel>()
                 .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Name))
@@ -201,9 +206,6 @@ namespace SkinTime.Helpers
                 .ForMember(dst => dst.Status, opt => opt.MapFrom(src => "ApprovePending"));
 
 
-            CreateMap<Transaction, TransactionModel>()
-              .ForMember(dest => dest.paymentMethod, opt => opt.MapFrom(src => src.Method))
-              .ReverseMap();
 
             CreateMap<Question, QuestionModel>()
                 .ForMember(dest => dest.No, opt => opt.MapFrom(src => src.OrderNo))
@@ -323,15 +325,31 @@ namespace SkinTime.Helpers
                 .ReverseMap();
 
             CreateMap<Feedback, ServiceFeedbackViewModel>()
-            .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id)) 
+            .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
-            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.Username)) 
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.Username))
             .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => (src.TherapistRating + src.ServiceRating) / 2.0f)) // Trung bình rating
-            .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => $"{src.TherapistFeedback} | {src.ServiceFeedback}".Trim())) 
+            .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => $"{src.TherapistFeedback} | {src.ServiceFeedback}".Trim()))
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.BookingNavigation.ReservedTime))
-            ).ReverseMap(); 
+            ).ReverseMap();
 
-          
+
+
+            CreateMap<Service, PopularServicesViewModel>()
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(x => x.Id))
+                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(x => x.ServiceName))
+                .ForMember(dest => dest.BookingCount, opt => opt.MapFrom(x => x.BookingNavigation.Count()))
+                .ForMember(dest => dest.TotalRevenue, opt => opt.MapFrom(x => x.BookingNavigation.Sum(x => x.TotalPayment)));
+
+            CreateMap<Booking, BookingServiceDTO>()
+                    .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.ReservedTime))).ReverseMap();
+            CreateMap<ServiceDTO, Service>()
+        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ServiceStatus>(src.Status)))
+        .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.ServiceDetails.Sum(d => d.Duration))) // Tự tính Duration
+        .ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
+
+            CreateMap<ServiceDetailsDTO, ServiceDetail>()
+               .ForMember(dest => dest.ServiceID, opt => opt.Ignore());
         }
 
     }

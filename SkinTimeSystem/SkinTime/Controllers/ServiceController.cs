@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
+using BusinessObject.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Commons;
-using SkinTime.BLL.Services.SkinTimeService;
-using SkinTime.DAL.Entities;
-using SkinTime.Helpers;
-using SkinTime.Models.Service;
+using SkinTime.DTOs;
+using SkinTime.DTOs.Service;
 
 namespace SkinTime.Controllers
 {
@@ -54,8 +54,23 @@ namespace SkinTime.Controllers
             return await HandleApiCallAsync(async () =>
             {
                 var treatmentPlan = await _skinTimeService.GetTreatmentplant(id);
-                var treatmentPlanDTO =  _mapper.Map<TreatmentPlanModel>(treatmentPlan);
+                var treatmentPlanDTO = _mapper.Map<TreatmentPlanModel>(treatmentPlan);
                 return treatmentPlanDTO;
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateService(ServiceDTO serviceDTO)
+        {
+            return await HandleServiceCall<ApiResponse>(async () =>
+            {
+                var service = _mapper.Map<Service>(serviceDTO);
+                var result = await _skinTimeService.CreateService(service, serviceDTO.ServiceImages, serviceDTO.SkintypeIds);
+
+                if (result.IsSuccess)
+                {
+                    return ServiceResult<ApiResponse>.Success(new ApiResponse(true, "Service created successfully", null));
+                }
+                return ServiceResult<ApiResponse>.Failed(new ServiceError(result.Error.Code, result.Error.Description));
             });
         }
     }

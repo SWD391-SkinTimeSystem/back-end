@@ -13,9 +13,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["SkinTime/SkinTime.csproj", "SkinTime/"]
+COPY ["Services/Services.csproj", "Services/"]
+COPY ["Repositories/Repositories.csproj", "Repositories/"]
+COPY ["DAOs/DAOs.csproj", "DAOS/"]
+COPY ["BusinessObject/BusinessObject.csproj", "BusinessObject/"]
 COPY ["SharedLibrary/SharedLibrary.csproj", "SharedLibrary/"]
-COPY ["SkinTime.BLL/SkinTime.BLL.csproj", "SkinTime.BLL/"]
-COPY ["SkinTime.DAL/SkinTime.DAL.csproj", "SkinTime.DAL/"]
 RUN dotnet restore "./SkinTime/SkinTime.csproj"
 COPY . .
 WORKDIR "/src/SkinTime"

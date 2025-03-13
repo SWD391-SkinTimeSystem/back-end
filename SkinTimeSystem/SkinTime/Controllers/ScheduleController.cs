@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
+using BusinessObject.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Commons;
-using SkinTime.BLL.Services.ScheduleService;
-using SkinTime.DAL.Entities;
-using SkinTime.Helpers;
-using SkinTime.Models;
-using SkinTime.Models.Schedule;
+using SkinTime.DTOs;
+using SkinTime.DTOs.Schedule;
 
 namespace SkinTime.Controllers
 {
@@ -19,7 +18,7 @@ namespace SkinTime.Controllers
     {
         IScheduleService _service;
 
-        public ScheduleController(IMapper mapper,IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, IScheduleService service)
+        public ScheduleController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, IScheduleService service)
         : base(mapper, emailUtilities, tokenUtilities)
         {
             this._service = service;
@@ -55,7 +54,7 @@ namespace SkinTime.Controllers
                 TimeOnly startOfDay = TimeOnly.Parse("9:00:00");
                 TimeOnly endOfDay = TimeOnly.Parse("17:00:00");
 
-                for (DateOnly x = currentDate; x <= currentDate.AddDays(6); x = x.AddDays(1) )
+                for (DateOnly x = currentDate; x <= currentDate.AddDays(6); x = x.AddDays(1))
                 {
                     viewModel.Availability[x] = new Dictionary<TimeOnly, bool>();
 
@@ -107,7 +106,7 @@ namespace SkinTime.Controllers
         [ProducesResponseType<ApiResponse<ScheduleViewModel>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<ScheduleViewModel>> GetScheduleWithId(Guid id)
         {
-            return await HandleServiceCall<Schedule, ScheduleViewModel>( async () =>
+            return await HandleServiceCall<Schedule, ScheduleViewModel>(async () =>
             {
                 return await _service.GetSchedule(id);
             });
@@ -150,17 +149,18 @@ namespace SkinTime.Controllers
             // Get the user id from jwt token.
             string jwt = Request.Headers.Authorization.Single()!;
             Guid userId = Guid.Parse(_tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"]);
-            
+
             // Get the start and end date from the input week.
             DateOnly startOfWeek, endOfWeek;
-            if (week != null) 
+            if (week != null)
             {
-                DateOnly yearStart = new DateOnly(year != null ? (int) year : DateTime.UtcNow.Year, 1, 1);
+                DateOnly yearStart = new DateOnly(year != null ? (int)year : DateTime.UtcNow.Year, 1, 1);
 
-                startOfWeek = yearStart.AddDays(7 * ((int) week - 1) - (int) DateTime.UtcNow.DayOfWeek + 1);
+                startOfWeek = yearStart.AddDays(7 * ((int)week - 1) - (int)DateTime.UtcNow.DayOfWeek + 1);
                 endOfWeek = yearStart.AddDays(7);
             }
-            else {
+            else
+            {
                 startOfWeek = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1 * (int)DateTime.UtcNow.DayOfWeek);
                 endOfWeek = startOfWeek.AddDays(7);
             }

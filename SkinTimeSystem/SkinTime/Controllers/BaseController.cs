@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Commons;
+using SkinTime.DTOs;
 using SkinTime.Helpers;
-using SkinTime.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 [ApiController]
@@ -113,6 +113,6 @@ public class BaseController : ControllerBase
             return error;
         }
 
-        return Ok(new ApiResponse(true, "Success",_mapper.Map<TResult>(result.Data)));
+        return Ok(new ApiResponse(true, "Success", _mapper.Map<TResult>(result.Data)));
     }
 }

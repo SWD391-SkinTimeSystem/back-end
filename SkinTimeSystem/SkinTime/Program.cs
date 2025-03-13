@@ -1,6 +1,4 @@
-﻿
-using Hangfire;
-using SkinTime.BLL.Data;
+﻿using Hangfire;
 using SkinTime.Extensions;
 using SkinTime.Hubs;
 

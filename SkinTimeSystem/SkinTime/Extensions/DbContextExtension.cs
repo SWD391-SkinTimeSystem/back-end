@@ -3,13 +3,14 @@ using System.Configuration;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using BusinessObject.Entities;
+using BusinessObject.Enum;
+using DAOs.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using SkinTime.DAL.Entities;
-using SkinTime.DAL.Enum;
 
-namespace SkinTime.BLL.Data
+namespace SkinTime.Extensions
 {
     public static class DbContextExtension
     {

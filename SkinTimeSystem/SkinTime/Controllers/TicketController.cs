@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Data;
-using SkinTime.BLL.Services.TicketService;
+using SkinTime.DTOs.Ticket;
 using SkinTime.Extensions;
-using SkinTime.Models.Ticket;
 using StackExchange.Redis;
 
 namespace SkinTime.Controllers

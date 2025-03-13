@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
+using BusinessObject.Entities;
+using BusinessObject.EventEnums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Services.EventService;
-using SkinTime.DAL.Entities;
-using SkinTime.DAL.Enum.EventEnums;
-using SkinTime.Models;
-using SkinTime.Models.Event;
+using SkinTime.DTOs;
+using SkinTime.DTOs.Event;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 
@@ -19,11 +19,15 @@ namespace SkinTime.Controllers
     public class EventController : BaseController
     {
         private readonly IEventService _services;
+        private readonly IMapper _mapper;
+        private readonly IEmailUtilities _emailUtilities;
 
         public EventController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, IEventService services)
             : base(mapper, emailUtilities, tokenUtilities)
         {
-                _services = services;
+            _services = services;
+            _mapper = mapper;
+            _emailUtilities = emailUtilities;
         }
 
         [HttpGet("available")]
@@ -40,6 +44,7 @@ namespace SkinTime.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<Event>>> GetEventInformation(Guid id)
         {
+            var target = await _services.GetEventWithId(id);
 
             return await HandleServiceCall<EventViewModel>(async () =>
             {
@@ -52,9 +57,9 @@ namespace SkinTime.Controllers
         public async Task<IActionResult> CreatEvent([FromBody] EventCreationModel eventInformation)
         {
             return await HandleServiceCall<EventViewModel>(async () =>
-            {
-                return await _services.CreateNewEvent(_mapper.Map<Event>(eventInformation));
-            });
+        {
+            return await _services.CreateNewEvent(_mapper.Map<Event>(eventInformation));
+        });
         }
 
         [HttpPost("state")]

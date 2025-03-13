@@ -1,19 +1,17 @@
 ﻿using AutoMapper;
+using BusinessObject.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Services.BookingService;
-using SkinTime.BLL.Services.TransactionService;
-using SkinTime.DAL.Entities;
+using SkinTime.DTOs.Booking;
+using SkinTime.DTOs.Ticket;
 using SkinTime.Extensions;
-using SkinTime.Models.Booking;
-using SkinTime.Models.Ticket;
 using StackExchange.Redis;
 using System.Net;
 using System.Transactions;
-using Transaction = SkinTime.DAL.Entities.Transaction;
 
 namespace SkinTime.Controllers
 {
@@ -32,28 +30,26 @@ namespace SkinTime.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> TransactionCallback(string redis)
+        public async Task<IActionResult> TransactionCallback( string redisKey)
         {
-            var bookingData = await _database.GetAsync<BokingServiceWithIdModel>(redis);
 
 
             var data = Request.Query;
 
-            var bookingDTO = _mapper.Map<Booking>(bookingData);
-            var scheduleDTO = _mapper.Map<Schedule>(bookingData);
 
-            var paymentResult = await _service.CallbackPayment(bookingData.UserId, data, bookingDTO, scheduleDTO);
-            await _database.DeleteAsync(redis);
-            if (paymentResult)
-            {
-                return Redirect(bookingData.ReturnURL);
-            }
-            else
-            {
-                return Redirect(bookingData.FailureURL);
-            }
+            var paymentResult = await _service.CallbackPayment(redisKey,data);
+          //  await _database.DeleteAsync(redis);
+            //if (paymentResult)
+            //{
+            //    return Redirect(bookingData.ReturnURL);
+            //}
+            //else
+            //{
+            //    return Redirect(bookingData.FailureURL);
+            //}
+            return Ok();
         }
-        
+
         [HttpGet("ticket-callback")]
         public async Task<IActionResult> TicketTransactionCallback(string redis)
         {

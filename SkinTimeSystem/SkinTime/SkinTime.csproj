@@ -36,15 +36,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="SimpleBase" Version="4.0.1" />
-    <PackageReference Include="StackExchange.Redis" Version="2.8.22" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Services\Services.csproj" />
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
-    <ProjectReference Include="..\SkinTime.BLL\SkinTime.BLL.csproj">
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
 
 </Project>

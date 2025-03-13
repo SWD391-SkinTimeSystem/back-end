@@ -1,42 +1,51 @@
+version: '3.8'
+
 services:
   skintime:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnectionMySQL=Server=mysql;Database=skintime_db;User=root;Password=minhtri;
-      - Redis__Connection=redis:6379
-    ports:
-      - "8080:8080"    # HTTP
-      - "2222:2222" # SSH
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    build:
+      context: .
+      dockerfile: SkinTime/Dockerfile 
     depends_on:
       - mysql
       - redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__DefaultConnectionMySQL=Server=mysql;Port=3306;Database=skintime;User=root;Password=root;
+      - Redis__Host=redis
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    networks:
+      - app_network
 
   mysql:
     image: mysql:8.0
+    container_name: skintime_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: minhtri
-      MYSQL_DATABASE: skintime_db
-      MYSQL_USER: skintime_user
-      MYSQL_PASSWORD: minhtri
-    ports:
-      - "3307:3306"
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: skintime
     volumes:
-      - mysql_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d 
+    ports:
+      - "3306:3306"
+    networks:
+      - app_network
 
   redis:
     image: redis:latest
+    container_name: skintime_redis
     restart: always
     ports:
-      - "6381:6379"
-    volumes:
-      - redis_data:/data
+      - "6379:6379"
+    networks:
+      - app_network
+
+networks:
+  app_network:
 
 volumes:
-  mysql_data:
-  redis_data:
+  db_data:

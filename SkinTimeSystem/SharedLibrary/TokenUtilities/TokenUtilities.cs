@@ -19,12 +19,12 @@ namespace SharedLibrary.TokenUtilities
         }
 
         public string CreateJwtFromDictionary(Dictionary<string, string> data)
-        {   
+        {
             var claims = new ClaimsIdentity();
-            
+
             foreach (var pair in data)
             {
-                claims.AddClaim(new Claim(pair.Key, pair.Value));    
+                claims.AddClaim(new Claim(pair.Key, pair.Value));
             }
 
             var TokenHandler = new JwtSecurityTokenHandler();
@@ -56,7 +56,7 @@ namespace SharedLibrary.TokenUtilities
             try
             {
                 string[] tokenPart = Encoding.UTF8.GetString(Convert.FromBase64String(token)).Split('|');
-                
+
                 // Check for token malformation.
                 if (tokenPart.Length != 3)
                 {
@@ -64,7 +64,7 @@ namespace SharedLibrary.TokenUtilities
                 }
 
                 // Check for the expiration time.
-                if ( DateTime.Parse(tokenPart[2]) < DateTime.UtcNow)
+                if (DateTime.Parse(tokenPart[2]) < DateTime.UtcNow)
                 {
                     return null;
                 }
@@ -96,7 +96,7 @@ namespace SharedLibrary.TokenUtilities
             {
                 TokenHandler.ValidateToken(token, validatior, out var validatedToken);
 
-                var Token = (JwtSecurityToken) validatedToken;
+                var Token = (JwtSecurityToken)validatedToken;
                 return true;
             }
             catch (SecurityTokenExpiredException)

@@ -10,17 +10,17 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Services.BookingService;
-using SkinTime.BLL.Services.ScheduleService;
-using SkinTime.DAL.Entities;
-using SkinTime.DAL.Enum;
 using SkinTime.Extensions;
 using SkinTime.Helpers;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
-using SkinTime.BLL.Commons;
-using SkinTime.Models.Booking;
+using Services.Interfaces;
+using SkinTime.DTOs.Booking;
+using BusinessObject.Entities;
+using Services.Commons;
+using BusinessObject.Enum;
+using System.Net.WebSockets;
 
 namespace SkinTime.Controllers
 {
@@ -29,12 +29,11 @@ namespace SkinTime.Controllers
     public class BookingController : BaseController
     {
         private readonly IBookingService _service;
-        private readonly IDatabase _database;
 
-        public BookingController(IDatabase database, IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, IBookingService bookingService)
+
+        public BookingController( IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, IBookingService bookingService)
         : base(mapper, emailUtils, tokenUtils)
         {
-            _database = database;
             _service = bookingService;
         }
         /// <summary>
@@ -56,38 +55,22 @@ namespace SkinTime.Controllers
                 var listBooking = await _service.GetAppointments(userId, status);
                 return ServiceResult<ICollection<Booking>>.Success(listBooking);
             });
-            }
-        [Authorize(Roles =  nameof(UserRole.Customer))]
+        }
+        [Authorize(Roles = nameof(UserRole.Customer))]
         [HttpPost]
-        public async Task<ActionResult<BookingServiceModel>> BookingService(BookingServiceModel booking)
+        public async Task<ActionResult<BookingServiceDTO>> BookingService(BookingServiceDTO booking)
         {
-            return await HandleServiceCall (async () =>
+            return await HandleServiceCall(async () =>
             {
-                string authHeader = Request.Headers.Authorization.First()!;
-                string token = authHeader.Replace("Bearer ", "");
-                var tokenData = _tokenUtils.GetDataDictionaryFromJwt(token);
-
-                Guid userId = Guid.Parse(tokenData["id"]);
-
-                Guid bookingId = Guid.NewGuid();
-
-                var bookingData = _mapper.Map<BokingServiceWithIdModel>(booking);
-                bookingData.BookingId = bookingId;
-                bookingData.UserId = userId;
-                
-                string redisKey = $"{bookingId}";
-
-                await _database.SetAsync(redisKey, bookingData, TimeSpan.FromMinutes(30));
-                var retrievedBooking = await _database.GetAsync<BokingServiceWithIdModel>(redisKey);
-
-                var returnUrl = Url.Action("TransactionCallback", "Transaction", new { redis = redisKey }, Request.Scheme);
-
-                return await _service.CreateNewBooking(returnUrl, booking.ServiceId, booking.PaymentMethod);
+                Guid userId = Guid.Parse(GetUserIdFromJwt());
+                var bookignData = _mapper.Map<Booking>(booking);
+                var returnAction = Url.Action("TransactionCallback", "Transaction",null, Request.Scheme);
+                return await _service.CreateNewBooking(bookignData, returnAction, booking.ReturnURL,booking.FailureURL,booking.ServiceHour,booking.PaymentMethod, userId);
             });
-            
+
         }
 
-    
+
 
 
 

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using SkinTime.Models;
+using SkinTime.DTOs;
 using System.Reflection;
 using System.Text;
 
@@ -25,6 +25,7 @@ namespace SkinTime.Extensions
                         ValidateIssuerSigningKey = true,
                         ValidateActor = false,
                         ValidateAudience = false,
+                        ValidateLifetime = true,
                     };
 
                     options.Events = new JwtBearerEvents

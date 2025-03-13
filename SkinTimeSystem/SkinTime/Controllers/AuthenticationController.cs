@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
+using BusinessObject.Entities;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Commons;
-using SkinTime.BLL.Services.AuthenticationService;
-using SkinTime.DAL.Entities;
-using SkinTime.Models;
-using SkinTime.Models.Authentication;
+using SkinTime.DTOs;
+using SkinTime.DTOs.Authentication;
 
 namespace SkinTime.Controllers
 {
@@ -111,7 +111,7 @@ namespace SkinTime.Controllers
                     RefreshToken = _tokenUtils.CreateBase64RefreshToken(userData["id"])
                 });
 
-                
+
             });
         }
 
@@ -165,7 +165,7 @@ namespace SkinTime.Controllers
         {
             return await HandleServiceCall(async () =>
             {
-               return await _authService.VerifyUserAccount(id);
+                return await _authService.VerifyUserAccount(id);
             });
         }
     }
