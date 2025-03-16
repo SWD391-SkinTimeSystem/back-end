@@ -1,14 +1,14 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
 using BusinessObject.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Commons;
+using Services.Commons.DTOs.Feedback;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.DTOs;
-using SkinTime.DTOs.Feedback;
 
 namespace SkinTime.Controllers
 {
@@ -33,7 +33,7 @@ namespace SkinTime.Controllers
         [HttpPost("booking/create")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateFeedback([FromBody] FeedbackCreationModel feedback)
+        public async Task<ActionResult> CreateFeedback([FromBody] FeedbackCreationDTO feedback)
         {
             return await HandleServiceCall<ApiResponse>(async () =>
             {
@@ -52,12 +52,12 @@ namespace SkinTime.Controllers
         /// <returns>An <see cref="ApiResponse{T}"/> with a list of all booking feedback made by users.</returns>
         [Authorize(Roles = "Manager,Admin")]
         [HttpGet]
-        [ProducesResponseType<ApiResponse<ICollection<BookingFeedbackViewModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<BookingFeedbackDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ApiResponse<ICollection<BookingFeedbackViewModel>>>> GetAllFeedBack()
+        public async Task<ActionResult<ApiResponse<ICollection<BookingFeedbackDTO>>>> GetAllFeedBack()
         {
-            return await HandleServiceCall<ICollection<BookingFeedbackViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<BookingFeedbackDTO>>(async () =>
             {
                 return await _service.GetAllFeedback();
             });
@@ -70,20 +70,20 @@ namespace SkinTime.Controllers
         /// <returns>An <see cref="ApiResponse{T}"/> with a list of all booking feedback made by user with provided id.</returns>
         //[Authorize(Roles = "Customer")]
         [HttpGet("customer/{id}")]
-        [ProducesResponseType<ApiResponse<ICollection<BookingFeedbackViewModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<BookingFeedbackDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ICollection<BookingFeedbackViewModel>>> GetAllCustomerFeedback(string id)
+        public async Task<ActionResult<ICollection<BookingFeedbackDTO>>> GetAllCustomerFeedback(string id)
         {
             // Get user id from jwt.
             Dictionary<string, string> data = _tokenUtils.GetDataDictionaryFromJwt(Request.Headers.Authorization.Single()!.Split()[1]);
 
             // if the customer and the searching id does not match, we do not allow operation.
-            return await HandleServiceCall<ICollection<BookingFeedbackViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<BookingFeedbackDTO>>(async () =>
             {
                 if (data["id"] != id)
                 {
-                    return ServiceResult<ICollection<BookingFeedbackViewModel>>
+                    return ServiceResult<ICollection<BookingFeedbackDTO >>
                     .Failed(ServiceError.Unauthorized("the requested id does not match with user id!"));
                 }
 
@@ -98,7 +98,7 @@ namespace SkinTime.Controllers
         /// <returns>The <see cref="ApiResponse"/> with booking feedback if found, else return 4xx response.</returns>
         [Authorize(Roles = "Customer,Manager,Admin")]
         [HttpGet("booking/{booking}")]
-        [ProducesResponseType<ApiResponse<ICollection<BookingFeedbackViewModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<BookingFeedbackDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ApiResponse>> GetBookingFeedbackDetail(string booking)
@@ -107,7 +107,7 @@ namespace SkinTime.Controllers
             Dictionary<string, string> tokenData = _tokenUtils.GetDataDictionaryFromJwt(Request.Headers.Authorization.Single()!.Split()[1]);
             string bookingId = tokenData["id"];
 
-            return await HandleServiceCall<ICollection<BookingFeedbackViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<BookingFeedbackDTO>>(async () =>
             {
                 return await _service.GetBookingFeedback(bookingId);
             });
@@ -119,11 +119,11 @@ namespace SkinTime.Controllers
         /// <param name="id">The therapist id</param>
         /// <returns></returns>
         [HttpGet("therapist/{id}")]
-        [ProducesResponseType<ApiResponse<ICollection<TherapistFeedbackViewModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<TherapistFeedbackDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse>> GetTherapistFeedback(string id)
         {
-            return await HandleServiceCall<ICollection<TherapistFeedbackViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<TherapistFeedbackDTO>>(async () =>
             {
                 return await _service.GetAllTherapistFeedback(id);
             });
@@ -134,12 +134,12 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <param name="id">The therapist id</param>
         /// <returns></returns>
-        [ProducesResponseType<ApiResponse<ICollection<ServiceFeedbackViewModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<ServiceFeedbackDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         [HttpGet("service/{id}")]
         public async Task<ActionResult<ApiResponse>> GetServiceFeedback(string id)
         {
-            return await HandleServiceCall<ICollection<ServiceFeedbackViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<ServiceFeedbackDTO>>(async () =>
             {
                 return await _service.GetAllServiceFeedback(id);
             });

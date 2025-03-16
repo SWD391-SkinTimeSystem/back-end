@@ -33,7 +33,6 @@ namespace Services.Implement
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{ex.Message}\nInnerException:{ex.InnerException?.Message}\n{ex.GetType()}:{ex.StackTrace}");
                 return ServiceResult<Schedule>.Failed(ServiceError.UnhandledException(ex.Message));
             }
 

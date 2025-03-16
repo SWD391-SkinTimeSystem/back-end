@@ -1,15 +1,13 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
 using BusinessObject.Entities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Commons;
+using Services.Commons.Analysis;
+using Services.Commons.DTOs.Question;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.DTOs;
-using SkinTime.DTOs.Analysis;
-using SkinTime.DTOs.Question;
 
 namespace SkinTime.Controllers
 {
@@ -30,10 +28,10 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <returns>The list of questions</returns>
         [HttpGet]
-        [ProducesResponseType<ApiResponse<ICollection<QuestionModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<QuestionDTO>>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllQuestion()
         {
-            return await HandleServiceCall<ICollection<QuestionModel>>(async () =>
+            return await HandleServiceCall<ICollection<QuestionDTO>>(async () =>
             {
                 return ServiceResult.Success(await _service.GetAllQuestion());
             });
@@ -48,7 +46,7 @@ namespace SkinTime.Controllers
         [HttpPost]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateQuestionList([FromBody] ICollection<QuestionCreationModel> questions)
+        public async Task<IActionResult> UpdateQuestionList([FromBody] ICollection<QuestionCreationDTO> questions)
         {
             Func<Task<ServiceResult>> function = async () =>
             {
@@ -64,10 +62,10 @@ namespace SkinTime.Controllers
         /// <param name="answer">The list of choices user has selected.</param>
         /// <returns>skin types in percentages and list of recommended services.</returns>
         [HttpPost("recommendations")]
-        [ProducesResponseType<ApiResponse<AnalysisModel>>(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetServiceRecommments([FromBody] AnswerModel answer)
+        [ProducesResponseType<ApiResponse<AnalysisDTO>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetServiceRecommments([FromBody] AnswerDTO answer)
         {
-            return await HandleServiceCall<AnalysisModel>(async () =>
+            return await HandleServiceCall<AnalysisDTO>(async () =>
             {
                 return ServiceResult.Success(await _service.GetServiceRecommments(answer.ResultIds));
             });

@@ -1,10 +1,10 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons.DTOs.Therapist;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.DTOs;
-using SkinTime.DTOs.Therapist;
 using SkinTime.Helpers;
 
 namespace SkinTime.Controllers
@@ -26,10 +26,10 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <returns>The 200 Ok action result with data as list of therapist.</returns>
         [HttpGet]
-        [ProducesResponseType<ApiResponse<ICollection<TherapistViewModel>>>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ApiResponse<ICollection<TherapistViewModel>>>> GetTherapistList()
+        [ProducesResponseType<ApiResponse<ICollection<TherapistDTO>>>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ApiResponse<ICollection<TherapistDTO>>>> GetTherapistList()
         {
-            return await HandleServiceCall<ICollection<TherapistViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<TherapistDTO>>(async () =>
             {
                 return await _service.GetAllTherapist();
             });
@@ -43,11 +43,11 @@ namespace SkinTime.Controllers
         /// <param name="duration">the duration of the service</param>
         /// <returns>A list of therapist that match the given criteria</returns>
         [HttpGet("available")]
-        [ProducesResponseType<ApiResponse<TherapistViewModel>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<TherapistDTO>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse<string>>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAvailableTherapistForDay(DateOnly date, TimeOnly time, int duration)
         {
-            return await HandleServiceCall<TherapistViewModel>(async () =>
+            return await HandleServiceCall<TherapistDTO>(async () =>
             {
                 return await _service.GetFirstAvailableTherapist(date, time, duration);
             });
@@ -60,12 +60,12 @@ namespace SkinTime.Controllers
         /// <param name="id">The therapist id</param>
         /// <returns>The 200 Ok action result with therapist information that match the provided id, else a 404 Not Found result.</returns>
         [HttpGet("{id}")]
-        [ProducesResponseType<ApiResponse<ICollection<TherapistViewModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<TherapistDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TherapistViewModel>> GetTherapistInformation(Guid id)
+        public async Task<ActionResult<TherapistDTO>> GetTherapistInformation(Guid id)
         {
-            return await HandleServiceCall<TherapistViewModel>(async () =>
+            return await HandleServiceCall<TherapistDTO>(async () =>
             {
                 return await _service.GetTherapistWithId(id);
             });

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +16,7 @@ namespace Services.PaymentSetting
         public string? Description { get; set; }
         public string? BankCode { get; set; }
         public double AmountInUsd { get; private set; }
-        public string? CallbackUrl { get; set; }
+        public string? RefundUrl { get; set; }
         public string? QueryOrderUrl { get; set; }
 
         #region ZALOPAY
@@ -26,9 +27,21 @@ namespace Services.PaymentSetting
 
             if (response.TryGetValue("order_url", out var orderUrl))
             {
-                return orderUrl; // URL to redirect user for ZaloPay QR code
+                return orderUrl; 
             }
             throw new Exception("Failed to create ZaloPay order.");
+        }
+        public async Task<string> CreateZaloPayRefund(decimal? amount, string returnCallBack, string serviceName)
+        {
+            var response = await CreateZaloPayRefundAsync(amount, returnCallBack, serviceName);
+
+
+            if (response.TryGetValue("order_url", out var orderUrl))
+            {
+                return orderUrl; 
+            }
+            throw new Exception("Failed to create ZaloPay order.");
+
         }
         #endregion
 
@@ -78,6 +91,51 @@ namespace Services.PaymentSetting
             param.Add("mac", Compute(ZaloPayHMAC.HMACSHA256, Key1, data));
 
             return await PostFormAsync<Dictionary<string, string>>(CreateOrderUrl, param);
+        }
+        public async Task<Dictionary<string, string>> CreateZaloPayRefundAsync(
+     decimal? amount, string returnCallBack, string serviceName)
+        {
+            if (amount == null || amount <= 0)
+            {
+                throw new Exception("Số tiền hoàn phải lớn hơn 0.");
+            }
+
+            Random rnd = new Random();
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+
+            // ✅ LẤY `zptransid` TỪ DB HOẶC GIAO DỊCH TRƯỚC
+            var zptransid = "250314000009078"; // ⚠️ Thay bằng ID thực tế của giao dịch
+
+            // ✅ Mã hoàn tiền hợp lệ
+            var mrefundid = $"{DateTime.UtcNow:yyMMdd}_{AppId}_{rnd.Next(100000000, 999999999)}";
+
+            // ✅ Định dạng description đúng
+            var description = "Hoàn tiền " + serviceName;
+            if (description.Length > 100)
+            {
+                description = description.Substring(0, 100);
+            }
+
+            var param = new Dictionary<string, string>
+    {
+        { "appid", AppId },
+        { "mrefundid", mrefundid },
+        { "zptransid", zptransid },
+        { "amount", ((long)amount).ToString() }, // Phải là số nguyên
+        { "timestamp", timestamp },
+        { "description", description }
+    };
+
+            // ✅ Tạo chữ ký bảo mật đúng format
+            var data = $"{AppId}|{zptransid}|{param["amount"]}|{description}|{timestamp}";
+            param.Add("mac", Compute(ZaloPayHMAC.HMACSHA256, Key1, data));
+
+            Console.WriteLine("🚀 Gửi yêu cầu hoàn tiền: " + JsonConvert.SerializeObject(param));
+
+            var response = await PostFormAsync<Dictionary<string, string>>("https://sandbox.zalopay.com.vn/v001/tpe/partialrefund", param);
+            Console.WriteLine("🛠 Phản hồi từ ZaloPay: " + JsonConvert.SerializeObject(response));
+
+            return response;
         }
 
         public static long GetTimeStamp(DateTime date)

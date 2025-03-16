@@ -1,13 +1,13 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons.DTOs.Booking;
 using Services.Commons.DTOs.StatisticDTOs;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.DTOs;
-using SkinTime.DTOs.Booking;
 
 namespace SkinTime.Controllers
 {
@@ -87,10 +87,10 @@ namespace SkinTime.Controllers
         /// <param name="limit">The maximum amount of booking information to return</param>
         /// <returns></returns>
         [HttpGet("booking/upcoming")]
-        [ProducesResponseType<ApiResponse<ICollection<BookingViewModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<BookingDetailDTO>>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUpcomingBookingIngo(int limit = 5)
         {
-            return await HandleServiceCall<ICollection<BookingViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<BookingDetailDTO>>(async () =>
             {
                 return await _service.GetUpcomingBookings(limit);
             });

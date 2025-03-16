@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
 using Azure;
 using BusinessObject.Entities;
 using BusinessObject.Enum;
@@ -6,11 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
 using Services.Commons;
+using Services.Commons.DTOs.User;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.DTOs;
-using SkinTime.DTOs.User;
 using System.IO;
 using System.Text;
 

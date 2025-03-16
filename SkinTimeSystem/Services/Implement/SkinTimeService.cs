@@ -53,6 +53,12 @@ namespace Services.Implement
 
         public async Task<ICollection<Service>> GetAllService() => await _unitOfWork.Repository<Service>().GetAllAsync();
 
+        public async Task<ICollection<Service>> GetAllTreatmentplant()
+        {
+           var listService = await _unitOfWork.Services.GetAllTretmenplan();
+            return  listService;
+        }
+
         public async Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService)
         {
             var service = await _unitOfWork.Repository<Service>()

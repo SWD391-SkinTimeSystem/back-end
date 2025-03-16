@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkinTime", "SkinTime\SkinTime.csproj", "{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "SkinTime\API.csproj", "{9D03315F-04E2-43FF-BF16-9C1F6B5CDA6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLibrary", "SharedLibrary\SharedLibrary.csproj", "{F6ED2BAF-D042-42E6-A891-2FB834825AB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessObject", "BusinessObject\BusinessObject.csproj", "{E67410E7-C560-4863-8E1C-7ABC09909CCE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAOs", "DAOS\DAOs.csproj", "{E26FAB4B-6169-4BF3-8412-AA5B9B4F7031}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositories\Repositories.csproj", "{9158139E-1A3A-4E69-9E89-7DB27BF36F86}"
 EndProject
@@ -35,10 +33,6 @@ Global
 		{E67410E7-C560-4863-8E1C-7ABC09909CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E67410E7-C560-4863-8E1C-7ABC09909CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E67410E7-C560-4863-8E1C-7ABC09909CCE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E26FAB4B-6169-4BF3-8412-AA5B9B4F7031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E26FAB4B-6169-4BF3-8412-AA5B9B4F7031}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E26FAB4B-6169-4BF3-8412-AA5B9B4F7031}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E26FAB4B-6169-4BF3-8412-AA5B9B4F7031}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9158139E-1A3A-4E69-9E89-7DB27BF36F86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9158139E-1A3A-4E69-9E89-7DB27BF36F86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9158139E-1A3A-4E69-9E89-7DB27BF36F86}.Release|Any CPU.ActiveCfg = Release|Any CPU

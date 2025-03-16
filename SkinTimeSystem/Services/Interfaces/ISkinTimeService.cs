@@ -13,6 +13,7 @@ namespace Services.Interfaces
     {
         Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService);
         Task<Service> GetTreatmentplant(Guid idService);
+        Task<ICollection<Service>> GetAllTreatmentplant();
         Task<ICollection<Service>> GetAllService();
         Task<ServiceResult<bool>> CreateService(Service service,ICollection<IFormFile> serviceImages, ICollection<Guid> skintypeIds);
     }

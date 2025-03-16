@@ -1,15 +1,19 @@
+using AutoMapper;
 using BusinessObject.Entities;
 using BusinessObject.Enum;
 using BusinessObject.Schedule;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Repositories.ConcreteRepository.Interface;
+using Repositories.Interface;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Booking;
 using Services.Interfaces;
 using Services.PaymentSetting;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,56 +25,48 @@ namespace Services.Implement
     public class TransactionService : ITransactionService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly ICache _cache;
         private readonly VNPay _vnPay;
         private readonly ZaloPay _zaloPay;
 
-        public TransactionService(ICache cache, IUnitOfWork unitOfWork, VNPay vNPay, ZaloPay zaloPay)
+        public TransactionService(IMapper mapper,ICache cache, IUnitOfWork unitOfWork, VNPay vNPay, ZaloPay zaloPay)
         {
             _unitOfWork = unitOfWork;
             _vnPay = vNPay;
             _zaloPay = zaloPay;
             _cache = cache;
+            _mapper = mapper;
         }
 
-        public async Task<bool> CallbackPayment(string redisKey,IQueryCollection data)
+        public async Task<string> CallbackPayment(string redisKey, IQueryCollection data)
         {
             string jsonData = await _cache.GetAsync<string>(redisKey);
-            JObject bookingData = JObject.Parse(jsonData);
+            var bookingDto = JsonConvert.DeserializeObject<BookingServiceDTO>(jsonData);
+            
 
-            var booking = bookingData["Booking"]?.ToObject<Booking>();
-            var serviceHour = bookingData["ServiceHour"]?.ToObject<TimeOnly>();
-            var paymentMethod = bookingData["PaymentMethod"]?.ToString();
-            var returnURL = bookingData["ReturnURL"]?.ToString();
-            var failureURL = bookingData["FailureURL"]?.ToString();
-            if (data.ContainsKey("vnp_BankCode"))
+            var bank = Enum.TryParse(bookingDto.PaymentMethod, true, out PaymentMethod pm) && Enum.IsDefined(pm) ? pm : (PaymentMethod?)null;
+            bool isSuccess = true;
+
+            if (bank == PaymentMethod.VnPay)
             {
-                bool vnPayResult = await HandleVnPayCallback(data);
-                if (!vnPayResult)
-                {
-                    return false;
-                }
+                isSuccess = await HandleVnPayCallback(data);
+            }
+            else if (bank == PaymentMethod.ZaloPay)
+            {
+                isSuccess = await HandleZaloPayCallback(data);
             }
 
-            if (
-                   data.ContainsKey("bankcode")
-                   && (
-                       data["bankode"].ToString() == ""
-                       || data["bankode"].ToString() == "zalopayapp"
-                       || data["bankode"].ToString() == "CC"
-                   )
-               )
+            if (!isSuccess)
             {
-                bool zaloPayResult = await HandleZaloPayCallback(data);
-                if (!zaloPayResult)
-                {
-                    return false;
-                }
+                return bookingDto.FailureURL;
             }
-           //await AddBookingData(userId, booking, schedule);
-            return true;
-
+            var booking = _mapper.Map<Booking>(bookingDto);
+            await _unitOfWork.Bookings.CreateBookingAndSchedule(booking,bookingDto.ServiceHour);
+            await _cache.DeleteAsync<string>(redisKey);
+            return  bookingDto.ReturnURL;
         }
+
 
         public async Task<ServiceResult> CallbackTicketPayment(IQueryCollection data, EventTicket ticket)
         {
@@ -99,41 +95,7 @@ namespace Services.Implement
             return ServiceResult.Success(addedTicket);
         }
 
-        public async Task AddBookingData(Guid userId, Booking booking, Schedule schedule)
-        {
-
-            var service = _unitOfWork.Repository<Service>().GetById(booking.ServiceId);
-            booking.Id = Guid.NewGuid();
-            booking.CustomerId = userId;
-            booking.TotalPrice = service.Price;
-            await _unitOfWork.Repository<Booking>().AddAsync(booking);
-
-
-            var serviceDetails = service.ServiceDetailNavigation
-                                        .Where(sd => !sd.IsDetele)
-                                        .OrderBy(sd => sd.Step)
-                                        .ToList();
-
-            foreach (var serviceDetail in serviceDetails)
-            {
-                var newSchedule = new Schedule
-                {
-                    Id = Guid.NewGuid(),
-                    BookingId = booking.Id,
-                    ServiceDetailId = serviceDetail.Id,
-                    Status = ScheduleStatus.NotStarted,
-                    ReservedStartTime = schedule.ReservedStartTime,
-                    ReservedEndTime = schedule.ReservedStartTime.Add(TimeSpan.FromMinutes(serviceDetail.Duration)),
-                    Date = schedule.Date.AddDays(serviceDetail.DateToNextStep),
-                };
-
-                await _unitOfWork.Repository<Schedule>().AddAsync(newSchedule);
-                newSchedule.Date = newSchedule.Date.AddDays(serviceDetail.DateToNextStep);
-            }
-
-            await _unitOfWork.Complete();
-
-        }
+       
 
         #region VNPAY
         private async Task<bool> HandleVnPayCallback(IQueryCollection data)
@@ -271,6 +233,18 @@ namespace Services.Implement
         public Task<string> CreateTransaction(System.Transactions.Transaction bookingTransaction, string returnUrl, string notifyUrl)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<string> RefundPayment(Guid id, string returnAction, string name, decimal amount)
+        {
+
+           return _zaloPay.CreateZaloPayRefund(amount ,returnAction, name);
+        }
+
+
+        public Task<string> RefundPaymentvnpay()
+        {
+            return _vnPay.CreateVNPayRefundOrder();
         }
     }
 }

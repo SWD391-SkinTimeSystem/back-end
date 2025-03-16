@@ -1,8 +1,7 @@
 ﻿using BusinessObject.Entities;
-using DAOs.Data;
-using Repositories.ConcreteRepository.Implement;
-using Repositories.ConcreteRepository.Interface;
-using Repositories.GenericRepository;
+using Repositories.Data;
+using Repositories.Implement;
+using Repositories.Interface;
 using System;
 using System.Collections;
 using System.Collections.Generic;

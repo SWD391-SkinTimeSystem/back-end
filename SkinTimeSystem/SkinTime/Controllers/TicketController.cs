@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons.DTOs.Ticket;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.DTOs.Ticket;
 using SkinTime.Extensions;
 using StackExchange.Redis;
 
@@ -36,22 +36,22 @@ namespace SkinTime.Controllers
             });
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterServiceTicket([FromBody] TicketRegistrationModel registration)
-        {
-            string userId = _tokenUtils.GetDataDictionaryFromJwt(Request.Headers.Authorization.Single()!.Split()[1])["id"];
+        //[HttpPost("register")]
+        //public async Task<IActionResult> RegisterServiceTicket([FromBody] TicketRegistrationDTO registration)
+        //{
+        //    string userId = _tokenUtils.GetDataDictionaryFromJwt(Request.Headers.Authorization.Single()!.Split()[1])["id"];
 
-            return await HandleServiceCall(async () =>
-            {
-                TicketRegistrationCacheModel cachedItem = _mapper.Map<TicketRegistrationCacheModel>(registration);
-                cachedItem.UserId = Guid.Parse(userId);
+        //    return await HandleServiceCall(async () =>
+        //    {
+        //        TicketRegistrationCacheModel cachedItem = _mapper.Map<TicketRegistrationCacheModel>(registration);
+        //        cachedItem.UserId = Guid.Parse(userId);
 
-                await _redisCache.SetAsync<TicketRegistrationCacheModel>(cachedItem.Id.ToString(), cachedItem, TimeSpan.FromMinutes(10));
+        //        await _redisCache.SetAsync<TicketRegistrationCacheModel>(cachedItem.Id.ToString(), cachedItem, TimeSpan.FromMinutes(10));
 
-                string callback = Url.Action("TicketTransactionCallback", "Transaction", new { redis = $"{cachedItem.Id}" }, Request.Scheme)!;
+        //        string callback = Url.Action("TicketTransactionCallback", "Transaction", new { redis = $"{cachedItem.Id}" }, Request.Scheme)!;
 
-                return await _service.CreateTicketForEvent(userId, registration.EventId.ToString(), registration.PaymentMethod, callback);
-            });
-        }
+        //        return await _service.CreateTicketForEvent(userId, registration.EventId.ToString(), registration.PaymentMethod, callback);
+        //    });
+        //}
     }
 }

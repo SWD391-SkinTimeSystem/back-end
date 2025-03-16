@@ -5,14 +5,15 @@ using Hangfire;
 using Hangfire.MySql;
 using Services.Implement;
 using Services.Interfaces;
-using Repositories.GenericRepository;
 using Repositories.UnitOfWork;
 using Services.PaymentSetting;
 using SharedLibrary.EmailUtilities;
 using SkinTime.Helpers;
-using Repositories.ConcreteRepository.Interface;
 using System.Security.Cryptography;
-using Repositories.ConcreteRepository.Implement;
+using System.Configuration;
+using Services.FileSetting;
+using Repositories.Implement;
+using Repositories.Interface;
 
 
 namespace SkinTime.Extensions
@@ -38,7 +39,9 @@ namespace SkinTime.Extensions
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICache, Cache>();
+            services.AddScoped<FileService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ITicketService, TicketService>();

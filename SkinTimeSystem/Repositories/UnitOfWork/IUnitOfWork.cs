@@ -1,6 +1,5 @@
 ﻿using BusinessObject.Entities;
-using Repositories.ConcreteRepository.Interface;
-using Repositories.GenericRepository;
+using Repositories.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;

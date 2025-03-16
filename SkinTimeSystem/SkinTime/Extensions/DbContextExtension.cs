@@ -5,10 +5,10 @@ using System.Security.Cryptography;
 using System.Text;
 using BusinessObject.Entities;
 using BusinessObject.Enum;
-using DAOs.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Repositories.Data;
 
 namespace SkinTime.Extensions
 {

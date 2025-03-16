@@ -15,7 +15,7 @@ namespace SkinTime
             services.AddDatabaseConfig(config);
             services.AddApplicationServices(config);
             services.ConfigurateAuthenticationMethod(config);
-            services.AddSessionService();
+            services.AddBlobService(config);
             services.AddRedisService(config);
             services.AddControllers();
             services.AddSignalR();
@@ -56,7 +56,6 @@ namespace SkinTime
             app.UseCors("AllowAll");
             app.UseHangfireDashboard("/hangfire");
             app.MapHub<Chathub>("/chatHub");
-            app.UseSession();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();

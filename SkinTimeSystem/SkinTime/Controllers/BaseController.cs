@@ -1,10 +1,9 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Services.Commons;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.DTOs;
-using SkinTime.Helpers;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 [ApiController]
