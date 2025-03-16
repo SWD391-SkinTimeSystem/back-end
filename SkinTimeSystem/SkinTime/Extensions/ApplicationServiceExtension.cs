@@ -40,6 +40,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ITrackingService, TrackingService>();
             services.AddScoped<ICache, Cache>();
             services.AddScoped<FileService>();
             services.AddScoped<IQuestionService, QuestionService>();

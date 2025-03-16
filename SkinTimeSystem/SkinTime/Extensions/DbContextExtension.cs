@@ -18,11 +18,11 @@ namespace SkinTime.Extensions
             this IServiceCollection services,
             IConfiguration config)
         {
-            // Code to use DbContext for MySQL database engine 
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseMySql(
                 config.GetConnectionString("DefaultConnectionMySQL"),
                 ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnectionMySQL"))
             ));
+
 
             // Code to use DbContext for SQL Server database engine (commented out)
             //services.AddDbContext<ApplicationDbContext>(options =>

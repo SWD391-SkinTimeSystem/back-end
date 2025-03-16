@@ -34,7 +34,7 @@ namespace Services.Implement
             _cache = cache;
         }
 
-        public async Task<ServiceResult<string>> CreateBooking(BookingServiceDTO booking, Guid userId,string? returnAction)
+        public async Task<ServiceResult<string>> CreateBooking(BookingServiceDTO booking, Guid userId, string? returnAction)
         {
             var service = _unitOfWork.Repository<Service>().GetById(booking.ServiceId);
             var bookingWithId = booking as BookingServiceWithIdDTO ?? new BookingServiceWithIdDTO(booking, userId);

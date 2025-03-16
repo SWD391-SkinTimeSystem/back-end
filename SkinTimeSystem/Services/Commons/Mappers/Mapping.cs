@@ -12,6 +12,7 @@ using Services.Commons.DTOs.Schedule;
 using Services.Commons.DTOs.Service;
 using Services.Commons.DTOs.Therapist;
 using Services.Commons.DTOs.Ticket;
+using Services.Commons.DTOs.TrackingDTO;
 using Services.Commons.DTOs.User;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -343,15 +344,16 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.ReservedTime))
                 .ReverseMap()
     .ForMember(dest => dest.ReservedTime, opt =>
-        opt.MapFrom(src => src.ServiceDate.ToDateTime(TimeOnly.MinValue))); 
+        opt.MapFrom(src => src.ServiceDate.ToDateTime(TimeOnly.MinValue)));
 
-        //    CreateMap<ServiceDTO, Service>()
-        //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ServiceStatus>(src.Status)))
-        //.ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.ServiceDetails.Sum(d => d.Duration))) // Tự tính Duration
-        //.ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
+            //    CreateMap<ServiceDTO, Service>()
+            //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ServiceStatus>(src.Status)))
+            //.ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.ServiceDetails.Sum(d => d.Duration))) // Tự tính Duration
+            //.ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
 
             CreateMap<ServiceDetailsDTO, ServiceDetail>()
                .ForMember(dest => dest.ServiceID, opt => opt.Ignore());
+            CreateMap<CreationalTrackingDTO, Tracking>().ReverseMap();
         }
 
     }
