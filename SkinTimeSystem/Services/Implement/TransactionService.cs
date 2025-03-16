@@ -42,7 +42,7 @@ namespace Services.Implement
         public async Task<string> CallbackPayment(string redisKey, IQueryCollection data)
         {
             string jsonData = await _cache.GetAsync<string>(redisKey);
-            var bookingDto = JsonConvert.DeserializeObject<BookingServiceDTO>(jsonData);
+            var bookingDto = JsonConvert.DeserializeObject<BookingServiceWithIdDTO>(jsonData);
             
 
             var bank = Enum.TryParse(bookingDto.PaymentMethod, true, out PaymentMethod pm) && Enum.IsDefined(pm) ? pm : (PaymentMethod?)null;

@@ -37,9 +37,10 @@ namespace Services.Implement
         public async Task<ServiceResult<string>> CreateBooking(BookingServiceDTO booking, Guid userId,string? returnAction)
         {
             var service = _unitOfWork.Repository<Service>().GetById(booking.ServiceId);
+            var bookingWithId = booking as BookingServiceWithIdDTO ?? new BookingServiceWithIdDTO(booking, userId);
             var bank = Enum.TryParse(booking.PaymentMethod, true, out PaymentMethod pm) && Enum.IsDefined(pm) ? pm : (PaymentMethod?)null;
             string redisKey = $"{Guid.NewGuid()}";
-            await _cache.SetAsync(redisKey, JsonConvert.SerializeObject(booking), TimeSpan.FromMinutes(30));
+            await _cache.SetAsync(redisKey, JsonConvert.SerializeObject(bookingWithId), TimeSpan.FromMinutes(30));
             returnAction = QueryHelpers.AddQueryString(returnAction, "redisKey", redisKey);
 
             string? result = null;

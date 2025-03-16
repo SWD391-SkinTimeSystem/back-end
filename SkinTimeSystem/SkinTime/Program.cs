@@ -18,9 +18,20 @@ namespace SkinTime
             services.AddBlobService(config);
             services.AddRedisService(config);
             services.AddControllers();
-            services.AddSignalR();
+            services.AddSignalR().AddNewtonsoftJsonProtocol(); ;
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:5173") // ✅ Chỉ cho phép frontend này
+                              .AllowAnyMethod()
+                              .AllowAnyHeader()
+                              .AllowCredentials(); // ✅ Bật credentials
+                    });
+            });
 
             var app = builder.Build();
 
@@ -55,7 +66,7 @@ namespace SkinTime
             #endregion
             app.UseCors("AllowAll");
             app.UseHangfireDashboard("/hangfire");
-            app.MapHub<Chathub>("/chatHub");
+            app.MapHub<NotificationHub>("/notificationHub");
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();

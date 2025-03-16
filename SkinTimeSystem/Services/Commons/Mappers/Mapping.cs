@@ -339,7 +339,7 @@ namespace SkinTime.Helpers
             //    .ForMember(dest => dest.BookingCount, opt => opt.MapFrom(x => x.BookingNavigation.Count()))
             //    .ForMember(dest => dest.TotalRevenue, opt => opt.MapFrom(x => x.BookingNavigation.Sum(x => x.TotalPayment)));
 
-            CreateMap<Booking, BookingServiceDTO>()
+            CreateMap<Booking, BookingServiceWithIdDTO>()
                 .ForMember(dest => dest.ServiceDate, opt => opt.MapFrom(src => src.ReservedTime))
                 .ReverseMap()
     .ForMember(dest => dest.ReservedTime, opt =>

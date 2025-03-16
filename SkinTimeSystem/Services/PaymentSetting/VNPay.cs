@@ -70,9 +70,9 @@ namespace Services.PaymentSetting
             _requestData.Clear();
 
             // Lấy thông tin giao dịch từ Redis (hoặc DB)
-            string transaction_id = "cd192a27-3153-4d99-8e53-b6644f4dd831"; // Đúng từ Redis
-            decimal amount = 2300000; // Số tiền đúng từ Redis (VND)
-            string transactionDate = "20250314174959"; // Đúng từ Redis
+            string transaction_id = "9e7bc25f-d6f7-44a1-be1b-a40e530deaf6"; // Đúng từ Redis
+            decimal amount = 2700000; // Số tiền đúng từ Redis (VND)
+            string transactionDate = "20250316171625"; // Đúng từ Redis
 
             string requestId = Guid.NewGuid().ToString("N");
             string createdBy = "admin";

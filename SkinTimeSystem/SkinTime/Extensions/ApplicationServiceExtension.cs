@@ -58,17 +58,7 @@ namespace SkinTime.Extensions
     )
 );
             services.AddHangfireServer();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll",
-                    policy =>
-                    {
-                        policy.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-
-                    });
-            });
+            
             services.AddScoped<IStatisticService, StatisticService>();
 
             // Auto mapper
