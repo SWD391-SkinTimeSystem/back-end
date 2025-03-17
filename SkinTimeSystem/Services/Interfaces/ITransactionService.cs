@@ -18,12 +18,11 @@ namespace Services.Interfaces
 
         public Task<string> CallbackPayment(string redisKey,IQueryCollection data);
 
-        public Task<bool> CallbackPayment(Guid itemId, object entity, IQueryCollection data);
+      //  public Task<bool> CallbackPayment(Guid itemId, object entity, IQueryCollection data);
 
-        public Task<ServiceResult> CallbackTicketPayment(IQueryCollection data, EventTicket ticket);
+      //  public Task<ServiceResult> CallbackTicketPayment(IQueryCollection data, EventTicket ticket);
 
-        public Task<ServiceResult> CallbackRefundPayment(IQueryCollection data);
-        public Task<string> RefundPayment( Guid id, string returnAction,string name, decimal amount);
-        public Task<string> RefundPaymentvnpay();
+     //   public Task<ServiceResult> CallbackRefundPayment(IQueryCollection data);
+        Task<ServiceResult<bool>> RefundPayment(Guid idTransaction);
     }
 }

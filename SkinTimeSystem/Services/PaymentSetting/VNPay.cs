@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BusinessObject.Entities;
+using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using System.Net;
 using System.Net.Http;
@@ -18,7 +19,7 @@ namespace Services.PaymentSetting
         public string? Command { get; set; }
         public string? CurrCode { get; set; }
         public string? Locale { get; set; }
-        public double AmountInUsd { get; private set; }
+        public string? RefundUrl { get; private set; }
 
         private SortedList<string, string> _requestData = new SortedList<string, string>(
             new VnPayCompare()
@@ -37,10 +38,10 @@ namespace Services.PaymentSetting
             return await CreatePaymentUrlAsync();
         }
 
-        public async Task<string> CreateVNPayRefundOrder()
+        public async Task<string> CreateVnPayRefund(Transaction transaction) 
         {
             string ipAddress = await GetIpAddress();
-            await ConfigureRefundRequest( ipAddress);
+            await ConfigureRefundRequest( ipAddress, transaction);
             return await CreatePaymentUrlRefundAsync();
         }
         #endregion
@@ -65,18 +66,15 @@ namespace Services.PaymentSetting
             AddRequestData("vnp_TxnRef", Guid.NewGuid().ToString());
         }
 
-        public async Task ConfigureRefundRequest(string ipAddress)
+        public async Task ConfigureRefundRequest(string ipAddress,Transaction transaction)
         {
             _requestData.Clear();
-
-            // Lấy thông tin giao dịch từ Redis (hoặc DB)
-            string transaction_id = "9e7bc25f-d6f7-44a1-be1b-a40e530deaf6"; // Đúng từ Redis
-            decimal amount = 2700000; // Số tiền đúng từ Redis (VND)
-            string transactionDate = "20250316171625"; // Đúng từ Redis
+            string transaction_id = transaction.TransactionReference.ToString(); 
+            decimal amount = transaction.Amount; 
+            
+            string transactionDate = transaction.PayDate; 
 
             string requestId = Guid.NewGuid().ToString("N");
-            string createdBy = "admin";
-            string returnUrl = "https://your-return-url.com";
 
             AddRequestData("vnp_RequestId", requestId);
             AddRequestData("vnp_Version", Version);
@@ -87,24 +85,20 @@ namespace Services.PaymentSetting
             AddRequestData("vnp_TxnRef", transaction_id);
             AddRequestData("vnp_Amount", ((long)(amount * 100)).ToString());
             AddRequestData("vnp_TransactionDate", transactionDate);
-            AddRequestData("vnp_CreateBy", createdBy);
 
             AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             AddRequestData("vnp_CurrCode", CurrCode);
             AddRequestData("vnp_IpAddr", ipAddress);
             AddRequestData("vnp_Locale", Locale);
             AddRequestData("vnp_OrderInfo", "Thanh toán hoàn tiền");
-            AddRequestData("vnp_OrderType", "other");
-            AddRequestData("vnp_ReturnUrl", returnUrl);
+            AddRequestData("vnp_OrderType", "hoàn tiền");
 
-            // Tạo SecureHash
-            string rawData = $"{requestId}|{Version}|refund|{TmnCode}|02|{transaction_id}|{(int)(amount * 100)}||{transactionDate}|{createdBy}|{DateTime.Now:yyyyMMddHHmmss}|{ipAddress}|Thanh";
+            string rawData = $"{requestId}|{Version}|refund|{TmnCode}|02|{transaction_id}|{(int)(amount * 100)}||{transactionDate}|{DateTime.Now:yyyyMMddHHmmss}|{ipAddress}|Thanh";
             string secureHash = GenerateSecureHash(rawData);
             AddRequestData("vnp_SecureHash", secureHash);
         }
 
 
-        // Hàm tạo SecureHash
         private string GenerateSecureHash(string data)
         {
             using (var hmac = new HMACSHA512(Encoding.UTF8.GetBytes("FE59QM7PYFU533HUBLS2WO9K3ABN3J8I")))
@@ -142,12 +136,10 @@ namespace Services.PaymentSetting
 
         public async Task<string> CreateRequestRefundUrl(string baseUrl, string vnp_HashSecret)
         {
-            // 1️⃣ Lọc tham số rỗng và sắp xếp theo thứ tự ABC
             var data = _requestData.Where(kv => !string.IsNullOrEmpty(kv.Value))
                                    .OrderBy(kv => kv.Key)
                                    .ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            // 2️⃣ Tạo chuỗi dữ liệu để mã hóa `vnp_SecureHash`
             string rawData = string.Join("|", new List<string>
         {
             data.GetValueOrDefault("vnp_RequestId", ""),
@@ -159,7 +151,6 @@ namespace Services.PaymentSetting
             data.GetValueOrDefault("vnp_Amount", ""),
             data.GetValueOrDefault("vnp_TransactionNo", ""),  
             data.GetValueOrDefault("vnp_TransactionDate", ""),
-            data.GetValueOrDefault("vnp_CreateBy", ""),
             data.GetValueOrDefault("vnp_CreateDate", ""),
             data.GetValueOrDefault("vnp_IpAddr", ""),
             data.GetValueOrDefault("vnp_OrderInfo", "")
@@ -203,7 +194,7 @@ namespace Services.PaymentSetting
             if (string.IsNullOrEmpty(HashSecret))
                 throw new Exception("VNPay HashSecret is null!");
 
-            return await CreateRequestRefundUrl("https://sandbox.vnpayment.vn/merchant_webapi/api/transaction", HashSecret);
+            return await CreateRequestRefundUrl(RefundUrl, HashSecret);
         }
         public async Task<string> GetIpAddress()
         {
@@ -228,7 +219,6 @@ namespace Services.PaymentSetting
             return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public async Task<double> GetAmount() => AmountInUsd;
 
         private string GetResponseData()
         {

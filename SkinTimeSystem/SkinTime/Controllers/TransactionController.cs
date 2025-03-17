@@ -3,6 +3,7 @@ using BusinessObject.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Commons.DTOs.Transaction;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
@@ -62,19 +63,12 @@ namespace SkinTime.Controllers
         //    }
         //}
         [HttpPost]
-        public async Task<IActionResult> RefundTransaction( bool isBooking, Guid id, string name , decimal amount)
+        public async Task<IActionResult> RefundTransaction([FromBody] Guid idTransaction)
         {
-            var returnAction = Url.Action("TransactionCallback", "Transaction", null, Request.Scheme);
-            var refundUrl = await _service.RefundPayment(  id, returnAction, name, amount);
+            var refundUrl = await _service.RefundPayment(idTransaction);
             return Ok(refundUrl);
         }
 
-        [HttpPost("/vnpay-refund")]
-        public async Task<IActionResult> RefundTransactionVNPAY()
-        {
-            var refundUrl = await _service.RefundPaymentvnpay();
-            return Ok(refundUrl);
-        }
 
     }
 }
