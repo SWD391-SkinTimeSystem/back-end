@@ -73,6 +73,18 @@ public class BaseController : ControllerBase
         }
     }
 
+    protected ActionResult HandleServiceCall(ServiceResult result, string success_message = "Success")
+    {
+        var ErrorResponse = HandleError(result);
+
+        if (ErrorResponse != null)
+        {
+            return ErrorResponse;
+        }
+
+        return Ok(new ApiResponse(true, success_message, result.Data));
+    }
+
     protected async Task<ActionResult> HandleServiceCall(Func<Task<ServiceResult>> func)
     {
         var result = await func();

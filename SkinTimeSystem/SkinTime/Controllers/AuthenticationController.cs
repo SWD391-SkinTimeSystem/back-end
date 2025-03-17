@@ -35,30 +35,9 @@ namespace SkinTime.Controllers
         [HttpPost("signin")]
         public async Task<ActionResult> SignInWithCredentials([FromBody] UserCredential credentials)
         {
-            return await HandleServiceCall<AuthenticationTokens>(async () =>
-            {
-                ServiceResult result = await _authService.GetUserWithCredential(credentials.Account, credentials.Password);
+            ServiceResult result = await _authService.AuthenUserWithCredential(credentials.Account, credentials.Password);
 
-                if (result.IsSuccess)
-                {
-                    Dictionary<string, string> userObject = new Dictionary<string, string>
-                    {
-                        {"id", (result.Data as User)!.Id.ToString()},
-                        {"role", (result.Data as User)!.Role.ToString() },
-                    };
-
-                    AuthenticationTokens tokens = new()
-                    {
-                        AccessToken = _tokenUtils.CreateJwtFromDictionary(userObject),
-                        RefreshToken = _tokenUtils.CreateBase64RefreshToken(userObject["id"])
-                    };
-
-                    return ServiceResult<AuthenticationTokens>.Success(tokens);
-                }
-
-                return ServiceResult<AuthenticationTokens>
-                .Failed(ServiceError.ValidationFailed("The given credentials does not match with any account"));
-            });
+            return HandleServiceCall(result);
         }
 
         /// <summary>
@@ -72,47 +51,9 @@ namespace SkinTime.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> SignInWithGoogleCredentials([FromBody] GoogleIdentityToken token)
         {
-            return await HandleServiceCall(async () =>
-            {
-                ServiceResult<User> result = await _authService.GetUserWithGoogleWebToken(token.Token);
-                Dictionary<string, string> userData;
-                if (result.IsSuccess)
-                {
-                    userData = new()
-                    {
-                        {"id", result.Data!.Id.ToString() },
-                        {"role", result.Data!.Id.ToString()}
-                    };
-                }
-                else if (result.IsFailed && result.Error.Code == ServiceError._NotFound)
-                {
-                    // New user => created user account
-                    result = await _authService.CreateUserWithGoogleWebToken(token.Token);
+            ServiceResult result = await _authService.AuthenUserWithGoogleWebToken(token.Token);
 
-                    userData = new()
-                    {
-                        {"id", result.Data!.Id.ToString() },
-                        {"role", result.Data!.Role.ToString()}
-                    };
-
-                    var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email.html");
-                    await _emailUtils.SendGoogleEmailAsync(result.Data.Email, "SkinTime - New Registration Notice", content.Replace("[0]", result.Data.FullName));
-
-                    await _emailUtils.SendGoogleEmailAsync(result.Data.Email, "SkinTime - New Registration Notice", content);
-                }
-                else
-                {
-                    return result;
-                }
-
-                return ServiceResult.Success(new AuthenticationTokens
-                {
-                    AccessToken = _tokenUtils.CreateJwtFromDictionary(userData),
-                    RefreshToken = _tokenUtils.CreateBase64RefreshToken(userData["id"])
-                });
-
-
-            });
+            return HandleServiceCall(result);
         }
 
 
@@ -124,34 +65,9 @@ namespace SkinTime.Controllers
         [HttpPost("refresh-token")]
         public async Task<ActionResult> RefreshAccessToken([FromBody] AuthenticationTokens tokens)
         {
-            // Validate refreshtoken.
-            string? userIdString = _tokenUtils.ValidateBase64RefreshToken(tokens.RefreshToken);
+            ServiceResult result = await _authService.RegenerateToken(tokens);
 
-            return await HandleServiceCall<AuthenticationTokens>(async () =>
-            {
-                if (userIdString == null)
-                {
-                    return ServiceResult.Failed(ServiceError.Unauthorized("invalid refresh token"));
-                }
-
-                // Asynchronously wait for 0 seconds...
-                await Task.Delay(0);
-
-                // Get data from old token.
-                Dictionary<string, string> oldInformation = _tokenUtils.GetDataDictionaryFromJwt(tokens.AccessToken);
-
-                if (oldInformation.TryGetValue("error", out var error))
-                {
-                    return ServiceResult.Failed(ServiceError.ValidationFailed(error));
-                }
-
-                return ServiceResult<AuthenticationTokens>.Success(new()
-                {
-                    AccessToken = _tokenUtils.CreateJwtFromDictionary(oldInformation),
-                    RefreshToken = _tokenUtils.CreateBase64RefreshToken(userIdString)
-                });
-
-            });
+            return HandleServiceCall(result);
         }
 
         /// <summary>
@@ -163,10 +79,10 @@ namespace SkinTime.Controllers
         [HttpPost("verify")]
         public async Task<ActionResult<ApiResponse>> VerifyUserAccount([FromBody] string id)
         {
-            return await HandleServiceCall(async () =>
-            {
-                return await _authService.VerifyUserAccount(id);
-            });
+            ServiceResult result = await _authService.VerifyUserAccount(id);
+
+            return HandleServiceCall(result);
+            
         }
     }
 }
