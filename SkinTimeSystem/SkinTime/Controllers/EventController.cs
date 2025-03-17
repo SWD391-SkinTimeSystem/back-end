@@ -41,8 +41,18 @@ namespace SkinTime.Controllers
             });
         }
 
+        [HttpGet("status")]
+        [ProducesResponseType<ApiResponse<ICollection<EventDTO>>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEventByStatus(EventStatus status)
+        {
+            return await HandleServiceCall<ICollection<EventDTO>>(async () =>
+            {
+                return await _services.GetEventByStatus(status);
+            });
+        }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<Event>>> GetEventInformation(Guid id)
+        public async Task<ActionResult<ApiResponse<EventDTO>>> GetEventInformation(Guid id)
         {
             var target = await _services.GetEventWithId(id);
 

@@ -28,6 +28,6 @@ namespace Services.Interfaces
 
         Task<ServiceResult> CancelEvent(string eventId);
 
-        Task<ServiceResult<Event>> GetEventByStatus(EventStatus eventStatus);
+        Task<ServiceResult<ICollection<Event>>> GetEventByStatus(EventStatus eventStatus);
     }
 }

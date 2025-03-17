@@ -94,7 +94,9 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.IdQuestion, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptionsNavigation));
 
-            CreateMap<QuestionOption, QuestionOptionDTO>();
+            CreateMap<QuestionOption, QuestionOptionDTO>()
+                .ForMember(dest => dest.SkinType, opt => opt.MapFrom(src => src.QuestionOptionSkintypes.Select(x => x.SkinTypeID)));
+
 
             CreateMap<QuestionCreationDTO, Question>()
                 .ForMember(dest => dest.QuestionOptionsNavigation, opt => opt.MapFrom(src => src.Choices));
@@ -204,13 +206,6 @@ namespace SkinTime.Helpers
                 .ForMember(dst => dst.TimeEnd, opt => opt.MapFrom(src => src.EndTime))
                 .ForMember(dst => dst.Status, opt => opt.MapFrom(src => "ApprovePending"));
 
-
-
-            CreateMap<Question, QuestionDTO>()
-                .ForMember(dest => dest.No, opt => opt.MapFrom(src => src.OrderNo))
-                .ForMember(dest => dest.IdQuestion, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptionsNavigation));
-            CreateMap<QuestionOption, QuestionOptionDTO>();
             CreateMap<SkinType, SkintypePercentageDTO>()
             .ForMember(dest => dest.NameSkinType, opt => opt.MapFrom(src => src.Name));
 

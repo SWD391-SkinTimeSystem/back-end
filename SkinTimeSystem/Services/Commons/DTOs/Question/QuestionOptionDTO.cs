@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using BusinessObject.Entities;
+using System.Text.Json.Serialization;
 
 namespace Services.Commons.DTOs.Question
 {
@@ -8,6 +9,6 @@ namespace Services.Commons.DTOs.Question
         public string Id { get; set; }
 
         [JsonPropertyName("skin_type")]
-        public string SkinType { get; set; }
+        public ICollection<Guid> SkinType { get; set; } = new List<Guid>();
     }
 }

@@ -65,9 +65,11 @@ namespace Services.Implement
             return ServiceResult.Failed(ServiceError.ValidationFailed("The given id does not match the correct format"));
         }
 
-        public Task<ServiceResult<Event>> GetEventByStatus(EventStatus eventStatus)
+        public async Task<ServiceResult<ICollection<Event>>> GetEventByStatus(EventStatus eventStatus)
         {
-            throw new NotImplementedException();
+            return ServiceResult<ICollection<Event>>
+                .Success((await _unitOfWork.Repository<Event>()
+                    .ListAsync(x => x.Include(b => b.TicketNavigation), filter: x => x.Status == eventStatus)).ToList());
         }
 
         public async Task<ServiceResult<ICollection<Event>>> GetEventList()

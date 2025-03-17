@@ -84,7 +84,13 @@ namespace Services.Implement
             throw new NotImplementedException();
         }
 
-        public Task<ICollection<Question>> GetAllQuestion() => _unitOfWork.Repository<Question>().GetAllAsync(q => q.QuestionOptionsNavigation);
+        public async Task<ICollection<Question>> GetAllQuestion()
+        {
+            var item = (await _unitOfWork.Repository<Question>()
+            .ListAsync(includeProperties: q => q.Include(q => q.QuestionOptionsNavigation).ThenInclude(x => x.QuestionOptionSkintypes)));
+
+            return item.ToList();
+        }
 
 
         public async Task<(Dictionary<SkinType, double> SkinTypes, List<Service> Services)> GetServiceRecommments(List<Guid> listResult)

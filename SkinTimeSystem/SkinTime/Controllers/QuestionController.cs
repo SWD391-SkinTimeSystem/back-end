@@ -33,7 +33,8 @@ namespace SkinTime.Controllers
         {
             return await HandleServiceCall<ICollection<QuestionDTO>>(async () =>
             {
-                return ServiceResult.Success(await _service.GetAllQuestion());
+                var item = await _service.GetAllQuestion();
+                return ServiceResult.Success(item);
             });
         }
 
