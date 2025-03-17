@@ -15,6 +15,10 @@ namespace Services.Interfaces
 
         Task<ServiceResult<ICollection<RevenueDTO>>> GetDailyRevenueStatistics(DateOnly? from, DateOnly? to);
 
+        Task<ServiceResult<SingleRevenueDTO>> GetDailyEventRevenueStatistics(DateOnly? from, DateOnly? to);
+
+        Task<ServiceResult<SingleRevenueDTO>> GetDailyBookingRevenueStatistics(DateOnly? from, DateOnly? to);
+
         Task<ServiceResult<EventStatisticDTO>> GetDailyEventStatistics(DateOnly? from, DateOnly? to);
 
         Task<ServiceResult<ICollection<Service>>> GetMostPopularService(int limit = 5, bool includeDeleted = false);

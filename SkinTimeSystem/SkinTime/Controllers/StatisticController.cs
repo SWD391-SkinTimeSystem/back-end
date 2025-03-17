@@ -1,8 +1,10 @@
 ﻿using API.Model;
 using AutoMapper;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
 using Services.Commons.DTOs.Booking;
 using Services.Commons.DTOs.StatisticDTOs;
 using Services.Interfaces;
@@ -60,6 +62,40 @@ namespace SkinTime.Controllers
             return await HandleServiceCall(async () =>
             {
                 return await _service.GetDailyRevenueStatistics(from, to);
+            });
+        }
+
+        /// <summary>
+        ///     Get the revenue of the booking from a date to a date
+        /// </summary>
+        /// <param name="from">filter from date</param>
+        /// <param name="to">filter to date</param>
+        /// <returns>A response</returns>
+        [HttpGet("revenue/booking")]
+        [ProducesResponseType<ApiResponse<SingleRevenueDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetBookingRevenue(DateOnly? from, DateOnly? to)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.GetDailyBookingRevenueStatistics(from, to);
+            });
+        }
+
+        /// <summary>
+        ///     Get the revenue of the event from a date to a date
+        /// </summary>
+        /// <param name="from">filter from date</param>
+        /// <param name="to">filter to date</param>
+        /// <returns>A response</returns>
+        [HttpGet("revenue/event")]
+        [ProducesResponseType<ApiResponse<SingleRevenueDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetEventRevenue(DateOnly? from, DateOnly? to)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.GetDailyEventRevenueStatistics(from, to);
             });
         }
 

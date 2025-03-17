@@ -6,6 +6,7 @@ using Repositories.UnitOfWork;
 using Services.Commons;
 using Services.Commons.DTOs.StatisticDTOs;
 using Services.Interfaces;
+using System.Collections.Generic;
 
 namespace Services.Implement
 {
@@ -44,6 +45,54 @@ namespace Services.Implement
             // If the filtered list is empty, nothing will be return! 
             //return ServiceResult<Dictionary<string, int>>
             //    .Success(filtered.GroupBy(x => x.Status).ToDictionary(x => x.Key.ToString(), x => x.Count()));
+        }
+
+        public async Task<ServiceResult<SingleRevenueDTO>> GetDailyBookingRevenueStatistics(DateOnly? from, DateOnly? to)
+        {
+            if (from > to)
+            {
+                return ServiceResult<SingleRevenueDTO>.Failed(ServiceError.ValidationFailed("the 'from' date must not be larger than the 'to' date"));
+            }
+
+            DateOnly actualFrom = from ?? DateOnly.FromDateTime(DateTime.Now);
+            DateOnly actualTo = to ?? DateOnly.FromDateTime(DateTime.Now);
+
+            IEnumerable<Booking> filtered = await _unitOfWork.Repository<Booking>()
+                .ListAsync(x => actualFrom <= DateOnly.FromDateTime(x.ReservedTime) && DateOnly.FromDateTime(x.ReservedTime) <= actualTo);
+
+            SingleRevenueDTO bookingRevenue = new SingleRevenueDTO();
+
+            for (DateOnly current = actualFrom; current <= actualTo; current = current.AddDays(1))
+            {
+                bookingRevenue.Timeline.Add(current);
+                bookingRevenue.Revenue.Add(filtered.Where(x => current == DateOnly.FromDateTime(x.ReservedTime)).Sum(x => x.TotalPayment));
+            }
+
+            return ServiceResult<SingleRevenueDTO>.Success(bookingRevenue);
+        }
+
+        public async Task<ServiceResult<SingleRevenueDTO>> GetDailyEventRevenueStatistics(DateOnly? from, DateOnly? to)
+        {
+            if (from > to)
+            {
+                return ServiceResult<SingleRevenueDTO>.Failed(ServiceError.ValidationFailed("the 'from' date must not be larger than the 'to' date"));
+            }
+
+            DateOnly actualFrom = from ?? DateOnly.FromDateTime(DateTime.Now);
+            DateOnly actualTo = to ?? DateOnly.FromDateTime(DateTime.Now);
+
+            IEnumerable<EventTicket> filtered = await _unitOfWork.Repository<EventTicket>()
+                .ListAsync(x => actualFrom <= DateOnly.FromDateTime(x.CreatedTime) && DateOnly.FromDateTime(x.CreatedTime) <= actualTo);
+
+            SingleRevenueDTO ticketRevenue = new SingleRevenueDTO();
+
+            for (DateOnly current = actualFrom; current <= actualTo; current = current.AddDays(1))
+            {
+                ticketRevenue.Timeline.Add(current);
+                ticketRevenue.Revenue.Add(filtered.Where(x => current == DateOnly.FromDateTime(x.CreatedTime)).Sum(x => x.PaidAmount));
+            }
+
+            return ServiceResult<SingleRevenueDTO>.Success(ticketRevenue);
         }
 
         public async Task<ServiceResult<EventStatisticDTO>> GetDailyEventStatistics(DateOnly? from, DateOnly? to)

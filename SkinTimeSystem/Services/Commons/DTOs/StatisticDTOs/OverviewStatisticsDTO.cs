@@ -30,36 +30,4 @@ namespace Services.Commons.DTOs.StatisticDTOs
         [JsonPropertyName("inactive_therapist")]
         public int InactiveTherapist { get; set; }
     }
-
-    public class EventStatisticDTO
-    {
-        [JsonPropertyName("total_revenue")]
-        public decimal Revenue { get; set; }
-
-        [JsonPropertyName("total_events")]
-        public int NumberOfEvents { get; set; }
-
-        [JsonPropertyName("upcoming_event")]
-        public int NumberOfUpcomingEvent { get; set; }
-
-        [JsonPropertyName("canceled_event")]
-        public int NumberOfCanceledEvent { get; set; }
-
-
-        [JsonPropertyName("total_ticket_sold")]
-        public int NumberOfTickers {  get; set; }
-
-        [JsonPropertyName("refunded_ticket")]
-        public int NumberOfRefunded {  get; set; }
-    }
-
-    public class RevenueDTO
-    {
-        [JsonPropertyName("date")]
-        public required DateOnly Date {  get; set; }
-        [JsonPropertyName("total_revenue")]
-        public required decimal TotalRevenue { get; set; }
-        [JsonPropertyName("revenue_brekadown")]
-        public IDictionary<string, decimal> RevenueBreakDown { get; set; } = new Dictionary<string, decimal>();
-    }
 }
