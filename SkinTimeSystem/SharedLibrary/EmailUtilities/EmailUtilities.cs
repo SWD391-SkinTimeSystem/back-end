@@ -21,12 +21,12 @@ namespace SharedLibrary.EmailUtilities
         Outlook = 587,
     }
 
-    public class EmailUtilities: IEmailUtilities
+    public class EmailUtilities : IEmailUtilities
     {
         private readonly string _hostEmailAddress;
         private readonly string _hostEmailPassword;
 
-        public EmailUtilities(IConfiguration config) 
+        public EmailUtilities(IConfiguration config)
         {
             _hostEmailAddress = config.GetSection("MailSystem:Address").Value!;
             _hostEmailPassword = config.GetSection("MailSystem:Secret").Value!;
@@ -50,7 +50,7 @@ namespace SharedLibrary.EmailUtilities
                 client.Credentials = new NetworkCredential(senderAdress, senderKey);
                 client.Port = smtpPort;
                 client.EnableSsl = true;
-                
+
                 try
                 {
                     await client.SendMailAsync(message);

@@ -1,15 +1,14 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
+using BusinessObject.Entities;
+using BusinessObject.EventEnums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons.DTOs.Event;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Services.EventService;
-using SkinTime.BLL.Services.UserService;
-using SkinTime.DAL.Entities;
-using SkinTime.DAL.Enum.EventEnums;
-using SkinTime.Models;
-using SkinTime.Models.Event;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 
@@ -32,22 +31,32 @@ namespace SkinTime.Controllers
         }
 
         [HttpGet("available")]
-        [ProducesResponseType<ApiResponse<Collection<AvailableEventViewModel>>>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ApiResponse<ICollection<AvailableEventViewModel>>>> GetAvailableEvents()
+        [ProducesResponseType<ApiResponse<Collection<AvailableEventDTO>>>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ApiResponse<ICollection<AvailableEventDTO>>>> GetAvailableEvents()
         {
-            return await HandleServiceCall<ICollection<AvailableEventViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<AvailableEventDTO>>(async () =>
             {
                 return await _services.GetEventList(x => x.Status == EventStatus.Approved
                 && x.EventDate.ToDateTime(x.TimeStart) > DateTime.UtcNow);
             });
         }
 
+        [HttpGet("status")]
+        [ProducesResponseType<ApiResponse<ICollection<EventDTO>>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEventByStatus(EventStatus status)
+        {
+            return await HandleServiceCall<ICollection<EventDTO>>(async () =>
+            {
+                return await _services.GetEventByStatus(status);
+            });
+        }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<Event>>> GetEventInformation(Guid id)
+        public async Task<ActionResult<ApiResponse<EventDTO>>> GetEventInformation(Guid id)
         {
             var target = await _services.GetEventWithId(id);
 
-            return await HandleServiceCall<EventViewModel>(async () =>
+            return await HandleServiceCall<EventDTO>(async () =>
             {
                 return await _services.GetEventWithId(id);
             });
@@ -55,22 +64,22 @@ namespace SkinTime.Controllers
 
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreatEvent([FromBody] EventCreationModel eventInformation)
+        public async Task<IActionResult> CreatEvent([FromBody] EventCreationDTO eventInformation)
         {
-            return await HandleServiceCall<EventViewModel>(async () =>
+            return await HandleServiceCall<EventDTO>(async () =>
         {
-                return await _services.CreateNewEvent(_mapper.Map<Event>(eventInformation));
-            });
+            return await _services.CreateNewEvent(_mapper.Map<Event>(eventInformation));
+        });
         }
 
         [HttpPost("state")]
-        public async Task<IActionResult> UpdateEventState([FromBody] EventStatusUpdateModel info)
-            {
-            return await HandleServiceCall<EventViewModel>(async () =>
+        public async Task<IActionResult> UpdateEventState([FromBody] EventStatusUpdateDTO info)
+        {
+            return await HandleServiceCall<EventDTO>(async () =>
             {
                 return await _services.UpdateEventStatus(info.Id, Enum.Parse<EventStatus>(info.Status));
             });
-            }
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> CreatEvent(string id)

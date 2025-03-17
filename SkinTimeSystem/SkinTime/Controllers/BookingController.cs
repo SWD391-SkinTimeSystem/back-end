@@ -1,26 +1,14 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using StackExchange.Redis;
-using System.Text.Json;
-using System.Threading.Tasks;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Services.BookingService;
-using SkinTime.BLL.Services.ScheduleService;
-using SkinTime.DAL.Entities;
-using SkinTime.DAL.Enum;
-using SkinTime.Extensions;
-using SkinTime.Helpers;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
-using SkinTime.BLL.Commons;
-using SkinTime.Models.Booking;
+using Services.Interfaces;
+using BusinessObject.Entities;
+using Services.Commons;
+using BusinessObject.Enum;
+using Services.Commons.DTOs.Booking;
+
 
 namespace SkinTime.Controllers
 {
@@ -29,12 +17,11 @@ namespace SkinTime.Controllers
     public class BookingController : BaseController
     {
         private readonly IBookingService _service;
-        private readonly IDatabase _database;
 
-        public BookingController(IDatabase database, IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, IBookingService bookingService)
+
+        public BookingController( IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, IBookingService bookingService)
         : base(mapper, emailUtils, tokenUtils)
         {
-            _database = database;
             _service = bookingService;
         }
         /// <summary>
@@ -43,66 +30,32 @@ namespace SkinTime.Controllers
         /// <returns>List of created booking</returns>
         [Authorize]
         [HttpGet("status/{status}")]
-        public async Task<ActionResult<List<BokingServiceStatus>>> GetAppointments([FromRoute] string status)
+        public async Task<ActionResult> GetAppointments([FromRoute] string status)
         {
-            return await HandleServiceCall<ICollection<Booking>, List<BokingServiceStatus>>(async () =>
-            {
-                string authHeader = Request.Headers.Authorization.First()!;
-                string token = authHeader.Replace("Bearer ", "");
-                var tokenData = _tokenUtils.GetDataDictionaryFromJwt(token);
-
-                Guid userId = Guid.Parse(tokenData["id"]);
-
-                var listBooking = await _service.GetAppointments(userId, status);
-                return ServiceResult<ICollection<Booking>>.Success(listBooking);
+            return await HandleServiceCall(async () => {
+                Guid userId = Guid.Parse(GetUserIdFromJwt());
+                return ServiceResult.Success(await _service.GetAppointments(userId, status));
             });
-            }
-        [Authorize(Roles =  nameof(UserRole.Customer))]
+        }
+        [Authorize(Roles = nameof(UserRole.Customer))]
         [HttpPost]
-        public async Task<ActionResult<BookingServiceModel>> BookingService(BookingServiceModel booking)
-        {
-            return await HandleServiceCall (async () =>
-            {
-                string authHeader = Request.Headers.Authorization.First()!;
-                string token = authHeader.Replace("Bearer ", "");
-                var tokenData = _tokenUtils.GetDataDictionaryFromJwt(token);
-
-                Guid userId = Guid.Parse(tokenData["id"]);
-
-                Guid bookingId = Guid.NewGuid();
-
-                var bookingData = _mapper.Map<BokingServiceWithIdModel>(booking);
-                bookingData.BookingId = bookingId;
-                bookingData.UserId = userId;
-                
-                string redisKey = $"{bookingId}";
-
-                await _database.SetAsync(redisKey, bookingData, TimeSpan.FromMinutes(30));
-                var retrievedBooking = await _database.GetAsync<BokingServiceWithIdModel>(redisKey);
-
-                var returnUrl = Url.Action("TransactionCallback", "Transaction", new { redis = redisKey }, Request.Scheme);
-
-                return await _service.CreateNewBooking(returnUrl, booking.ServiceId, booking.PaymentMethod);
+        public async Task<ActionResult> BookingService(BookingServiceDTO booking)
+        {  
+            Guid userId = Guid.Parse(GetUserIdFromJwt());
+                var returnAction = Url.Action("TransactionCallback", "Transaction",null, Request.Scheme);
+            return await HandleServiceCall(async () =>
+            {            
+                return ServiceResult.Success(await _service.CreateBooking(booking, userId,returnAction));
             });
-            
+
         }
 
-    
-
-
-
-        //   return Ok(new ApiResponse<BookingServiceModel>
-        /// <summary>
-        ///     Get a detailed booking information using the booking id.
-        /// </summary>
-        /// <param name="id">The booking id</param>
-        /// <returns>Detailed information of a booking record</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookingDetailModel>> GetBookingDetails(Guid id)
+        public async Task<ActionResult> GetBookingDetails(Guid id)
         {
-            return await HandleServiceCall<Booking, BookingDetailModel>(async () =>
+            return await HandleServiceCall(async () =>
             {
-                return await _service.GetBookingInformation(id);
+                return ServiceResult.Success(await _service.GetBookingInformation(id));
             });
         }
 

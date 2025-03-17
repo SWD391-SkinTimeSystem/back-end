@@ -1,13 +1,15 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
+using Services.Commons.DTOs.Booking;
+using Services.Commons.DTOs.StatisticDTOs;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Commons.DTOs.StatisticDTOs;
-using SkinTime.BLL.Services.StatisticService;
-using SkinTime.Models;
-using SkinTime.Models.Booking;
 
 namespace SkinTime.Controllers
 {
@@ -42,7 +44,7 @@ namespace SkinTime.Controllers
             {
                 return await _service.GetOverviewStatistics(from, to);
             });
-            
+
         }
 
         /// <summary>
@@ -60,6 +62,40 @@ namespace SkinTime.Controllers
             return await HandleServiceCall(async () =>
             {
                 return await _service.GetDailyRevenueStatistics(from, to);
+            });
+        }
+
+        /// <summary>
+        ///     Get the revenue of the booking from a date to a date
+        /// </summary>
+        /// <param name="from">filter from date</param>
+        /// <param name="to">filter to date</param>
+        /// <returns>A response</returns>
+        [HttpGet("revenue/booking")]
+        [ProducesResponseType<ApiResponse<SingleRevenueDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetBookingRevenue(DateOnly? from, DateOnly? to)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.GetDailyBookingRevenueStatistics(from, to);
+            });
+        }
+
+        /// <summary>
+        ///     Get the revenue of the event from a date to a date
+        /// </summary>
+        /// <param name="from">filter from date</param>
+        /// <param name="to">filter to date</param>
+        /// <returns>A response</returns>
+        [HttpGet("revenue/event")]
+        [ProducesResponseType<ApiResponse<SingleRevenueDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetEventRevenue(DateOnly? from, DateOnly? to)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.GetDailyEventRevenueStatistics(from, to);
             });
         }
 
@@ -87,10 +123,10 @@ namespace SkinTime.Controllers
         /// <param name="limit">The maximum amount of booking information to return</param>
         /// <returns></returns>
         [HttpGet("booking/upcoming")]
-        [ProducesResponseType<ApiResponse<ICollection<BookingViewModel>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<ICollection<BookingDetailDTO>>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUpcomingBookingIngo(int limit = 5)
         {
-            return await HandleServiceCall<ICollection<BookingViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<BookingDetailDTO>>(async () =>
             {
                 return await _service.GetUpcomingBookings(limit);
             });

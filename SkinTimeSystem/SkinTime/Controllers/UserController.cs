@@ -1,16 +1,16 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
 using Azure;
+using BusinessObject.Entities;
+using BusinessObject.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
+using Services.Commons;
+using Services.Commons.DTOs.User;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Commons;
-using SkinTime.BLL.Services.UserService;
-using SkinTime.DAL.Entities;
-using SkinTime.DAL.Enum;
-using SkinTime.Models;
-using SkinTime.Models.User;
 using System.IO;
 using System.Text;
 
@@ -24,7 +24,7 @@ namespace SkinTime.Controllers
         private readonly IUserService _services;
 
         public UserController(IUserService services, IMapper mapper, IEmailUtilities emailUtil, ITokenUtilities tokenUtil)
-            :base(mapper, emailUtil,tokenUtil)
+            : base(mapper, emailUtil, tokenUtil)
         {
             _services = services;
         }
@@ -45,9 +45,9 @@ namespace SkinTime.Controllers
             return await HandleServiceCall(async () =>
             {
                 // Get user id from jwt token.
-                return await _services.UpdateUser(base.GetUserIdFromJwt(),_mapper.Map<User>(user));
+                return await _services.UpdateUser(base.GetUserIdFromJwt(), _mapper.Map<User>(user));
             });
-            
+
         }
 
         /// <summary>

@@ -21,22 +21,6 @@ namespace SkinTime.Extensions
 
             return services;
         }
-
-        public static async Task SetAsync<T>(this IDatabase redis, string key, T value, TimeSpan? expiry = null)
-        {
-            string json = JsonSerializer.Serialize(value);
-            await redis.StringSetAsync(key, json, expiry);
-        }
-
-        public static async Task<T?> GetAsync<T>(this IDatabase redis, string key)
-        {
-            string json = await redis.StringGetAsync(key);
-            return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json);
-        }
-
-        public static async Task<bool> DeleteAsync(this IDatabase redis, string key)
-        {
-            return await redis.KeyDeleteAsync(key);
-        }
+      
     }
 }

@@ -1,15 +1,14 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
+using BusinessObject.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
+using Services.Commons.DTOs.Schedule;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Commons;
-using SkinTime.BLL.Services.ScheduleService;
-using SkinTime.DAL.Entities;
-using SkinTime.Helpers;
-using SkinTime.Models;
-using SkinTime.Models.Schedule;
 
 namespace SkinTime.Controllers
 {
@@ -19,7 +18,7 @@ namespace SkinTime.Controllers
     {
         IScheduleService _service;
 
-        public ScheduleController(IMapper mapper,IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, IScheduleService service)
+        public ScheduleController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, IScheduleService service)
         : base(mapper, emailUtilities, tokenUtilities)
         {
             this._service = service;
@@ -31,7 +30,7 @@ namespace SkinTime.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("therapist/{id}/availability")]
-        [ProducesResponseType<ApiResponse<TherapistAvailabilityViewModel>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse<TherapistAvailabilityDTO>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse<string>>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetTherapistAvailabilitySchedule(string id)
         {
@@ -46,7 +45,7 @@ namespace SkinTime.Controllers
                 }
 
                 // Manually mapping to result return type.
-                TherapistAvailabilityViewModel viewModel = new TherapistAvailabilityViewModel
+                TherapistAvailabilityDTO viewModel = new TherapistAvailabilityDTO
                 {
                     TherapistId = Guid.Parse(id),
                     Availability = new Dictionary<DateOnly, IDictionary<TimeOnly, bool>>(),
@@ -55,7 +54,7 @@ namespace SkinTime.Controllers
                 TimeOnly startOfDay = TimeOnly.Parse("9:00:00");
                 TimeOnly endOfDay = TimeOnly.Parse("17:00:00");
 
-                for (DateOnly x = currentDate; x <= currentDate.AddDays(6); x = x.AddDays(1) )
+                for (DateOnly x = currentDate; x <= currentDate.AddDays(6); x = x.AddDays(1))
                 {
                     viewModel.Availability[x] = new Dictionary<TimeOnly, bool>();
 
@@ -87,9 +86,9 @@ namespace SkinTime.Controllers
         /// <returns>The precalculated new schedule.</returns>
         [Authorize(Roles = "Staff")]
         [HttpGet("{id}/create")]
-        public async Task<ActionResult<ScheduleViewModel>> GetPreCalculatedSchedule(string id)
+        public async Task<ActionResult<ScheduleDTO>> GetPreCalculatedSchedule(string id)
         {
-            return await HandleServiceCall<Schedule, ScheduleViewModel>(async () =>
+            return await HandleServiceCall<Schedule, ScheduleDTO>(async () =>
             {
                 return await _service.GenerateScheduleForBooking(id);
             });
@@ -104,10 +103,10 @@ namespace SkinTime.Controllers
         /// <param name="id"></param>
         /// <returns>The user scheduled resevation (not available slot)</returns>
         [HttpGet("{id}")]
-        [ProducesResponseType<ApiResponse<ScheduleViewModel>>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ScheduleViewModel>> GetScheduleWithId(Guid id)
+        [ProducesResponseType<ApiResponse<ScheduleDTO>>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ScheduleDTO>> GetScheduleWithId(Guid id)
         {
-            return await HandleServiceCall<Schedule, ScheduleViewModel>( async () =>
+            return await HandleServiceCall<Schedule, ScheduleDTO>(async () =>
             {
                 return await _service.GetSchedule(id);
             });
@@ -122,15 +121,16 @@ namespace SkinTime.Controllers
         /// <returns>The user scheduled resevation (not available slot)</returns>
         [Authorize(Roles = "Customer,Therapist")]
         [HttpGet]
-        public async Task<ActionResult<ICollection<ScheduleViewModel>>> GetPersonalSchedule()
+        public async Task<ActionResult<ICollection<ScheduleDTO>>> GetPersonalSchedule()
         {
             // Get the user id from jwt token.
             string jwtToken = Request.Headers.Authorization.Single()!;
             Guid userId = Guid.Parse(_tokenUtils.GetDataDictionaryFromJwt(jwtToken.Split()[1])["id"]);
 
-            return await HandleServiceCall<ICollection<Schedule>, ICollection<ScheduleViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<Schedule>, ICollection<ScheduleDTO>>(async () =>
             {
-                return await _service.GetUserSchedules(userId);
+                var schedules = await _service.GetUserSchedules(userId);
+                return schedules;
             });
         }
 
@@ -145,27 +145,28 @@ namespace SkinTime.Controllers
         /// <returns>The user scheduled resevation (not available slot)</returns>
         [Authorize(Roles = "Customer,Therapist")]
         [HttpGet("week")]
-        public async Task<ActionResult<ICollection<ScheduleViewModel>>> GetPersonalSchedule(int? year, int? week)
+        public async Task<ActionResult<ICollection<ScheduleDTO>>> GetPersonalSchedule(int? year, int? week)
         {
             // Get the user id from jwt token.
             string jwt = Request.Headers.Authorization.Single()!;
             Guid userId = Guid.Parse(_tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"]);
-            
+
             // Get the start and end date from the input week.
             DateOnly startOfWeek, endOfWeek;
-            if (week != null) 
+            if (week != null)
             {
-                DateOnly yearStart = new DateOnly(year != null ? (int) year : DateTime.UtcNow.Year, 1, 1);
+                DateOnly yearStart = new DateOnly(year != null ? (int)year : DateTime.UtcNow.Year, 1, 1);
 
-                startOfWeek = yearStart.AddDays(7 * ((int) week - 1) - (int) DateTime.UtcNow.DayOfWeek + 1);
+                startOfWeek = yearStart.AddDays(7 * ((int)week - 1) - (int)DateTime.UtcNow.DayOfWeek + 1);
                 endOfWeek = yearStart.AddDays(7);
             }
-            else {
+            else
+            {
                 startOfWeek = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1 * (int)DateTime.UtcNow.DayOfWeek);
                 endOfWeek = startOfWeek.AddDays(7);
             }
 
-            return await HandleServiceCall<ICollection<ScheduleViewModel>>(async () =>
+            return await HandleServiceCall<ICollection<ScheduleDTO>>(async () =>
             {
                 var result = await _service.GetUserSchedules(userId);
 

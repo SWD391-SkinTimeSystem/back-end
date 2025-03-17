@@ -1,19 +1,16 @@
 ﻿using AutoMapper;
+using BusinessObject.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Commons.DTOs.Transaction;
+using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
-using SkinTime.BLL.Services.BookingService;
-using SkinTime.BLL.Services.TransactionService;
-using SkinTime.DAL.Entities;
 using SkinTime.Extensions;
-using SkinTime.Models.Booking;
-using SkinTime.Models.Ticket;
 using StackExchange.Redis;
 using System.Net;
 using System.Transactions;
-using Transaction = SkinTime.DAL.Entities.Transaction;
 
 namespace SkinTime.Controllers
 {
@@ -21,64 +18,57 @@ namespace SkinTime.Controllers
     [ApiController]
     public class TransactionController : BaseController
     {
-        private readonly ITransactionService _service;
-        private readonly IDatabase _database;
+        private readonly ITransactionService _service; 
         public TransactionController(IDatabase database, IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, ITransactionService
  service)
         : base(mapper, emailUtils, tokenUtils)
         {
-            _database = database;
             _service = service;
         }
 
         [HttpGet]
-        public async Task<IActionResult> TransactionCallback(string redis)
+        public async Task<IActionResult> TransactionCallback(string redisKey)
         {
-            var bookingData = await _database.GetAsync<BokingServiceWithIdModel>(redis);
-
-
             var data = Request.Query;
+            var url  = await _service.CallbackPayment(redisKey, data);
 
-            var bookingDTO = _mapper.Map<Booking>(bookingData);
-            var scheduleDTO = _mapper.Map<Schedule>(bookingData);
-
-            var paymentResult = await _service.CallbackPayment(bookingData.UserId, data, bookingDTO, scheduleDTO);
-            await _database.DeleteAsync(redis);
-            if (paymentResult)
-            {
-                return Redirect(bookingData.ReturnURL);
-            }
-            else
-            {
-                return Redirect(bookingData.FailureURL);
-            }
+            return Redirect(url);
         }
-        
-        [HttpGet("ticket-callback")]
-        public async Task<IActionResult> TicketTransactionCallback(string redis)
+
+
+        //[HttpGet("ticket-callback")]
+        //public async Task<IActionResult> TicketTransactionCallback(string redisKey)
+        //{
+        //    var ticketData = await _database.GetAsync<TicketRegistrationCacheModel>(redis);
+
+        //    if (ticketData == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var data = Request.Query;
+
+        //    EventTicket ticket = _mapper.Map<EventTicket>(ticketData);
+
+        //    var paymentResult = await _service.CallbackTicketPayment(data, ticket);
+        //    await _database.DeleteAsync(redis);
+
+        //    if (paymentResult.IsSuccess)
+        //    {
+        //        return Redirect(ticketData.SuccessCallbackUrl);
+        //    }
+        //    else
+        //    {
+        //        return Redirect(ticketData.FailureCallbackUrl);
+        //    }
+        //}
+        [HttpPost]
+        public async Task<IActionResult> RefundTransaction([FromBody] Guid idTransaction)
         {
-            var ticketData = await _database.GetAsync<TicketRegistrationCacheModel>(redis);
-
-            if (ticketData == null)
-            {
-                return NotFound();
-            }
-
-            var data = Request.Query;
-
-            EventTicket ticket = _mapper.Map<EventTicket>(ticketData);
-
-            var paymentResult = await _service.CallbackTicketPayment(data, ticket);
-            await _database.DeleteAsync(redis);
-
-            if (paymentResult.IsSuccess)
-            {
-                return Redirect(ticketData.SuccessCallbackUrl);
-            }
-            else
-            {
-                return Redirect(ticketData.FailureCallbackUrl);
-            }
+            var refundUrl = await _service.RefundPayment(idTransaction);
+            return Ok(refundUrl);
         }
+
+
     }
 }
