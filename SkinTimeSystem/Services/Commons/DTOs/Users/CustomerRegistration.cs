@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Services.Commons.DTOs.User
+namespace Services.Commons.DTOs.Users
 {
     public class CustomerRegistration
     {

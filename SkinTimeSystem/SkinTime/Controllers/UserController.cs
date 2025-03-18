@@ -6,8 +6,10 @@ using BusinessObject.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
+using Repositories;
 using Services.Commons;
 using Services.Commons.DTOs.User;
+using Services.Commons.DTOs.Users;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
@@ -30,24 +32,39 @@ namespace SkinTime.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<AccountInformation>> DeleteUser(string id)
+        public async Task<ActionResult<AccountInformation>> DeleteUser(Guid id)
         {
-            return await HandleServiceCall<User, AccountInformation>(async () =>
-            {
-                return await _services.DeleteUser(id);
-            });
+            ServiceResult result = await _services.UpdateUserStatus(id, UserStatus.Deleted);
+
+            return HandleServiceCall(result);
         }
 
+        /// <summary>
+        ///  Update user information
+        /// </summary>
+        /// <param name="user">some required fields</param>
+        /// <returns></returns>
         [Authorize]
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateUser([FromBody] AccountUpdateInformation user)
         {
-            return await HandleServiceCall(async () =>
-            {
-                // Get user id from jwt token.
-                return await _services.UpdateUser(base.GetUserIdFromJwt(), _mapper.Map<User>(user));
-            });
+            ServiceResult result = await _services.UpdateUserInformation(Guid.Parse(GetUserIdFromJwt()), user);
 
+            return HandleServiceCall(result);
+        }
+
+        /// <summary>
+        ///   Update user password. Requires to be authenticated to use
+        /// </summary>
+        /// <param name="password">old and new password</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("password")]
+        public async Task<IActionResult> UpdateUserPassword([FromBody] PasswordUpdate password)
+        {
+            ServiceResult result = await _services.UpdateUserPassword(Guid.Parse(GetUserIdFromJwt()), password.OldPassword, password.NewPassword);
+
+            return HandleServiceCall(result);
         }
 
         /// <summary>
@@ -55,10 +72,16 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
+        [ProducesResponseType<ApiResponse<PaginationResult<AccountInformation>>>(StatusCodes.Status200OK)]
         [HttpGet("list")]
-        public async Task<ActionResult<IReadOnlyCollection<AccountInformation>>> GetUserAccountList()
+        public async Task<ActionResult<IReadOnlyCollection<AccountInformation>>> GetUserAccountList(int page = 1, int page_size = 10)
         {
-            return await HandleServiceCall<IReadOnlyCollection<User>, IReadOnlyCollection<AccountInformation>>(_services.GetUsersAsReadOnly);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Success",
+                Data = await _services.GetAllUser(page, page_size),
+            });
         }
 
         /// <summary>
@@ -71,10 +94,9 @@ namespace SkinTime.Controllers
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<AccountInformation>> GetUserAccount()
         {
-            return await HandleServiceCall<User, AccountInformation>(async () =>
-            {
-                return await _services.GetUser(base.GetUserIdFromJwt());
-            });
+            ServiceResult result = await _services.GetUserById(Guid.Parse(GetUserIdFromJwt()));
+
+            return HandleServiceCall(result);
         }
 
         /// <summary>
@@ -88,56 +110,25 @@ namespace SkinTime.Controllers
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse>> RegisterCustomerAccount([FromBody] CustomerRegistration registrationInfo)
         {
-            return await HandleServiceCall(async () =>
-            {
-                ServiceResult<User> result = await _services.CreateUserAccount(_mapper.Map<User>(registrationInfo));
+            ServiceResult result = await _services.CreateCustomerAccount(registrationInfo);
 
-                if (result.IsFailed)
-                {
-                    return result;
-                }
-
-                var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email.html");
-                await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content.Replace("[0]", registrationInfo.Fullname));
-
-                return ServiceResult.Success(result.Data!.Id);
-            });
+            return HandleServiceCall(result);
         }
 
         /// <summary>
         ///     Create a new user account of any role. 
         /// </summary>
         /// <param name="registrationInfo">The user account registration information</param>
-        /// <remarks>Only the admin may use this endpoint 
-        ///     <para>
-        ///         <b>Note:</b> This endpoint is not updated to use the latest 
-        ///         <see cref="BaseController.HandleServiceCall(Func{Task{ServiceResult}})"/> to return 
-        ///         a <see cref="ApiResponse"/> result to the client.
-        ///     </para>
+        /// <remarks>Only the admin may use this endpoint
         /// </remarks>
         /// <returns>200Ok response if successfully create an user account, else 400BadRequest</returns>
         [Authorize(Roles = "admin")]
         [HttpPost("account")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountRegistration registrationInfo)
         {
+            ServiceResult result = await _services.CreateAccount(registrationInfo);
 
-            return await HandleServiceCall(async () =>
-            {
-                User userInformation = _mapper.Map<User>(registrationInfo);
-
-                userInformation.Role = Enum.Parse<UserRole>(registrationInfo.Role);
-                var result = await _services.CreateUserAccount(userInformation);
-
-                if (result.IsSuccess)
-                {
-                    var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email_staff.html");
-                    content = content.Replace("[1]", registrationInfo.Username).Replace("[2]", registrationInfo.Password);
-
-                    await _emailUtils.SendGoogleEmailAsync(registrationInfo.Email, "SkinTime - New Registration Notice", content);
-                }
-
-                return ServiceResult.Success();
-            });
+            return HandleServiceCall(result);
         }
     }
 }

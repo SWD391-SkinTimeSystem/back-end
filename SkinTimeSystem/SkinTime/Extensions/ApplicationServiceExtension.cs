@@ -26,6 +26,10 @@ namespace SkinTime.Extensions
         )
         {// khai báo tất cả các service ở đây => tìm hiểu midderware, tìm hiểu thêm về addscoped vs addtransient vs addsingleton
 
+            // Shared Libraries
+            services.AddTransient<ITokenUtilities, TokenUtilities>();
+            services.AddTransient<IEmailUtilities, EmailUtilities>();
+
             // Repositories and Unit of work.
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -63,10 +67,6 @@ namespace SkinTime.Extensions
 
             // Auto mapper
             services.AddAutoMapper(typeof(Mapping).Assembly);
-
-            // Shared Libraries
-            services.AddTransient<ITokenUtilities, TokenUtilities>();
-            services.AddTransient<IEmailUtilities, EmailUtilities>();
 
             // Middlewares
 
