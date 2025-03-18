@@ -12,6 +12,7 @@ using Services.Commons.DTOs.Feedback;
 using Services.Commons.DTOs.Question;
 using Services.Commons.DTOs.Schedule;
 using Services.Commons.DTOs.Service;
+using Services.Commons.DTOs.Skintype;
 using Services.Commons.DTOs.Therapist;
 using Services.Commons.DTOs.Ticket;
 using Services.Commons.DTOs.Transaction;
@@ -357,6 +358,7 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.IsRefundTransaction, opt => opt.MapFrom(_ => false));
 
             CreateMap<CategoryDetailDTO, ServiceCategory>().ReverseMap();
+            CreateMap<SkintypeDetailDTO, SkinType>().ReverseMap();
         }
 
     }

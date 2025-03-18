@@ -38,6 +38,7 @@ namespace SkinTime.Extensions
             services.AddScoped<ISkinTimeService, SkinTimeService>();
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IScheduleService, ScheduleService>();
+            services.AddScoped<ISkintypeService, SkintypeService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICache, Cache>();
