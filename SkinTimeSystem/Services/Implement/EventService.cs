@@ -1,8 +1,12 @@
-﻿using BusinessObject.Entities;
+﻿using AutoMapper;
+using BusinessObject.Entities;
 using BusinessObject.EventEnums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Repositories;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Event;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -16,53 +20,80 @@ namespace Services.Implement
     public class EventService : IEventService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public EventService(IUnitOfWork unitOfWork)
+        public EventService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public Task<ServiceResult> CancelEvent(string eventId)
+        public Task<ServiceResult> CancelEvent(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResult<Event>> CreateNewEvent(Event eventInformation)
+        public async Task<ServiceResult> CreateNewEvent(EventCreationDTO eventInformation)
         {
             // Find for any event that's clashing with the new event time.
             var clashingEvent = await _unitOfWork.Repository<Event>()
-                .FindAsync(x => x.TimeStart <= eventInformation.TimeEnd && x.TimeEnd >= eventInformation.TimeStart
-                && (x.Status != EventStatus.Canceled || x.Status != EventStatus.Removed || x.Status != EventStatus.Removed));
+                .FindAsync(x => x.EventDate == eventInformation.Date && x.TimeStart <= eventInformation.EndTime && x.TimeEnd >= eventInformation.StartTime
+                && (x.Status == EventStatus.Approved || x.Status == EventStatus.OnGoing));
 
             if (clashingEvent != null)
             {
-                return ServiceResult<Event>
-                    .Failed(ServiceError.ValidationFailed("There is another event curretnly existing in the selected time!"));
+                return ServiceResult.Failed(ServiceError.ValidationFailed("There is another event curretnly existing in the selected time!"));
             }
 
-            eventInformation.Id = Guid.NewGuid();
-            Event result = await _unitOfWork.Repository<Event>().AddAsync(eventInformation);
+            Event eventEntity = _mapper.Map<Event>(eventInformation);
+            eventEntity.Id = Guid.NewGuid();
+
+            eventEntity = await _unitOfWork.Repository<Event>().AddAsync(eventEntity);
             await _unitOfWork.Complete();
 
-            return ServiceResult<Event>.Success(result);
+            return ServiceResult<EventDTO>.Success(_mapper.Map<EventDTO>(eventEntity));
         }
 
-        public async Task<ServiceResult> DeleteEvent(string eventId)
+        public async Task<ServiceResult> DeleteEvent(Guid id)
         {
-            if (Guid.TryParse(eventId, out var parsedId))
+            var result = await _unitOfWork.EventRepository.GetByIdAsync(id);
+
+            if (result == null || result.Status == EventStatus.Removed)
             {
-                var result = await _unitOfWork.Repository<Event>().GetByIdAsync(parsedId);
-
-                if (result == null || result.Status == EventStatus.Removed)
-                {
-                    return ServiceResult.Failed(ServiceError.NotFound("can not find the required service"));
-                }
-
-                // Business logic for and event deletion and refunds
-                throw new NotImplementedException();
+                return ServiceResult.Failed(ServiceError.NotFound("can not find the required event"));
             }
 
-            return ServiceResult.Failed(ServiceError.ValidationFailed("The given id does not match the correct format"));
+            if (result.Status != EventStatus.ApprovePending)
+            {
+                return ServiceResult.Failed(ServiceError.ValidationFailed("Can not remove an event that has been approved"));
+            }
+            
+            result.Status = EventStatus.Removed;
+            _unitOfWork.EventRepository.Update(result);
+
+            return ServiceResult.Success(result.Id);
+        }
+
+        public async Task<ICollection<EventDTO>> GetAllEvents()
+        {
+            return _mapper.Map<ICollection<EventDTO>>(await _unitOfWork.EventRepository.GetAllEvents());
+        }
+
+        public async Task<PaginationResult<AvailableEventDTO>> GetAvailableEventList(int page, int pageSize)
+        {
+            Expression<Func<Event, bool>> filter = x => x.TicketNavigation.Count() < x.Capacity && x.Status == EventStatus.Approved;
+
+            PaginationResult<Event> results = await _unitOfWork.EventRepository.GetEventPaginated(page, pageSize, filter);
+
+            Console.WriteLine(results.ItemAmount);
+
+            return new PaginationResult<AvailableEventDTO>
+            {
+                Content = _mapper.Map<ICollection<AvailableEventDTO>>(results.Content),
+                CurrentPage = results.CurrentPage,
+                ItemAmount = results.ItemAmount,
+                PageSize = pageSize
+            };
         }
 
         public async Task<ServiceResult<ICollection<Event>>> GetEventByStatus(EventStatus eventStatus)
@@ -79,26 +110,33 @@ namespace Services.Implement
                     .ListAsync(x => x.Include(b => b.TicketNavigation))).ToList());
         }
 
-        public async Task<ServiceResult<ICollection<Event>>> GetEventList(Expression<Func<Event, bool>> expression)
+        public async Task<PaginationResult<EventDTO>> GetEventList(int page, int pageSize, Expression<Func<Event, bool>> expression)
         {
-            return ServiceResult<ICollection<Event>>
-                .Success((await _unitOfWork.Repository<Event>().ListAsync(expression)).ToList());
-        }
+            PaginationResult<Event> result = await _unitOfWork.EventRepository.GetEventPaginated(page, pageSize, expression);
 
-        public async Task<ServiceResult<Event>> GetEventWithId(Guid id)
-        {
-            var result = await _unitOfWork.Repository<Event>().GetByIdAsync(id, x => x.Include(x =>
-            x.TicketNavigation));
-
-            if (result == null)
+            return new PaginationResult<EventDTO>
             {
-                return ServiceResult<Event>.Failed(ServiceError.ValidationFailed("Can not find event with the provided id"));
-            }
-
-            return ServiceResult<Event>.Success(result);
+                Content = _mapper.Map<ICollection<EventDTO>>(result.Content),
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = pageSize
+            };
         }
 
-        public Task<ServiceResult<Event>> UpdateEvent(Guid eventId, Event eventInformation)
+        public async Task<PaginationResult<EventDTO>> GetEventListWithStatus(int page, int pageSize, EventStatus status)
+        {
+            PaginationResult<Event> result = await _unitOfWork.EventRepository.GetEventWithStatusPaginated(page, pageSize, status);
+
+            return new PaginationResult<EventDTO>
+            {
+                Content = _mapper.Map<ICollection<EventDTO>>(result.Content),
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = pageSize
+            };
+        }
+
+        public Task<ServiceResult> UpdateEvent(Guid eventId, EventUpdateDTO eventInformation)
         {
             throw new NotImplementedException();
         }
@@ -122,6 +160,18 @@ namespace Services.Implement
 
 
             return ServiceResult.Success(target);
+        }
+
+        public async Task<ServiceResult<EventDTO>> GetEventWithId(Guid id)
+        {
+            var result = await _unitOfWork.EventRepository.GetEventById(id);
+
+            if (result == null)
+            {
+                return ServiceResult<EventDTO>.Failed(ServiceError.ValidationFailed("Can not find event with the provided id"));
+            }
+
+            return ServiceResult<EventDTO>.Success(_mapper.Map<EventDTO>(result));
         }
     }
 }

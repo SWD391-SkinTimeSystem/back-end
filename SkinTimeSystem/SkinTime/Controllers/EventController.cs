@@ -5,6 +5,8 @@ using BusinessObject.EventEnums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
+using Services.Commons;
 using Services.Commons.DTOs.Event;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
@@ -30,64 +32,92 @@ namespace SkinTime.Controllers
             _emailUtilities = emailUtilities;
         }
 
+        /// <summary>
+        ///     Get available events
+        /// </summary>
+        /// <param name="page">page number, default 1</param>
+        /// <param name="pageSize">page size, default 20</param>
+        /// <returns></returns>
         [HttpGet("available")]
-        [ProducesResponseType<ApiResponse<Collection<AvailableEventDTO>>>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ApiResponse<ICollection<AvailableEventDTO>>>> GetAvailableEvents()
+        [ProducesResponseType<ApiResponse<PaginationResult<AvailableEventDTO>>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAvailableEvents(int page = 1, int pageSize = 20)
         {
-            return await HandleServiceCall<ICollection<AvailableEventDTO>>(async () =>
+            return Ok(new ApiResponse
             {
-                return await _services.GetEventList(x => x.Status == EventStatus.Approved
-                && x.EventDate.ToDateTime(x.TimeStart) > DateTime.UtcNow);
+                Success = true,
+                Data = await _services.GetAvailableEventList(page, pageSize),
+                Message = "Success",
             });
         }
 
+        /// <summary>
+        ///     Get list of event based on event status
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         [HttpGet("status")]
-        [ProducesResponseType<ApiResponse<ICollection<EventDTO>>>(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetEventByStatus(EventStatus status)
+        [ProducesResponseType<ApiResponse<PaginationResult<EventDTO>>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEventByStatus(int page, int pageSize, EventStatus status)
         {
-            return await HandleServiceCall<ICollection<EventDTO>>(async () =>
+            return Ok(new ApiResponse
             {
-                return await _services.GetEventByStatus(status);
+                Success = true,
+                Data = await _services.GetEventListWithStatus(page, pageSize, status),
+                Message = "Success"
             });
         }
 
+        /// <summary>
+        ///     Get event information with provided id
+        /// </summary>
+        /// <param name="id">event id</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<EventDTO>>> GetEventInformation(Guid id)
+        [ProducesResponseType<ApiResponse<EventDTO>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetEventInformation(Guid id)
         {
-            var target = await _services.GetEventWithId(id);
+            ServiceResult result = await _services.GetEventWithId(id);
 
-            return await HandleServiceCall<EventDTO>(async () =>
-            {
-                return await _services.GetEventWithId(id);
-            });
+            return HandleServiceCall(result);
         }
 
-
+        /// <summary>
+        ///     Create a new event.
+        /// </summary>
+        /// <param name="eventInformation">event information</param>
+        /// <returns>Status 200 <see cref="ApiResponse"/> if success, else status 400</returns>
         [HttpPost("create")]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatEvent([FromBody] EventCreationDTO eventInformation)
         {
-            return await HandleServiceCall<EventDTO>(async () =>
-        {
-            return await _services.CreateNewEvent(_mapper.Map<Event>(eventInformation));
-        });
+            ServiceResult result = await _services.CreateNewEvent(eventInformation);
+
+            return HandleServiceCall(result);
         }
 
+        /// <summary>
+        ///     Update event status
+        /// </summary>
+        /// <param name="info">event update information</param>
+        /// <returns></returns>
         [HttpPost("state")]
         public async Task<IActionResult> UpdateEventState([FromBody] EventStatusUpdateDTO info)
         {
-            return await HandleServiceCall<EventDTO>(async () =>
-            {
-                return await _services.UpdateEventStatus(info.Id, Enum.Parse<EventStatus>(info.Status));
-            });
+            ServiceResult result = await _services.UpdateEventStatus(info.Id, info.Status);
+
+            return HandleServiceCall(result);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> CreatEvent(string id)
+        public async Task<IActionResult> RemoveEvent(Guid id)
         {
-            return await HandleServiceCall(async () =>
-            {
-                return await _services.DeleteEvent(id);
-            });
+            ServiceResult result = await _services.DeleteEvent(id);
+
+            return HandleServiceCall(result);
         }
     }
 }

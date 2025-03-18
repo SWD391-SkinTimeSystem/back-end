@@ -18,8 +18,8 @@ namespace Repositories.UnitOfWork
         public IBookingRepository Bookings { get; private set; }
         public IServiceRepository Services { get; private set; }
         public IUserRepository UserRepository {get; private set; }
-
         public ITherapistRepository TherapistRepository { get; private set; }
+        public IEventRepository EventRepository { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -28,6 +28,7 @@ namespace Repositories.UnitOfWork
             Services = new ServiceRepository(context);
             UserRepository = new UserRepository(context);
             TherapistRepository = new TherapistRepository(context);
+            EventRepository = new EventRepository(context);
         }
         public async Task<int> Complete()
         {

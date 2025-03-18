@@ -7,27 +7,31 @@ using System.Text;
 using System.Threading.Tasks;
 using BusinessObject.EventEnums;
 using Services.Commons;
+using Repositories;
+using Services.Commons.DTOs.Event;
 
 namespace Services.Interfaces
 {
     public interface IEventService
     {
-        Task<ServiceResult<ICollection<Event>>> GetEventList();
+        Task<ICollection<EventDTO>> GetAllEvents();
 
-        Task<ServiceResult<ICollection<Event>>> GetEventList(Expression<Func<Event, bool>> expression);
+        Task<ServiceResult<EventDTO>> GetEventWithId(Guid id);
 
-        Task<ServiceResult<Event>> GetEventWithId(Guid id);
+        Task<PaginationResult<EventDTO>> GetEventListWithStatus(int page, int pageSize, EventStatus status);
 
-        Task<ServiceResult<Event>> CreateNewEvent(Event eventInformation);
+        Task<PaginationResult<EventDTO>> GetEventList(int page, int pageSize, Expression<Func<Event, bool>> expression);
 
-        Task<ServiceResult<Event>> UpdateEvent(Guid eventId, Event eventInformation);
+        Task<PaginationResult<AvailableEventDTO>> GetAvailableEventList(int page, int pageSize);
+
+        Task<ServiceResult> CreateNewEvent(EventCreationDTO eventInformation);
+
+        Task<ServiceResult> UpdateEvent(Guid eventId, EventUpdateDTO eventInformation);
 
         Task<ServiceResult> UpdateEventStatus(Guid eventId, EventStatus status);
 
-        Task<ServiceResult> DeleteEvent(string eventId);
+        Task<ServiceResult> DeleteEvent(Guid id);
 
-        Task<ServiceResult> CancelEvent(string eventId);
-
-        Task<ServiceResult<ICollection<Event>>> GetEventByStatus(EventStatus eventStatus);
+        Task<ServiceResult> CancelEvent(Guid id);
     }
 }
