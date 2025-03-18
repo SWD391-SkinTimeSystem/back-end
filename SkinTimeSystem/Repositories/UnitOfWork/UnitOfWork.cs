@@ -19,12 +19,15 @@ namespace Repositories.UnitOfWork
         public IServiceRepository Services { get; private set; }
         public IUserRepository UserRepository {get; private set; }
 
+        public ITherapistRepository TherapistRepository { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Bookings = new BookingRepository(context);
             Services = new ServiceRepository(context);
             UserRepository = new UserRepository(context);
+            TherapistRepository = new TherapistRepository(context);
         }
         public async Task<int> Complete()
         {

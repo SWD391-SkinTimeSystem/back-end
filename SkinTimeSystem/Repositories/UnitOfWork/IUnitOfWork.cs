@@ -14,6 +14,8 @@ namespace Repositories.UnitOfWork
         IServiceRepository Services { get; }
         IUserRepository UserRepository { get; }
 
+        ITherapistRepository TherapistRepository { get; }
+
         IGenericRepository<TEntity> Repository<TEntity>()
            where TEntity : BaseEntity;
 

@@ -1,8 +1,11 @@
-﻿using BusinessObject.Entities;
+﻿using AutoMapper;
+using BusinessObject.Entities;
 using BusinessObject.Enum;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Therapist;
 using Services.Interfaces;
 using System.Linq.Expressions;
 
@@ -11,10 +14,12 @@ namespace Services.Implement
     public class TherapistService : ITherapistService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public TherapistService(IUnitOfWork unitOfWork)
+        public TherapistService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResult<Guid>> AddTherapist(Therapist therapist)
@@ -28,95 +33,103 @@ namespace Services.Implement
             }
             catch (DbUpdateException ex)
             {
-                Console.WriteLine($"{ex.Message}\nInnerException:{ex.InnerException?.Message}\n{ex.GetType()}:{ex.StackTrace}");
                 return ServiceResult<Guid>.Failed(ServiceError.UnhandledException(ex.Message));
             }
         }
 
-        public async Task<ServiceResult<ICollection<Therapist>>> GetAllTherapist(Expression<Func<Therapist, bool>> predicate)
+        public async Task<PaginationResult<TherapistDTO>> GetAllTherapist(int page, int pageSize)
         {
-            IEnumerable<Therapist> result = await _unitOfWork.Repository<Therapist>().ListAsync(predicate);
+            PaginationResult<Therapist> result = await _unitOfWork.Repository<Therapist>().AsPaginated(page, pageSize);
 
-            return ServiceResult<ICollection<Therapist>>.Success(result.ToList());
+            return new PaginationResult<TherapistDTO>
+            {
+                Content = _mapper.Map<ICollection<TherapistDTO>>(result.Content),
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = pageSize,
+            };
         }
 
-        public async Task<ServiceResult<ICollection<Therapist>>> GetAllTherapist()
+        public async Task<ServiceResult<TherapistDTO>> GetTherapistWithId(Guid id)
         {
-            IEnumerable<Therapist> result = await _unitOfWork.Repository<Therapist>().ListAsync();
+            var therapist_info = await _unitOfWork.TherapistRepository.GetTherapistInformationWithId(id);
 
-            return ServiceResult<ICollection<Therapist>>.Success(result.ToList());
+            if ( therapist_info == null)
+            {
+                return ServiceResult<TherapistDTO>.Failed(ServiceError.NotFound("Can not find therapist entity with provided Id"));
+            }
+
+            return ServiceResult<TherapistDTO>.Success(_mapper.Map<TherapistDTO>(therapist_info));
         }
 
-        public async Task<ServiceResult<ICollection<Therapist>>> GetAvailableTherapist()
+        public async Task<PaginationResult<TherapistDTO>> GetAllTherapistWithStatus(int page, int pageSize, TherapistStatus status)
         {
-            IEnumerable<Therapist> result = await _unitOfWork.Repository<Therapist>()
-                .ListAsync(x => x.Status == TherapistStatus.Available);
+            PaginationResult<Therapist> result = await _unitOfWork.Repository<Therapist>().AsPaginated(page, pageSize, x=> x.Status == status);
 
-            return ServiceResult<ICollection<Therapist>>.Success(result.ToList());
+            return new PaginationResult<TherapistDTO>
+            {
+                Content = _mapper.Map<ICollection<TherapistDTO>>(result.Content),
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = pageSize,
+            };
         }
 
-        public async Task<ServiceResult<ICollection<Therapist>>> GetAvailableTherapist(DateOnly date, TimeOnly startTime, int duration)
+        public async Task<PaginationResult<TherapistDTO>> GetAvailableTherapist(int page, int pageSize)
+        {
+            PaginationResult result = await GetAllTherapist(page, pageSize, x => x.Status == TherapistStatus.Available);
+            return new PaginationResult<TherapistDTO>
+            {
+                Content = _mapper.Map<ICollection<TherapistDTO>>(result.Content),
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = pageSize
+            };
+        }
+
+        public async Task<ICollection<TherapistDTO>> GetAvailableTherapist(DateOnly date, TimeOnly startTime, int duration)
         {
             TimeOnly endTime = startTime.AddMinutes(duration);
 
             // This is one of a hell thingamabob function, please do not touch.
-            Expression<Func<Therapist, bool>> predicate = x => x.Status == TherapistStatus.Available
-            && (x.BookingNavigation.Count == 0 || x.BookingNavigation
-                .Any(b => b.ScheduleNavigation
-                    .Any(s => s.ReservedStartTime <= endTime && startTime <= s.ReservedEndTime)));
+            Expression<Func<Therapist, bool>> predicate = x => x.Status == TherapistStatus.Available && (!x.BookingNavigation
+            .Any(b => b.ScheduleNavigation.Any(s =>s.Date == date && s.ReservedStartTime <= endTime && startTime <= s.ReservedEndTime)));
 
-            IEnumerable<Therapist> result = await _unitOfWork.Repository<Therapist>().ListAsync(x => x
-            .Include(b => b.UserNavigation)
-            .Include(b => b.BookingNavigation).ThenInclude(b => b.FeedbackNavigation)
-            .Include(b => b.BookingNavigation).ThenInclude(b => b.ScheduleNavigation)
-            .Include(b => b.CertificationNavigation), predicate);
+           
 
-            return ServiceResult<ICollection<Therapist>>.Success(result.ToList());
+            ICollection<Therapist> result = await _unitOfWork.TherapistRepository.GetAllTherapistWithScheduleInformation(predicate);
+
+            return _mapper.Map<ICollection<TherapistDTO>>(result);
         }
 
-        public async Task<ServiceResult<Therapist>> GetFirstAvailableTherapist(DateOnly date, TimeOnly startTime, int duration)
+        public async Task<ServiceResult<TherapistDTO>> GetFirstAvailableTherapist(DateOnly date, TimeOnly startTime, int duration)
         {
-            TimeOnly endTime = startTime.AddMinutes(duration);
+            TherapistDTO? result = (await GetAvailableTherapist(date, startTime, duration)).FirstOrDefault();
 
-            // This is one of a hell thingamabob function, please do not touch.
-            Expression<Func<Therapist, bool>> predicate = x => x.Status == TherapistStatus.Available
-            && (x.BookingNavigation.Count == 0 || !x.BookingNavigation
-                .Any(b => b.ScheduleNavigation
-                    .Any(s => s.ReservedStartTime <= endTime && startTime <= s.ReservedEndTime)));
-
-            IEnumerable<Therapist> result = await _unitOfWork.Repository<Therapist>().ListAsync(x => x
-            .Include(b => b.UserNavigation)
-            .Include(b => b.BookingNavigation).ThenInclude(b => b.FeedbackNavigation)
-            .Include(b => b.BookingNavigation).ThenInclude(b => b.ScheduleNavigation)
-            .Include(b => b.CertificationNavigation), predicate);
-
-            if (result.Any())
+            if (result == null)
             {
-                return ServiceResult<Therapist>.Success(result.First());
+                return ServiceResult<TherapistDTO>.Failed(ServiceError.ValidationFailed("No available therapist found"));
             }
 
-            return ServiceResult<Therapist>.Failed(ServiceError.ValidationFailed("can not find any available therapist"));
-        }
-
-        public async Task<ServiceResult<Therapist>> GetTherapistWithId(Guid id)
-        {
-            Therapist? result = await _unitOfWork.Repository<Therapist>()
-                .GetByIdAsync(id, x => x
-                    .Include(b => b.UserNavigation)
-                    .Include(b => b.BookingNavigation).ThenInclude(x => x.FeedbackNavigation)
-                    .Include(b => b.CertificationNavigation));
-
-            if (result != null)
-            {
-                return ServiceResult<Therapist>.Success(result);
-            }
-
-            return ServiceResult<Therapist>.Failed(ServiceError.NotFound("Can not find therapist entity with provided Id"));
+            return ServiceResult<TherapistDTO>.Success(result);
         }
 
         public Task<ServiceResult<Guid>> UpdateTherapist(Guid id, Therapist information)
         {
             throw new NotImplementedException();
+        }
+
+        private async Task<PaginationResult<TherapistDTO>> GetAllTherapist(int page, int pageSize, Expression<Func<Therapist, bool>> predicate)
+        {
+            PaginationResult result = await _unitOfWork.Repository<Therapist>().AsPaginated(page, pageSize, predicate);
+
+            return new PaginationResult<TherapistDTO>
+            {
+                Content = _mapper.Map<ICollection<TherapistDTO>>(result),
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = pageSize,
+            };
         }
     }
 }
