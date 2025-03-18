@@ -24,10 +24,6 @@ namespace SkinTime.Controllers
         {
             _service = bookingService;
         }
-        /// <summary>
-        ///     Get all user's booking general informations.
-        /// </summary>
-        /// <returns>List of created booking</returns>
         [Authorize]
         [HttpGet("status/{status}")]
         public async Task<ActionResult> GetAppointments([FromRoute] string status)

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Services.Commons.Analysis;
 using Services.Commons.DTOs.Analysis;
 using Services.Commons.DTOs.Booking;
+using Services.Commons.DTOs.Category;
 using Services.Commons.DTOs.Event;
 using Services.Commons.DTOs.Feedback;
 using Services.Commons.DTOs.Question;
@@ -348,15 +349,14 @@ namespace SkinTime.Helpers
             //.ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
 
             CreateMap<ZaloPayTransactionDTO, Transaction>()
-     .ForMember(dest => dest.Method, opt => opt.MapFrom(_ => PaymentMethod.ZaloPay))
-     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status == "1" ? PaymentStatus.Success : PaymentStatus.Failed))
-     .ForMember(dest => dest.IsRefundTransaction, opt => opt.MapFrom(_ => false));
+                .ForMember(dest => dest.Method, opt => opt.MapFrom(_ => PaymentMethod.ZaloPay))
+                .ForMember(dest => dest.IsRefundTransaction, opt => opt.MapFrom(_ => false));
 
             CreateMap<VnPayTransactionDTO, Transaction>()
                 .ForMember(dest => dest.Method, opt => opt.MapFrom(_ => PaymentMethod.VnPay))
                 .ForMember(dest => dest.IsRefundTransaction, opt => opt.MapFrom(_ => false));
 
-
+            CreateMap<CategoryDetailDTO, ServiceCategory>().ReverseMap();
         }
 
     }

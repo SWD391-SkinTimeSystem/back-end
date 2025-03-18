@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using BusinessObject.Entities;
 using BusinessObject.Enum;
 using BusinessObject.Schedule;
@@ -64,137 +64,88 @@ namespace Services.Implement
             return  bookingDto.ReturnURL;
         }
 
-
-        //public async Task<ServiceResult> CallbackTicketPayment(IQueryCollection data, EventTicket ticket)
-        //{
-        //    if (data.ContainsKey("vnp_BankCode"))
-        //    {
-        //        if (!await HandleVnPayCallback(data))
-        //        {
-        //            return ServiceResult.Failed(ServiceError.ValidationFailed("Error with VnPay")); ;
-        //        }
-        //    }
-
-        //    if (data.ContainsKey("bankcode")
-        //           && (data["bankode"].ToString() == "" || data["bankode"].ToString() == "zalopayapp" || data["bankode"].ToString() == "CC")
-        //       )
-        //    {
-        //        bool zaloPayResult = await HandleZaloPayCallback(data);
-        //        if (!zaloPayResult)
-        //        {
-        //            return ServiceResult.Failed(ServiceError.ValidationFailed("Error with ZaloPay"));
-        //        }
-        //    }
-
-        //    var addedTicket = await _unitOfWork.Repository<EventTicket>().AddAsync(ticket);
-        //    await _unitOfWork.Complete();
-
-        //    return ServiceResult.Success(addedTicket);
-        //}
-
-
-
         #region VNPAY
         private async Task<bool> HandleVnPayCallback(IQueryCollection data, Guid id)
         {
-            var dto = new VnPayTransactionDTO
+            bool vnp_ResponseCode =
+               data.ContainsKey("vnp_ResponseCode") && data["vnp_ResponseCode"] == "00";
+            PaymentStatus status = vnp_ResponseCode
+                ? PaymentStatus.Success
+                : PaymentStatus.Failed;
+            var vnPayTransactionDTO = new VnPayTransactionDTO
             {
-                TransactionTime = data["vnp_PayDate"],
-                Amount = decimal.Parse(data["vnp_Amount"]) / 100,
-                TransactionCode = data["vnp_TxnRef"],
-                TransactionReference = data["vnp_TxnRef"]
+                TransactionTime = DateTime.Now,
+                Paydate = data["vnp_PayDate"]!,
+                Amount = decimal.Parse(data["vnp_Amount"]!) / 100,
+                TransactionCode = data["vnp_TxnRef"]!,
+                TransactionReference = data["vnp_TxnRef"]!,
+                Status = status,
             };
 
-            var transaction = _mapper.Map<Transaction>(dto);
+            var transaction = _mapper.Map<Transaction>(vnPayTransactionDTO);
             transaction.Id = id;
 
             await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
             await _unitOfWork.Complete();
-
-            return true;
-        }
-
-
-        private async Task<bool> CallBackVnPay(
-            string vnp_TxnRef,
-            string vnp_SecureHash,
-            IQueryCollection request
-        )
-        {
-            try
+            if (vnp_ResponseCode)
             {
-                _vnPay.AddResponseDataFromQueryString(request);
-                await _vnPay.ValidateSignature(vnp_TxnRef, vnp_SecureHash);
                 return true;
             }
-            catch (Exception ex)
-            {
-                return false;
-            }
+           return false;
         }
+
+
+        //private async Task<bool> CallBackVnPay(
+        //    string vnp_TxnRef,
+        //    string vnp_SecureHash,
+        //    IQueryCollection request
+        //)
+        //{
+        //    try
+        //    {
+        //        _vnPay.AddResponseDataFromQueryString(request);
+        //        await _vnPay.ValidateSignature(vnp_TxnRef, vnp_SecureHash);
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return false;
+        //    }
+        //}
         #endregion
 
         #region ZALOPAY
         private async Task<bool> HandleZaloPayCallback(IQueryCollection data, Guid key)
         {
+            bool statusZalo = data.ContainsKey("status") && data["status"] == "1";
+            PaymentStatus status = statusZalo
+                ? PaymentStatus.Success
+                : PaymentStatus.Failed;
             var dto = new ZaloPayTransactionDTO
             {
-                Amount = decimal.Parse(data["amount"]),
-                TransactionReference = data["apptransid"],
-                Status = data["status"]
+                Amount = decimal.Parse(data["amount"]!),
+                TransactionCode = data["apptransid"]!,
+                Status = status!
             };
 
             var transaction = _mapper.Map<Transaction>(dto);
             transaction.Id = key;
-            transaction.TransactionCode = await _zaloPay.GetZaloPayTransactionIdAsync(data["apptransid"]);
+            transaction.PayDate = DateTime.Now.ToString();
+            transaction.TransactionReference = await _zaloPay.GetZaloPayTransactionIdAsync(data["apptransid"]);
 
             await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
             await _unitOfWork.Complete();
 
-            return transaction.Status == PaymentStatus.Success;
+            if (statusZalo)
+            {
+                return true;
+            }
+            return false;
         }
 
 
         #endregion
-        public Task<bool> CallbackPayment(Guid itemId, object entity, IQueryCollection data)
-        {
-            throw new NotImplementedException();
-        }
 
-
-        public string DeterminePaymentService(IQueryCollection data)
-        {
-            if (data.ContainsKey("vnp_BankCode"))
-            {
-                return "vnpay";
-            }
-            else if (data.ContainsKey("bankcode"))
-            {
-                return "zalopay";
-            }
-            else
-            {
-                return "unknown";
-            }
-        }
-
-        public async Task<ServiceResult> CallbackRefundPayment(IQueryCollection data)
-        {
-            switch (DeterminePaymentService(data))
-            {
-                case "vnpay":
-                    return ServiceResult.Success();
-                case "zalopay":
-                    return ServiceResult.Success();
-                default:
-                    return ServiceResult.Failed(ServiceError.ValidationFailed("Unknown payment type"));
-            }
-        }
-
-        public Task<string> CreateTransaction(System.Transactions.Transaction bookingTransaction, string returnUrl, string notifyUrl)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<ServiceResult<bool>> RefundPayment(Guid idTransaction)
         {
@@ -202,10 +153,10 @@ namespace Services.Implement
             var transacion = await _unitOfWork.Repository<Transaction>().FindAsync(tr => tr.Id == idTransaction);
            if(transacion.Method == PaymentMethod.VnPay)
             {
-               await _vnPay.CreateVnPayRefund(transacion);
+               await _vnPay.CreateVnPayRefund(transacion);// handle thêm hướng xử lý lưuu và databse 
             }
             if(transacion.Method == PaymentMethod.ZaloPay){
-                await _zaloPay.CreateZaloPayRefund(transacion);
+                await _zaloPay.CreateZaloPayRefund(transacion); // handle thêm hướng xử lý lưuu và databse 
             }
            return ServiceResult<bool>.Success(true);
         }

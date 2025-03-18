@@ -32,18 +32,10 @@ namespace Services.PaymentSetting
             }
             throw new Exception("Failed to create ZaloPay order.");
         }
-        public async Task<string> CreateZaloPayRefund(Transaction transaction)
-        {
-            var response = await CreateZaloPayRefundAsync(transaction);
+        public async Task<Dictionary<string,string>> CreateZaloPayRefund(Transaction transaction)=>  await CreateZaloPayRefundAsync(transaction);
 
 
-            if (response.TryGetValue("order_url", out var orderUrl))
-            {
-                return orderUrl; 
-            }
-            throw new Exception("Failed to create ZaloPay order.");
-
-        }
+           
         #endregion
 
         #region Request Process
@@ -103,15 +95,14 @@ namespace Services.PaymentSetting
             var zptransid = transaction.TransactionReference; 
             var mrefundid = $"{DateTime.UtcNow:yyMMdd}_{AppId}_{rnd.Next(100000000, 999999999)}";
 
-            // ✅ Định dạng description đúng
-            var description = "Hoàn tiền " ;
+            var description = "Hoàn tiền" ;
 
             var param = new Dictionary<string, string>
     {
         { "appid", AppId },
         { "mrefundid", mrefundid },
         { "zptransid", zptransid },
-        { "amount", ((long)transaction.Amount).ToString() }, // Phải là số nguyên
+        { "amount", ((long)transaction.Amount).ToString() }, 
         { "timestamp", timestamp },
         { "description", description }
     };

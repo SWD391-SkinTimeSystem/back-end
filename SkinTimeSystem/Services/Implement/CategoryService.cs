@@ -1,6 +1,8 @@
-﻿using BusinessObject.Entities;
+﻿using AutoMapper;
+using BusinessObject.Entities;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Category;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -13,10 +15,23 @@ namespace Services.Implement
     public class CategoryService : ICategoryService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CategoryService(IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
+
+        public async Task<ServiceResult<ICollection<CategoryDetailDTO>>> GetAllCategory()
+        {
+            var listCategory = await _unitOfWork.Repository<ServiceCategory>().GetAllAsync();
+            var listCategoryDTO = _mapper.Map<ICollection<CategoryDetailDTO>>(listCategory);
+
+            return ServiceResult<ICollection<CategoryDetailDTO>>.Success(listCategoryDTO);
+        }
+
+
 
         public async Task<ServiceResult<ICollection<Service>>> ListServiceByCategory(Guid id)
         {// laay leen maf map 

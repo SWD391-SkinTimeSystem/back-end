@@ -42,7 +42,7 @@ namespace Services.PaymentSetting
         {
             string ipAddress = await GetIpAddress();
             await ConfigureRefundRequest( ipAddress, transaction);
-            return await CreatePaymentUrlRefundAsync();
+          return await  CreateRequestRefundUrl(RefundUrl, HashSecret);
         }
         #endregion
 
@@ -187,14 +187,6 @@ namespace Services.PaymentSetting
                 throw new Exception("VNPay HashSecret is null!");
 
             return await CreateRequestUrl(BaseUrl, HashSecret);
-        }
-        public async Task<string> CreatePaymentUrlRefundAsync()
-
-        {
-            if (string.IsNullOrEmpty(HashSecret))
-                throw new Exception("VNPay HashSecret is null!");
-
-            return await CreateRequestRefundUrl(RefundUrl, HashSecret);
         }
         public async Task<string> GetIpAddress()
         {
