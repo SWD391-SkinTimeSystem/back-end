@@ -2,14 +2,13 @@
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repositories.FileSetting
+namespace Services.FileSetting
 {
     public class FileService(BlobServiceClient blobServiceClient, IConfiguration configuration)
     {

@@ -316,6 +316,11 @@ namespace SkinTime.Helpers
 
             CreateMap<CategoryDetailDTO, ServiceCategory>().ReverseMap();
             CreateMap<SkintypeDetailDTO, SkinType>().ReverseMap();
+            CreateMap<ServiceDetail, ServiceDetailsDTO>().ReverseMap();
+            CreateMap<ServiceCreateDTO, Service>()
+           .ForMember(dest => dest.Thumbnail, opt => opt.Ignore()) // Bỏ qua Thumbnail (vì cần upload trước)
+           .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ServiceStatus>(src.Status))) // Chuyển từ string sang Enum
+           .ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails)); // Ánh xạ danh sách ServiceDetails
         }
 
     }

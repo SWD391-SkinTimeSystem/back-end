@@ -2,6 +2,7 @@
 using Repositories.Data;
 using Repositories.Implement;
 using Repositories.Interface;
+using Services.FileSetting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,11 +18,13 @@ namespace Repositories.UnitOfWork
         private readonly Dictionary<Type, object> _repositories = new();
         public IBookingRepository Bookings { get; private set; }
         public IServiceRepository Services { get; private set; }
-        public UnitOfWork(ApplicationDbContext context)
+        private readonly FileService _fileService;
+        public UnitOfWork(ApplicationDbContext context, FileService fileService)
         {
             _context = context;
+            _fileService = fileService;
             Bookings = new BookingRepository(context);
-            Services = new ServiceRepository(context);
+            Services = new ServiceRepository(context,_fileService);
         }
         public async Task<int> Complete()
         {
