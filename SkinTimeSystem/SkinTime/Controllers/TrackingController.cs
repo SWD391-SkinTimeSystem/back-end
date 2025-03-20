@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons;
 using Services.Commons.DTOs.TrackingDTO;
 using Services.Interfaces;
 
@@ -9,7 +10,7 @@ namespace API.Controllers
 {
     [Route("api/tracking")]
     [ApiController]
-    public class TrackingController : ControllerBase
+    public class TrackingController : BaseController
     {
         private readonly ITrackingService _trackingService;
         public TrackingController(ITrackingService trackingService)
@@ -20,8 +21,10 @@ namespace API.Controllers
         [HttpPost("checkin")]
         public async Task<IActionResult> TrackingBooking(CreationalTrackingDTO creationalTrackingDTO)
         {
-            _trackingService.CreateTracking(creationalTrackingDTO);
-            return Ok();
+            return await HandleServiceCall(async () =>
+            {
+                return ServiceResult.Success(await _trackingService.CreateTracking(creationalTrackingDTO));
+            });
 
         }
 
@@ -29,16 +32,20 @@ namespace API.Controllers
         [HttpPut("checkout")]
         public async Task<IActionResult> CheckoutTracking(Guid trackingId)
         {
-            _trackingService.CheckoutTracking(trackingId);
-            return Ok();
+            return await HandleServiceCall(async () =>
+            {
+                return ServiceResult.Success(await _trackingService.CheckoutTracking(trackingId));
+            });
         }
 
 //[Authorize(Roles = nameof(UserRole.Therapist))]
         [HttpPut("note")]
         public async Task<IActionResult> NoteTracking(Guid trackingId, string note)
         {
-            _trackingService.NoteTracking(trackingId, note);
-            return Ok();
+            return await HandleServiceCall(async () =>
+            {
+                return ServiceResult.Success(await _trackingService.NoteTracking(trackingId, note));
+            });
         }
     }
 }

@@ -71,7 +71,7 @@ namespace Services.Implement
         {
 
 
-            var booking = _unitOfWork.Bookings.GetBookingInformation(bookingId);
+            var booking = await  _unitOfWork.Bookings.GetBookingInformation(bookingId);
 
             if (booking == null)
             {

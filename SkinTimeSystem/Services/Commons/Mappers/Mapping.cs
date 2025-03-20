@@ -294,27 +294,30 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceNavigation.Description))
                 .ReverseMap();
 
+            CreateMap<Schedule, BookingStepDetailsDTO>()
+                .ForMember(dest => dest.ScheduleID, opt => opt.MapFrom(src => src.Id))
+                 .ForMember(dest => dest.CheckInCode, opt => opt.MapFrom(src =>
+                     Convert.ToBase64String(Encoding.UTF8.GetBytes(src.Id.ToString())).Substring(0, 6)
+                 ));
 
             CreateMap<Booking, BookingDetailDTO>()
-    .ForMember(dest => dest.CheckInCode, opt => opt.MapFrom(src =>
-        Convert.ToBase64String(Encoding.UTF8.GetBytes(src.Id.ToString())).Substring(0, 6)
-    ))
-    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-    .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src =>
-        src.TherapistNavigation != null && src.TherapistNavigation.UserNavigation != null
-            ? src.TherapistNavigation.UserNavigation.FullName
-            : "Not yet"
-    ))
-    .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
-    .ForMember(dest => dest.TotalStep, opt => opt.MapFrom(src =>
-        src.ServiceNavigation.ServiceDetailNavigation != null
-            ? src.ServiceNavigation.ServiceDetailNavigation.Count
-            : 0
-    ))
-    .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceNavigation.Description))
-        .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ServiceNavigation.Thumbnail))
-    .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.ScheduleNavigation))
-    .ReverseMap();
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src =>
+                    src.TherapistNavigation != null && src.TherapistNavigation.UserNavigation != null
+                        ? src.TherapistNavigation.UserNavigation.FullName
+                        : "Not yet"
+                ))
+                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
+                .ForMember(dest => dest.TotalStep, opt => opt.MapFrom(src =>
+                    src.ServiceNavigation.ServiceDetailNavigation != null
+                        ? src.ServiceNavigation.ServiceDetailNavigation.Count
+                        : 0
+                ))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceNavigation.Description))
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ServiceNavigation.Thumbnail))
+                .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.ScheduleNavigation)) // Chỉ rõ cách map
+                .ReverseMap();
+
 
             //CreateMap<Schedule, BookingStepDetails>()
             //    .ForMember(dest => dest.ServiceDetailsName, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Name))
@@ -354,7 +357,11 @@ namespace SkinTime.Helpers
             CreateMap<ServiceDetailsDTO, ServiceDetail>()
                .ForMember(dest => dest.ServiceID, opt => opt.Ignore());
             CreateMap<CreationalTrackingDTO, Tracking>().ReverseMap();
+
+                
         }
+
+        
 
     }
 

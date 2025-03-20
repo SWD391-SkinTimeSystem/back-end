@@ -13,6 +13,9 @@ namespace Repositories.UnitOfWork
         IBookingRepository Bookings { get; }
         IServiceRepository Services { get; }
         ITrackingRepository Trackings { get; }
+
+        IScheduleRepository Schedules { get; }
+
         IGenericRepository<TEntity> Repository<TEntity>()
            where TEntity : BaseEntity;
 

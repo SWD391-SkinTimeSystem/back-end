@@ -18,12 +18,14 @@ namespace Repositories.UnitOfWork
         public IBookingRepository Bookings { get; private set; }
         public IServiceRepository Services { get; private set; }
         public ITrackingRepository Trackings { get; private set; }
+        public IScheduleRepository Schedules { get; private set; }
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Bookings = new BookingRepository(context);
             Services = new ServiceRepository(context);
             Trackings = new TrackingRepository(context);
+            Schedules = new ScheduleRepository(context);
         }
         public async Task<int> Complete()
         {

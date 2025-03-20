@@ -9,5 +9,8 @@ namespace Services.Commons.DTOs.TrackingDTO
     public class CreationalTrackingDTO
     {
         public Guid ScheduleId { get; set; }
+
+        public string OtpInput { get; set; }
+
     }
 }

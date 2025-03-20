@@ -1,4 +1,5 @@
 ﻿
+using Services.Commons;
 using Services.Commons.DTOs.TrackingDTO;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,8 @@ namespace Services.Interfaces
 {
     public interface ITrackingService 
     {
-        Task<bool> CreateTracking(CreationalTrackingDTO creationalTrackingDTO);
-        Task<bool> NoteTracking(Guid trackingId, string note);
-        Task<bool> CheckoutTracking(Guid trackingId);
+        Task<ServiceResult<string>> CreateTracking(CreationalTrackingDTO creationalTrackingDTO);
+        Task<ServiceResult<string>> NoteTracking(Guid trackingId, string note);
+        Task<ServiceResult<string>> CheckoutTracking(Guid trackingId);
     }
 }

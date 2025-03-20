@@ -14,6 +14,8 @@ public class BaseController : ControllerBase
     protected readonly ITokenUtilities _tokenUtils;
     protected readonly IEmailUtilities _emailUtils;
 
+    public BaseController() { }
+
     public BaseController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities)
     {
         _mapper = mapper;
