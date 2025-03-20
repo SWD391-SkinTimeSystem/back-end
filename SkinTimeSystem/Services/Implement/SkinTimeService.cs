@@ -13,18 +13,22 @@ using Microsoft.SqlServer.Server;
 using StackExchange.Redis;
 using Services.FileSetting;
 using Services.Commons;
+using Services.Commons.DTOs.Service;
+using AutoMapper;
 
 namespace Services.Implement
 {
     public class SkinTimeService : ISkinTimeService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly FileService _fileService;
 
-        public SkinTimeService(FileService fileService,IUnitOfWork unitOfWork)
+        public SkinTimeService(FileService fileService,IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _fileService = fileService;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResult<bool>> CreateService(Service service, ICollection<IFormFile> serviceImages, ICollection<Guid> skintypeIds)
@@ -53,34 +57,12 @@ namespace Services.Implement
 
         public async Task<ICollection<Service>> GetAllService() => await _unitOfWork.Repository<Service>().GetAllAsync();
 
-        public async Task<ICollection<Service>> GetAllTreatmentplant()
-        {
-           var listService = await _unitOfWork.Services.GetAllTretmenplan();
-            return  listService;
-        }
+        public async Task<ICollection<Service>> GetAllTreatmentplant() => await _unitOfWork.Services.GetAllTretmenplan();
 
-        public async Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService)
-        {
-            var service = await _unitOfWork.Repository<Service>()
-                .GetByConditionAsync(s => s.Id == idService,
-                    query => query.Include(s => s.ServiceDetailNavigation)
-                                  .Include(s => s.ServiceImageNavigation));
-
-            var bookings = await _unitOfWork.Repository<Booking>()
-                .ListAsync(
-                    filter: b => b.ServiceId == idService,
-                    orderBy: null,
-                    includeProperties: query => query
-                        .Include(b => b.CustomerNavigation)
-                        .Include(b => b.FeedbackNavigation!)
-                );
-
-            var result = bookings
-                .Where(b => b.FeedbackNavigation != null)
-                .Select(b => (b, b.FeedbackNavigation!, b.CustomerNavigation))
-                .ToList();
-
-            return (service, result.Any() ? result : null);
+        public async Task<ServiceResult<ServiceDTO>> GetService(Guid idService) { 
+           
+        var service =   await _unitOfWork.Services.GetService(idService);
+            return ServiceResult<ServiceDTO>.Success(_mapper.Map<ServiceDTO>(service));
         }
 
 

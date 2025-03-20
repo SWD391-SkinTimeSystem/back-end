@@ -11,5 +11,7 @@ namespace Repositories.Interface
     {
         Task CreateService(Service service, List<string> listURl, ICollection<Guid> skinTypeIds);
         Task<ICollection<Service>> GetAllTretmenplan();
+        Task<Service> GetService(Guid idService);
+        Task<Service> GetTretmenplan(Guid idService);
     }
 }

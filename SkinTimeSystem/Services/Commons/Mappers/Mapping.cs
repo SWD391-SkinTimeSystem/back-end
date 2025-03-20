@@ -150,37 +150,17 @@ namespace SkinTime.Helpers
                         NameService = s.ServiceName
                     }).ToList()
                 });
-
-            // Map từ Service -> ServiceDTO
+            // Service => ServiceDTO
             CreateMap<Service, ServiceDTO>()
-                .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.ServiceDetailNavigation))
-                .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.ServiceImageNavigation))
-                .ForMember(dest => dest.Feedbacks, opt => opt.Ignore()).ReverseMap();
+            .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.ServiceDetailNavigation))
+            .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.ServiceImageNavigation));
 
-            // Map từ ServiceDetail -> ServiceDetailDTO
-            CreateMap<ServiceDetail, ServiceDetailDTO>().ReverseMap(); ;
+            CreateMap<ServiceDetail, ServiceDetailDTO>();
 
-            // Map từ ServiceImage -> ServiceImageDTO
-            CreateMap<ServiceImage, ServiceImageDTO>().ReverseMap(); ;
+            CreateMap<ServiceImage, ServiceImageDTO>()
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.ImageUrl));
 
-            // Map từ (Booking?, Feedback?, User?) -> FeedBackServiceDTO
-            //CreateMap<(Booking?, Feedback?, User?), ServiceFeedbackDTO>()
-            //    .ForMember(dest => dest.CustommerName, opt => opt.MapFrom(src => src.Item3 != null ? src.Item3.FullName : "Unknown"))
-            //    .ForMember(dest => dest.Star, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.ServiceRating : (int?)null))
-            //    .ForMember(dest => dest.CreatedTime, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.CreatedTime : (DateTime?)null))
-             //   .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.ServiceFeedback : null));
 
-            // Map từ (Service, List<(Booking?, Feedback?, User?)>?) -> ServiceDTO
-            CreateMap<(Service, List<(Booking?, Feedback?, User?)>?), ServiceDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item1.Id))
-                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Item1.ServiceName))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item1.Description))
-                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Item1.Thumbnail))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item1.Price))
-                .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.Item1.ServiceDetailNavigation))
-                .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.Item1.ServiceImageNavigation))
-                .ForMember(dest => dest.Feedbacks, opt => opt.MapFrom(src => src.Item2 ?? new List<(Booking?, Feedback?, User?)>())); // Nếu null, chuyển thành list rỗng
-           
 
             CreateMap<Event, EventDTO>()
                 .ForMember(dst => dst.Title, opt => opt.MapFrom(src => src.Name))
@@ -231,37 +211,14 @@ namespace SkinTime.Helpers
                         NameService = s.ServiceName
                     }).ToList()
                 });
-            // Map từ Service -> ServiceDTO
-            CreateMap<Service, ServiceDTO>()
-                .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.ServiceDetailNavigation))
-                .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.ServiceImageNavigation))
-                .ForMember(dest => dest.Feedbacks, opt => opt.Ignore());
+
 
             // Map từ ServiceDetail -> ServiceDetailDTO
             CreateMap<ServiceDetail, ServiceDetailDTO>();
 
             // Map từ ServiceImage -> ServiceImageDTO
             CreateMap<ServiceImage, ServiceImageDTO>();
-
-            // Map từ (Booking?, Feedback?, User?) -> FeedBackServiceDTO
-            //CreateMap<(Booking?, Feedback?, User?), ServiceFeedbackDTO>()
-            //    .ForMember(dest => dest.CustommerName, opt => opt.MapFrom(src => src.Item3 != null ? src.Item3.FullName : "Unknown"))
-            //    .ForMember(dest => dest.Star, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.ServiceRating : (int?)null))
-            //    .ForMember(dest => dest.CreatedTime, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.CreatedTime : (DateTime?)null))
-            //    .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Item2 != null ? src.Item2.ServiceFeedback : null));
-
-            // Map từ (Service, List<(Booking?, Feedback?, User?)>?) -> ServiceDTO
-            CreateMap<(Service, List<(Booking?, Feedback?, User?)>?), ServiceDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item1.Id))
-                .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Item1.ServiceName))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Item1.Description))
-                .ForMember(dest => dest.Duration, opt => opt.MapFrom(src => src.Item1.Duration))
-                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Item1.Thumbnail))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Item1.Price))
-                .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.Item1.ServiceDetailNavigation))
-                .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.Item1.ServiceImageNavigation))
-                .ForMember(dest => dest.Feedbacks, opt => opt.MapFrom(src => src.Item2 ?? new List<(Booking?, Feedback?, User?)>())); // Nếu null, chuyển thành list rỗng
-
+          
             CreateMap<Service, TreatmentPlanDTO>()
             .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Price))

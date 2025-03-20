@@ -57,5 +57,13 @@ namespace Repositories.Implement
             return services;
         }
 
+        public async Task<Service?> GetService(Guid idService)
+        {
+            return await _context.Services
+                .Include(s => s.ServiceDetailNavigation)
+                .Include(s => s.ServiceImageNavigation)
+                .FirstOrDefaultAsync(s => s.Id == idService);
+        }
+
     }
 }

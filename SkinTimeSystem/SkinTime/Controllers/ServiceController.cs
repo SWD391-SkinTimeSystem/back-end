@@ -23,18 +23,10 @@ namespace SkinTime.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetService(Guid id)
         {
-            return await HandleServiceCall<ServiceDTO>(async () =>
+            return await HandleServiceCall(async () =>
             {
-                var service = await _skinTimeService.GetService(id);
-                
-                if (service.Item1 == null)
-                {
-                    return ServiceResult.Failed(ServiceError.NotFound("Can not find service with provided id"));
-                }
-                else
-                {
-                    return ServiceResult.Success(service);
-                }
+                var service = await _skinTimeService.GetService(id);                
+                return service;
             });
         }
 
@@ -48,7 +40,7 @@ namespace SkinTime.Controllers
             });
         }
 
-        [HttpGet("treatment-plan/{id}")]// 35. Lấy danh sách thông tin của treatment plan 
+        [HttpGet("treatment-plan/{id}")]
         public async Task<IActionResult> GetTreatmentPlan(Guid id)
         {
             return await HandleApiCallAsync(async () =>

@@ -1,6 +1,7 @@
 ﻿using BusinessObject.Entities;
 using Microsoft.AspNetCore.Http;
 using Services.Commons;
+using Services.Commons.DTOs.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Services.Interfaces
 {
     public interface ISkinTimeService
     {
-        Task<(Service?, List<(Booking?, Feedback?, User?)>?)> GetService(Guid idService);
+        Task<ServiceResult<ServiceDTO>> GetService(Guid idService);
         Task<Service> GetTreatmentplant(Guid idService);
         Task<ICollection<Service>> GetAllTreatmentplant();
         Task<ICollection<Service>> GetAllService();
