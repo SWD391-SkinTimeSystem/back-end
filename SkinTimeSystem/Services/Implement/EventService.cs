@@ -7,6 +7,7 @@ using Repositories;
 using Repositories.UnitOfWork;
 using Services.Commons;
 using Services.Commons.DTOs.Event;
+using Services.Commons.DTOs.Ticket;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -67,7 +68,7 @@ namespace Services.Implement
             {
                 return ServiceResult.Failed(ServiceError.ValidationFailed("Can not remove an event that has been approved"));
             }
-            
+
             result.Status = EventStatus.Removed;
             _unitOfWork.EventRepository.Update(result);
 
@@ -173,5 +174,21 @@ namespace Services.Implement
 
             return ServiceResult<EventDTO>.Success(_mapper.Map<EventDTO>(result));
         }
+
+        //public async Task<PaginationResult<TicketRegistrationDTO>>  GetAllEventTicket(Guid eventId, EventTicketStatus status, int page, int page_size)
+        //{
+
+        //    PaginationResult<EventTicket> result = await _unitOfWork.EventTicketRepository
+        //.GetEventTicketPaginated(eventId, status, page, page_size );
+
+
+        //    return new PaginationResult<TicketRegistrationDTO>
+        //    {
+        //        Content = _mapper.Map<ICollection<TicketRegistrationDTO>>(result.Content),
+        //        CurrentPage = page,
+        //        ItemAmount = result.ItemAmount,
+        //        PageSize = page_size
+        //    };
+        //}
     }
 }

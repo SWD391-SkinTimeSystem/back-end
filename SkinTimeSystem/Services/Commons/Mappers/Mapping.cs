@@ -331,6 +331,10 @@ namespace SkinTime.Helpers
             CreateMap<ServiceCreateDTO, Service>()
            .ForMember(dest => dest.Thumbnail, opt => opt.Ignore()) 
            .ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
+
+
+            CreateMap<EventTicket, TicketRegisterListDTO>();
+                
         }
 
         

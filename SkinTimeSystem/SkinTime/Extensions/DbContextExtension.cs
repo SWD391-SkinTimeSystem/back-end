@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Configuration;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using BusinessObject.Entities;
 using BusinessObject.Enum;
+using BusinessObject.EventEnums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -700,6 +702,60 @@ namespace SkinTime.Extensions
     };
 
                 await context.Events.AddRangeAsync(events);
+                await context.SaveChangesAsync();
+            }
+
+            // 12. Seed ticket event
+            if (!context.EventTickets.Any())
+            {
+                var eventId = context.Events.ToArray();
+                var userId = context.Users.ToArray();
+                Console.WriteLine($"Số lượng sự kiện: {eventId.Length}");
+                //if (eventId.Length < 10) throw new Exception("Không đủ Services để seeding ServiceDetails.");
+
+                var eventTickets  = new[]
+                {
+                    new EventTicket
+                    {
+                        PaidAmount = 55000.00m,
+                        QRCode = "QR111111",
+                        TicketCode = "111111",
+                        Status = EventTicketStatus.Paid,
+                        UserID = userId[1].Id,
+                        EventId  = eventId[1].Id,
+                        CreatedTime = new DateTime(2025, 03, 21, 14, 30, 00),
+                        LastUpdate = new DateTime(2025, 03, 21, 14, 35, 00)
+                    },
+
+                    new EventTicket
+                    {
+                        PaidAmount = 60000.50m,
+                        QRCode = "QR222222",
+                        TicketCode = "222222",
+                        Status = EventTicketStatus.Paid,
+                        UserID = userId[2].Id,
+                        EventId = eventId[1].Id,
+                        CreatedTime = new DateTime(2025, 03, 21, 14, 40, 00),
+                        LastUpdate = new DateTime(2025, 03, 21, 14, 45, 00)
+                    },
+
+                    new EventTicket
+                    {
+                        PaidAmount = 75000.75m,
+                        QRCode = "QR333333",
+                        TicketCode = "333333",
+                        Status = EventTicketStatus.Paid,
+                        UserID = userId[1].Id,
+                        EventId = eventId[1].Id,
+                        CreatedTime = new DateTime(2025, 03, 21, 14, 50, 00),
+                        LastUpdate = new DateTime(2025, 03, 21, 14, 55, 00)
+                    }
+
+
+
+                };
+
+                await context.EventTickets.AddRangeAsync(eventTickets);
                 await context.SaveChangesAsync();
             }
         }

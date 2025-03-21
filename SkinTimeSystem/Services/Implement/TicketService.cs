@@ -1,15 +1,20 @@
-﻿using BusinessObject.Entities;
+﻿using AutoMapper;
+using BusinessObject.Entities;
 using BusinessObject.Enum;
 using BusinessObject.EventEnums;
 using Castle.Core.Resource;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Therapist;
+using Services.Commons.DTOs.Ticket;
 using Services.Interfaces;
 using Services.PaymentSetting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,12 +25,14 @@ namespace Services.Implement
         private readonly IUnitOfWork _unitOfWork;
         private readonly VNPay _vnPay;
         private readonly ZaloPay _zaloPay;
+        private readonly IMapper _mapper;
 
-        public TicketService(IUnitOfWork unitOfWork, VNPay vnPay, ZaloPay zaloPay)
+        public TicketService(IUnitOfWork unitOfWork, VNPay vnPay, ZaloPay zaloPay, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _vnPay = vnPay;
             _zaloPay = zaloPay;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResult<string>> CancelEventTicket(string ticketId)
@@ -156,28 +163,35 @@ namespace Services.Implement
             return ServiceResult<ICollection<EventTicket>>.Success(userTickets.ToList());
         }
 
-        public async Task<ServiceResult<ICollection<EventTicket>>> GetAllEventTicket(string eventId, string? status)
+        public async Task<PaginationResult<TicketRegisterListDTO>> GetRegisterEventTicket(Guid eventId, int page, int pageSize)
         {
-            // Input parameters validation
-            if (!Guid.TryParse(eventId, out var parsedEventId))
-            {
-                return ServiceResult<ICollection<EventTicket>>.Failed(ServiceError.ValidationFailed("User id does not match the required"));
-            }
 
-            IEnumerable<EventTicket> eventTickets = await _unitOfWork.Repository<EventTicket>().ListAsync(x => x.EventId == parsedEventId);
+            PaginationResult<EventTicket> result = await _unitOfWork.Repository<EventTicket>().AsPaginated(page, pageSize, x => x.EventId == eventId && x.Status == EventTicketStatus.Paid);
+            
 
-            if (status != null)
-            {
-                if (!Enum.TryParse<EventTicketStatus>(status, out var statusValue))
-                {
-                    return ServiceResult<ICollection<EventTicket>>.Failed(ServiceError.ValidationFailed("the given status is invalid"));
-                }
-
-                eventTickets = eventTickets.Where(x => x.Status == statusValue);
-            }
-
-            return ServiceResult<ICollection<EventTicket>>.Success(eventTickets.ToList());
+            return new PaginationResult<TicketRegisterListDTO>
+                   {
+                        Content = _mapper.Map<ICollection<TicketRegisterListDTO>>(result.Content),
+                        CurrentPage = page,
+                        ItemAmount = result.ItemAmount,
+                        PageSize = pageSize,
+                    };
         }
+
+        public async Task<PaginationResult<TicketRegisterListDTO>> GetAllEventTicket(Guid eventId, int page, int pageSize)
+        {
+
+            PaginationResult<EventTicket> result = await _unitOfWork.Repository<EventTicket>().AsPaginated(page, pageSize, x => x.EventId == eventId);
+
+            return new PaginationResult<TicketRegisterListDTO>
+            {
+                Content = _mapper.Map<ICollection<TicketRegisterListDTO>>(result.Content),
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = pageSize,
+            };
+        }
+
 
         public async Task<ServiceResult<EventTicket>> GetTicketWithId(string ticketId)
         {
@@ -201,6 +215,49 @@ namespace Services.Implement
         public Task<ServiceResult<EventTicket>> UpdateTicket(string ticketId, EventTicket ticket)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ServiceResult> CheckinTicket(Guid eventId, Guid ticketId, string otp)
+        {
+
+            var eventInformation = await _unitOfWork.Repository<Event>().GetByIdAsync(eventId);
+            var ticketInformation = await _unitOfWork.Repository<EventTicket>().GetByIdAsync(ticketId);
+
+            //var now = DateTime.Now; // Thời gian hiện tại
+            var now = new DateTime(2025, 11, 22, 6, 40, 0);
+
+            // Lấy ngày và giờ sự kiện
+            var eventDate = eventInformation.EventDate;
+            var timeStart = eventInformation.TimeStart;
+            var timeEnd = eventInformation.TimeEnd;
+
+            // Xác định khoảng thời gian cho phép check-in
+            var eventStartTime = new DateTime(eventDate.Year, eventDate.Month, eventDate.Day,
+                                              timeStart.Hour, timeStart.Minute, timeStart.Second);
+            var eventEndTime = new DateTime(eventDate.Year, eventDate.Month, eventDate.Day,
+                                            timeEnd.Hour, timeEnd.Minute, timeEnd.Second);
+            var checkInStartTime = eventStartTime.AddMinutes(-30); // 30 phút trước TimeStart
+
+            // Kiểm tra điều kiện check-in
+            if (now.Date == eventDate.ToDateTime(TimeOnly.MinValue).Date &&
+                now >= checkInStartTime &&
+                now <= eventEndTime)
+            {
+                if (ticketInformation.TicketCode == otp)
+                {
+                    var result = await _unitOfWork.EventTicket.CheckinEventTicket(ticketId);
+                    return ServiceResult.Success("✅ Check-in hợp lệ!");
+                }
+                else
+                {
+                    return ServiceResult.Failed(ServiceError.ValidationFailed("❌ Mã OTP không hợp lệ!"));
+                }
+            }
+            else
+            {
+                return ServiceResult.Failed(ServiceError.ValidationFailed("❌ Không thể check-in ngoài khung giờ cho phép!"));
+            }
+
         }
     }
 }

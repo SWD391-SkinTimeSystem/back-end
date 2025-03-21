@@ -20,6 +20,10 @@ namespace Repositories.UnitOfWork
 
         IScheduleRepository Schedules { get; }
 
+
+        IEventTicketRepository EventTicket { get; }
+
+
         IGenericRepository<TEntity> Repository<TEntity>()
            where TEntity : BaseEntity;
 
