@@ -179,10 +179,9 @@ namespace SkinTime.Controllers
         [HttpPost("reschedule")]
         public async Task<ActionResult> ChangSchedule(RescheduleDTO rescheduleDTO)
         {
-            string userrole= GetUserRoleFromJwt();
             return await HandleServiceCall(async () =>
             {
-              return await _service.ReSchedule(userrole, rescheduleDTO);                 
+              return await _service.ReSchedule(rescheduleDTO);                 
             });
         }
 

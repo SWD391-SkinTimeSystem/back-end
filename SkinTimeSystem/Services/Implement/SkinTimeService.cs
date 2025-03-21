@@ -23,10 +23,9 @@ namespace Services.Implement
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public SkinTimeService(/*FileService fileService,*/ IUnitOfWork unitOfWork, IMapper mapper)
+        public SkinTimeService( IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-          //  _fileService = fileService;
             _mapper = mapper;
         }
 
@@ -34,7 +33,7 @@ namespace Services.Implement
         {
                 var service = _mapper.Map<Service>(serviceDTO);
                 var servicedetails = _mapper.Map<ICollection<ServiceDetail>>(serviceDTO.ServiceDetails);
-                await _unitOfWork.Services.CreateService(service,serviceDTO.SkintypeIds, serviceDTO.ServiceImages, servicedetails);
+                await _unitOfWork.Services.CreateService(serviceDTO.Thumbnail,service,serviceDTO.SkintypeIds, serviceDTO.ServiceImages, servicedetails);
                 return ServiceResult<bool>.Success(true);
 
         }

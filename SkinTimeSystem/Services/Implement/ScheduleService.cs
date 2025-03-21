@@ -150,7 +150,6 @@ namespace Services.Implement
 
             for (TimeOnly y = startOfDay; y <= endOfDay; y = y.AddMinutes(30))
             {
-                // If the current time is over the checking time, the slot is automatically un available.
                 DateTime checking = date.ToDateTime(y);
                 if (DateTime.UtcNow > checking)
                 {
@@ -196,13 +195,8 @@ namespace Services.Implement
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
         }
 
-        public async Task<ServiceResult<Schedule>> ReSchedule(string role, RescheduleDTO rescheduleDTO)
+        public async Task<ServiceResult<Schedule>> ReSchedule(RescheduleDTO rescheduleDTO)
         {
-            var userRole = Enum.TryParse<UserRole>(role, true, out var parsed) ? parsed : UserRole.Customer;
-
-            if (userRole == UserRole.Customer && await _unitOfWork.Schedules.CheckFirstStep(rescheduleDTO.IdSchedule))
-                return ServiceResult<Schedule>.Failed(ServiceError.ValidationFailed("Cannot reschedule first step as Customer"));
-
             var schedule = await _unitOfWork.Schedules.ReSchedule(rescheduleDTO.IdSchedule, rescheduleDTO.Date, rescheduleDTO.TimeStart);
             return ServiceResult<Schedule>.Success(schedule);
         }

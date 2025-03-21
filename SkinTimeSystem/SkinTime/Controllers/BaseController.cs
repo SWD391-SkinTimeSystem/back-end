@@ -61,16 +61,6 @@ public class BaseController : ControllerBase
         // Split the bearer token ("Bearer adfbnenofcsa...") into two parts and take the jwt part to decode and get the user id.
         return _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
     }
-    protected string GetUserRoleFromJwt()
-    {
-        string? jwt = Request.Headers.Authorization.First();
-        if (jwt == null)
-        {
-            throw new InvalidOperationException("Can not use this method with endpoint allows anonymous access.");
-        }
-
-        return _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["role"];
-    }
     protected async Task<IActionResult> HandleApiCallAsync<T>(Func<Task<T>> func)
     {
         try

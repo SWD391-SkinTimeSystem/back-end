@@ -14,14 +14,6 @@ namespace Repositories.Implement
     {
         public ScheduleRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<bool> CheckFirstStep(Guid idSchedule)
-        {
-            var schedule = await _context.Schedules
-                .Include(s => s.ServiceDetailNavigation) 
-                .FirstOrDefaultAsync(s => s.Id == idSchedule);
-
-            return schedule.ServiceDetailNavigation.Step == 1;
-        }
         public async Task<bool> GetScheduleById(Guid scheduleId)
         {
             var schedule =  _context.Schedules.SingleOrDefault(x => x.Id == scheduleId);
@@ -32,9 +24,9 @@ namespace Repositories.Implement
             return true;
         }
 
-        public async Task<Schedule> ReSchedule(Schedule schedule, DateOnly date, TimeOnly time)
+        public async Task<Schedule> ReSchedule(Guid idSchedule, DateOnly date, TimeOnly time)
         {
-            var schchedule = _context.Schedules.SingleOrDefault(x => x.Id == schedule.Id);
+            var schchedule = _context.Schedules.SingleOrDefault(x => x.Id == idSchedule);
             var serviceDetail = _context.ServiceDetails.SingleOrDefault(s => s.Id == schchedule.ServiceDetailId);
             schchedule.Date = date;
             schchedule.ReservedEndTime = time.AddMinutes(serviceDetail.Duration);
@@ -46,9 +38,5 @@ namespace Repositories.Implement
             return schchedule;
         }
 
-        public Task<Schedule> ReSchedule(Guid iDSchedule, DateOnly date, TimeOnly time)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

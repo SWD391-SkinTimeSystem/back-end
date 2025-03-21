@@ -330,7 +330,6 @@ namespace SkinTime.Helpers
             CreateMap<ServiceDetail, ServiceDetailsDTO>().ReverseMap();
             CreateMap<ServiceCreateDTO, Service>()
            .ForMember(dest => dest.Thumbnail, opt => opt.Ignore()) 
-           .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ServiceStatus>(src.Status))) 
            .ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
         }
 

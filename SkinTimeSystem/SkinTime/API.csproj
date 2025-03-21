@@ -49,10 +49,4 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="wwwroot\skimtime-firebase-adminsdk-fbsvc-e0413fa20d.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>

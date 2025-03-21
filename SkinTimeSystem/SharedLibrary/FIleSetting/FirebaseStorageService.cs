@@ -19,11 +19,10 @@ namespace SharedLibrary.FIleSetting
 
         public FirebaseStorageService(IConfiguration configuration)
         {
-            // Đọc cấu hình từ appsettings.json
+
             _bucketName = configuration["Firebase:BucketName"];
             string credentialPath = configuration["Firebase:CredentialPath"];
-
-            // Kiểm tra nếu chưa cấu hình đúng
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
             if (string.IsNullOrEmpty(_bucketName) || string.IsNullOrEmpty(credentialPath))
             {
                 throw new Exception("Firebase configuration is missing!");
@@ -38,16 +37,16 @@ namespace SharedLibrary.FIleSetting
                 });
             }
 
-          //  _storageClient = StorageClient.Create(credential);
+            _storageClient = StorageClient.Create();
         }
 
-        public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType)
-        {
-            var storageObject = await _storageClient.UploadObjectAsync(_bucketName, fileName, contentType, fileStream);
-            return $"https://storage.googleapis.com/{_bucketName}/{storageObject.Name}";
-        }
         public async Task<string> Upload(IFormFile file)
         {
+            if (file == null || file.Length == 0)
+            {
+                throw new ArgumentException("File cannot be null or empty.");
+            }
+
             var fileName = $"{Guid.NewGuid()}_{file.FileName}";
             using (var memoryStream = new MemoryStream())
             {

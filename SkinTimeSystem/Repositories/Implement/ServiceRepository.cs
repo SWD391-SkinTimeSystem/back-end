@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Entities;
+using BusinessObject.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Data;
@@ -20,12 +21,13 @@ namespace Repositories.Implement
             _fileService = fileService;
         }
 
-        public async Task CreateService(Service service, ICollection<Guid> SkintypeIds, ICollection<IFormFile> ServiceImages, ICollection<ServiceDetail> ServiceDetails)
+        public async Task CreateService(IFormFile thumnail, Service service, ICollection<Guid> SkintypeIds, ICollection<IFormFile> ServiceImages, ICollection<ServiceDetail> ServiceDetails)
         {
             var listURL = new List<string>();
             service.Id = Guid.NewGuid();
-
-            // Upload các hình ảnh và lưu URL
+            service.Status = ServiceStatus.Available;
+            service.Duration = ServiceDetails.Sum(detail => detail.Duration);
+            service.Thumbnail = await _fileService.Upload(thumnail);
             foreach (var file in ServiceImages)
             {
                 if (file.Length > 0)
@@ -34,15 +36,12 @@ namespace Repositories.Implement
                     listURL.Add(fileUrl);
                 }
             }
-
-            // Gán ID cho ServiceDetails
             foreach (var detail in ServiceDetails)
             {
                 detail.ServiceID = service.Id;
+                service.ServiceDetailNavigation.Add(detail);
             }
-
-            // Gán ServiceDetails vào Service
-            service.ServiceDetailNavigation = ServiceDetails;
+            //service.ServiceDetailNavigation = ServiceDetails;
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
 
