@@ -1,9 +1,11 @@
-﻿using BusinessObject.Entities;
+﻿using AutoMapper;
+using BusinessObject.Entities;
 using BusinessObject.Enum;
 using BusinessObject.Schedule;
 using Microsoft.EntityFrameworkCore;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Schedule;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -18,10 +20,12 @@ namespace Services.Implement
     public class ScheduleService : IScheduleService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ScheduleService(IUnitOfWork unitOfWork)
+        public ScheduleService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResult<Schedule>> CreateSchedule(Schedule schedule)
@@ -119,6 +123,24 @@ namespace Services.Implement
             IEnumerable<Schedule> result = await _unitOfWork.Repository<Schedule>().ListAsync(x => x.Id == reservationId);
 
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
+        }
+
+        public async Task<IDictionary<DateOnly, IDictionary<TimeOnly, ICollection<ScheduleDTO>>>> GetDailySchedule(DateOnly from, DateOnly to)
+        {
+            IEnumerable<Schedule> schedulesList = await _unitOfWork.Repository<Schedule>().ListAsync(x => from <= x.Date && x.Date <= to);
+
+            IDictionary<DateOnly, IDictionary<TimeOnly, ICollection<ScheduleDTO>>> result = new Dictionary<DateOnly, IDictionary<TimeOnly, ICollection<ScheduleDTO>>>();
+
+            for (DateOnly x = from; x <= to; x = x.AddDays(1))
+            {
+                result[x] = new Dictionary<TimeOnly, ICollection<ScheduleDTO>>();
+                for (TimeOnly y = TimeOnly.Parse("6:00:00"); y <= TimeOnly.Parse("20:00:00"); y = y.AddMinutes(30))
+                {
+                    result[x][y] = _mapper.Map<ICollection<ScheduleDTO>>(schedulesList.Where(schedule => schedule.Date == x &&  schedule.ReservedStartTime == y));
+                }
+            }
+
+            return result;
         }
 
         public async Task<ServiceResult<Schedule>> GetSchedule(Guid scheduleId)

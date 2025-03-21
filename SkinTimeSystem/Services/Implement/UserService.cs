@@ -92,6 +92,21 @@ namespace Services.Implement
             };
         }
 
+        public async Task<PaginationResult<AccountInformation>> GetAllUser(int page, int page_size, UserStatus status)
+        {
+            var result = await _unitOfWork.UserRepository.GetUserWithStatusPaginated(page, page_size, status, x => x.OrderByDescending(x => x.CreatedTime));
+
+            ICollection<AccountInformation> information = _mapper.Map<ICollection<AccountInformation>>(result.Content);
+
+            return new PaginationResult<AccountInformation>
+            {
+                Content = information,
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = page_size,
+            };
+        }
+
         public async Task<ServiceResult> GetUserById(Guid id)
         {
             var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);

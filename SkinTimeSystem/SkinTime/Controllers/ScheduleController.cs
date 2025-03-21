@@ -69,7 +69,13 @@ namespace SkinTime.Controllers
             });
         }
 
+        /// <summary>
+        ///     
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         [HttpGet("availability")]
+        [ProducesResponseType<ApiResponse<IDictionary<TimeOnly, bool>>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAvailabilityForDate([FromQuery] DateOnly date)
         {
             return await HandleServiceCall(async () =>
@@ -131,6 +137,26 @@ namespace SkinTime.Controllers
             {
                 var schedules = await _service.GetUserSchedules(userId);
                 return schedules;
+            });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        //[Authorize(Roles = "Staff")]
+        [HttpGet("weekly")]
+        public async Task<IActionResult> GetWeeklySchedule(DateOnly start, DateOnly to)
+        {
+            var schedules = await _service.GetDailySchedule(start, to);
+
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Success",
+                Data = schedules,
             });
         }
 
