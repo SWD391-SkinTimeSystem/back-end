@@ -16,6 +16,8 @@ namespace Services.Interfaces
     {
         Task<PaginationResult<AccountInformation>> GetAllUser(int page, int page_size);
 
+        Task<PaginationResult<AccountInformation>> GetAllUser(int page, int page_size, UserStatus status);
+
         Task<ServiceResult> GetUserById(Guid id);
 
         Task<ServiceResult> CreateAccount(AccountRegistration account);

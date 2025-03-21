@@ -21,6 +21,7 @@ namespace Services.Interfaces
         Task<ServiceResult<Schedule>> UpdateSchedule(Guid id, Schedule schedule);
         Task<ServiceResult<Schedule>> ReSchedule(RescheduleDTO rescheduleDTO);
         Task<ServiceResult<Schedule>> DeleteSchedule(Guid id);
+        Task<IDictionary<DateOnly, IDictionary<TimeOnly, ICollection<ScheduleDTO>>>> GetDailySchedule(DateOnly from, DateOnly to);
 
         /// <summary>
         ///     <para>

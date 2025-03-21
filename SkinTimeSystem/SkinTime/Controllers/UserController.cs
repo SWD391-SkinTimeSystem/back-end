@@ -31,6 +31,11 @@ namespace SkinTime.Controllers
             _services = services;
         }
 
+        /// <summary>
+        ///     Delete user account
+        /// </summary>
+        /// <param name="id">user id</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<AccountInformation>> DeleteUser(Guid id)
         {
@@ -40,7 +45,7 @@ namespace SkinTime.Controllers
         }
 
         /// <summary>
-        ///  Update user information
+        ///  Update user information (Required authenticated to use)
         /// </summary>
         /// <param name="user">some required fields</param>
         /// <returns></returns>
@@ -49,6 +54,23 @@ namespace SkinTime.Controllers
         public async Task<IActionResult> UpdateUser([FromBody] AccountUpdateInformation user)
         {
             ServiceResult result = await _services.UpdateUserInformation(Guid.Parse(GetUserIdFromJwt()), user);
+
+            return HandleServiceCall(result);
+        }
+
+        /// <summary>
+        ///     Update user status (Required authenticated to use)
+        ///     + This can be used by:
+        ///         - Admin to update user status.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <param name="status">New user status</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("{id}/status")]
+        public async Task<IActionResult> UpdateUserStatus(Guid id, [FromQuery] UserStatus status)
+        {
+            ServiceResult result =  await _services.UpdateUserStatus(id, status);
 
             return HandleServiceCall(result);
         }
@@ -72,15 +94,32 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
-        [ProducesResponseType<ApiResponse<PaginationResult<AccountInformation>>>(StatusCodes.Status200OK)]
         [HttpGet("list")]
-        public async Task<ActionResult<IReadOnlyCollection<AccountInformation>>> GetUserAccountList(int page = 1, int page_size = 10)
+        [ProducesResponseType<ApiResponse<PaginationResult<AccountInformation>>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserAccountList(int page = 1, int page_size = 10)
         {
             return Ok(new ApiResponse
             {
                 Success = true,
                 Message = "Success",
                 Data = await _services.GetAllUser(page, page_size),
+            });
+        }
+
+        /// <summary>
+        ///     Get account information for all user in the system. (This should be limited to admin)
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("list/status")]
+        [ProducesResponseType<ApiResponse<PaginationResult<AccountInformation>>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserAccountList(int page = 1, int page_size = 10, UserStatus status = UserStatus.Active)
+        {
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "Success",
+                Data = await _services.GetAllUser(page, page_size, status),
             });
         }
 
@@ -122,7 +161,7 @@ namespace SkinTime.Controllers
         /// <remarks>Only the admin may use this endpoint
         /// </remarks>
         /// <returns>200Ok response if successfully create an user account, else 400BadRequest</returns>
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "manager")]
         [HttpPost("account")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountRegistration registrationInfo)
         {
