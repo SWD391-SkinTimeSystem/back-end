@@ -27,7 +27,7 @@ namespace Services.Commons.DTOs.Therapist
         public required ICollection<string> Specialization { get; set; } = new List<string> { "This property does not exist from database!", };
 
         [JsonPropertyName("rating")]
-        public float Rating => Reviews.Count == 0 ? 0 : Reviews.Where(x => x != null).Average(x => x.Rating);
+        public float Rating => Reviews.Any() ? Reviews.Average(x => x.Rating) : 0f;
 
         [JsonPropertyName("reviews")]
         public required ICollection<TherapistFeedbackDTO> Reviews { get; set; } = new List<TherapistFeedbackDTO>();

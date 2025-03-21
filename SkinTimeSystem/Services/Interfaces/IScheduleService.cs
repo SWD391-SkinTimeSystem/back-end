@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Entities;
 using Services.Commons;
+using Services.Commons.DTOs.Schedule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace Services.Interfaces
         Task<ServiceResult<ICollection<Schedule>>> GetAllSchedules();
         Task<ServiceResult<ICollection<Schedule>>> GetAllSchedules(Expression<Func<Schedule, bool>> expression);
         Task<ServiceResult<Schedule>> UpdateSchedule(Guid id, Schedule schedule);
+       // Task<ServiceResult<Schedule>> ReSchedule(RescheduleDTO rescheduleDTO);
         Task<ServiceResult<Schedule>> DeleteSchedule(Guid id);
 
         /// <summary>

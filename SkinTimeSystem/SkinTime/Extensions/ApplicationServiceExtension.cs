@@ -11,7 +11,6 @@ using SharedLibrary.EmailUtilities;
 using SkinTime.Helpers;
 using System.Security.Cryptography;
 using System.Configuration;
-using Services.FileSetting;
 using Repositories.Implement;
 using Repositories.Interface;
 
@@ -42,10 +41,11 @@ namespace SkinTime.Extensions
             services.AddScoped<ISkinTimeService, SkinTimeService>();
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IScheduleService, ScheduleService>();
+            services.AddScoped<ISkintypeService, SkintypeService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ITrackingService, TrackingService>();
             services.AddScoped<ICache, Cache>();
-            services.AddScoped<FileService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ITicketService, TicketService>();

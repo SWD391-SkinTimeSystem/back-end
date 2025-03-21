@@ -13,7 +13,6 @@ namespace Services.Commons.DTOs.Service
 
         public List<ServiceDetailDTO> ServiceDetails { get; set; }
         public List<ServiceImageDTO> ServiceImages { get; set; }
-        public List<ServiceFeedbackDTO> Feedbacks { get; set; }
 
     }
     

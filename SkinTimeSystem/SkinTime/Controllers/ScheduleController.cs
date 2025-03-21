@@ -61,7 +61,7 @@ namespace SkinTime.Controllers
                     for (TimeOnly y = startOfDay; y <= endOfDay; y = y.AddMinutes(30))
                     {
                         viewModel.Availability[x][y] = !result.Data!
-                        .Any(s => s.Date == x && (s.ReservedStartTime <= y && y < s.ReservedEndTime));
+                        .Any(s => s.Date == x && (s.ReservedStartTime <= y && y <= s.ReservedEndTime));
                     }
                 }
 
@@ -175,5 +175,21 @@ namespace SkinTime.Controllers
                 return ServiceResult.Success(collection);
             });
         }
+        [Authorize(Roles = "Customer,Therapist")]
+        [HttpGet("reschedule")]
+        public async Task<ActionResult> GetPersonalSchedule(RescheduleDTO rescheduleDTO)
+        {
+            Guid userrole= Guid.Parse(GetUserIdFromJwt());
+
+
+            //return await HandleServiceCall<ICollection<ScheduleDTO>>(async () =>
+            //{
+
+
+            //    return ServiceResult.Success(collection);
+            //});
+            return Ok();
+        }
+
     }
 }

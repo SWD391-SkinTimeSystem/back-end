@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using BusinessObject.Entities;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -31,18 +32,10 @@ namespace Services.PaymentSetting
             }
             throw new Exception("Failed to create ZaloPay order.");
         }
-        public async Task<string> CreateZaloPayRefund(decimal? amount, string returnCallBack, string serviceName)
-        {
-            var response = await CreateZaloPayRefundAsync(amount, returnCallBack, serviceName);
+        public async Task<Dictionary<string,string>> CreateZaloPayRefund(Transaction transaction)=>  await CreateZaloPayRefundAsync(transaction);
 
 
-            if (response.TryGetValue("order_url", out var orderUrl))
-            {
-                return orderUrl; 
-            }
-            throw new Exception("Failed to create ZaloPay order.");
-
-        }
+           
         #endregion
 
         #region Request Process
@@ -93,47 +86,32 @@ namespace Services.PaymentSetting
             return await PostFormAsync<Dictionary<string, string>>(CreateOrderUrl, param);
         }
         public async Task<Dictionary<string, string>> CreateZaloPayRefundAsync(
-     decimal? amount, string returnCallBack, string serviceName)
+     Transaction transaction)
         {
-            if (amount == null || amount <= 0)
-            {
-                throw new Exception("Số tiền hoàn phải lớn hơn 0.");
-            }
 
             Random rnd = new Random();
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
 
-            // ✅ LẤY `zptransid` TỪ DB HOẶC GIAO DỊCH TRƯỚC
-            var zptransid = "250314000009078"; // ⚠️ Thay bằng ID thực tế của giao dịch
-
-            // ✅ Mã hoàn tiền hợp lệ
+            var zptransid = transaction.TransactionReference; 
             var mrefundid = $"{DateTime.UtcNow:yyMMdd}_{AppId}_{rnd.Next(100000000, 999999999)}";
 
-            // ✅ Định dạng description đúng
-            var description = "Hoàn tiền " + serviceName;
-            if (description.Length > 100)
-            {
-                description = description.Substring(0, 100);
-            }
+            var description = "Hoàn tiền" ;
 
             var param = new Dictionary<string, string>
     {
         { "appid", AppId },
         { "mrefundid", mrefundid },
         { "zptransid", zptransid },
-        { "amount", ((long)amount).ToString() }, // Phải là số nguyên
+        { "amount", ((long)transaction.Amount).ToString() }, 
         { "timestamp", timestamp },
         { "description", description }
     };
 
-            // ✅ Tạo chữ ký bảo mật đúng format
             var data = $"{AppId}|{zptransid}|{param["amount"]}|{description}|{timestamp}";
             param.Add("mac", Compute(ZaloPayHMAC.HMACSHA256, Key1, data));
 
-            Console.WriteLine("🚀 Gửi yêu cầu hoàn tiền: " + JsonConvert.SerializeObject(param));
 
-            var response = await PostFormAsync<Dictionary<string, string>>("https://sandbox.zalopay.com.vn/v001/tpe/partialrefund", param);
-            Console.WriteLine("🛠 Phản hồi từ ZaloPay: " + JsonConvert.SerializeObject(response));
+            var response = await PostFormAsync<Dictionary<string, string>>(RefundUrl, param);
 
             return response;
         }
@@ -224,6 +202,28 @@ namespace Services.PaymentSetting
                 return false;
             }
         }
+        public async Task<string> GetZaloPayTransactionIdAsync(string appTransId)
+        {
+
+            var param = new Dictionary<string, string>
+    {
+        { "app_id", AppId },
+        { "app_trans_id", appTransId }
+    };
+
+            string data = $"{AppId}|{appTransId}|{Key1}";
+            param.Add("mac", Compute(ZaloPayHMAC.HMACSHA256, Key1, data));
+
+            var response = await PostFormAsync<Dictionary<string, string>>(QueryOrderUrl, param);
+
+            if (response.TryGetValue("zp_trans_id", out var zpTransId))
+            {
+                return zpTransId.ToString();
+            }
+
+            throw new Exception("Không tìm thấy zp_trans_id");
+        }
+
         #endregion
     }
 }

@@ -13,10 +13,10 @@ namespace SkinTime.Controllers
     [Route("api/category")]
     public class CategoryController : BaseController
     {
-        private readonly ICategoryService _category;
-        public CategoryController(ICategoryService category, IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities) : base(mapper, emailUtilities, tokenUtilities)
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ICategoryService categoryService, IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities) : base(mapper, emailUtilities, tokenUtilities)
         {
-            _category = category;
+            _categoryService = categoryService;
         }
         [HttpPost]
         public async Task<ActionResult> CreateCategory(CategoryDTO category)
@@ -31,6 +31,15 @@ namespace SkinTime.Controllers
                 return ServiceResult.Success(new ApiResponse(true, "Successfully added the feedback"));
             });
         }
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse>> GetAllCategory()
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _categoryService.GetAllCategory();
+            });
+        }
+
         [HttpGet("/list-services/{id}")]
         public async Task<ActionResult> GetServiceByCategory(Guid id)
         {

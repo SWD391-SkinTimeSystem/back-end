@@ -21,15 +21,12 @@ namespace SkinTime.Controllers
     public class EventController : BaseController
     {
         private readonly IEventService _services;
-        private readonly IMapper _mapper;
-        private readonly IEmailUtilities _emailUtilities;
+
 
         public EventController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, IEventService services)
             : base(mapper, emailUtilities, tokenUtilities)
         {
             _services = services;
-            _mapper = mapper;
-            _emailUtilities = emailUtilities;
         }
 
         /// <summary>

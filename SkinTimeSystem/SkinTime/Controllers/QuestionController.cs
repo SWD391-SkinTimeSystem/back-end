@@ -49,12 +49,12 @@ namespace SkinTime.Controllers
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateQuestionList([FromBody] ICollection<QuestionCreationDTO> questions)
         {
-            Func<Task<ServiceResult>> function = async () =>
-            {
-                return await _service.UpdateAllQuestion(_mapper.Map<ICollection<Question>>(questions));
-            };
 
-            return await HandleServiceCall(function);
+            //return _service.UpdateAllQuestion(questions);
+
+
+            //return await HandleServiceCall(function);
+            return Ok(); 
         }
 
         /// <summary>

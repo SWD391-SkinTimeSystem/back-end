@@ -25,6 +25,6 @@ namespace Services.Commons.DTOs.Question
         public required string Content { get; set; }
 
         [JsonPropertyName("skin_type")]
-        public required Guid SkinType { get; set; }
+        public required List<Guid> SkinType { get; set; }
     }
 }

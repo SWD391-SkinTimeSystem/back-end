@@ -16,6 +16,10 @@ namespace Repositories.UnitOfWork
         ITherapistRepository TherapistRepository { get; }
         IEventRepository EventRepository { get; }
 
+        ITrackingRepository Trackings { get; }
+
+        IScheduleRepository Schedules { get; }
+
         IGenericRepository<TEntity> Repository<TEntity>()
            where TEntity : BaseEntity;
 

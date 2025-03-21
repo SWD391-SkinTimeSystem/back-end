@@ -23,58 +23,49 @@ namespace SkinTime.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetService(Guid id)
         {
-            return await HandleServiceCall<ServiceDTO>(async () =>
+            return await HandleServiceCall(async () =>
             {
-                var service = await _skinTimeService.GetService(id);
-                
-                if (service.Item1 == null)
-                {
-                    return ServiceResult.Failed(ServiceError.NotFound("Can not find service with provided id"));
-                }
-                else
-                {
-                    return ServiceResult.Success(service);
-                }
+                var service = await _skinTimeService.GetService(id);                
+                return service;
             });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllService()
         {
-            return await HandleServiceCall<ICollection<ServiceDTO>>(async () =>
+            return await HandleServiceCall(async () =>
             {
                 var services = await _skinTimeService.GetAllService();
-                return ServiceResult<ICollection<Service>>.Success(services);
+                return services;
             });
         }
 
-        [HttpGet("treatment-plan/{id}")]// 35. Lấy danh sách thông tin của treatment plan 
+        [HttpGet("treatment-plan/{id}")]
         public async Task<IActionResult> GetTreatmentPlan(Guid id)
         {
             return await HandleApiCallAsync(async () =>
             {
                 var treatmentPlan = await _skinTimeService.GetTreatmentplant(id);
-                var treatmentPlanDTO = _mapper.Map<TreatmentPlanDTO>(treatmentPlan);
-                return treatmentPlanDTO;
+                return treatmentPlan;
             });
         }
 
-        [HttpGet("treatment-plan")]// 35. Lấy danh sách thông tin của treatment plan 
+        [HttpGet("treatment-plan")]
         public async Task<IActionResult> GetAllTreatmentPlan()
         {
             return await HandleApiCallAsync(async () =>
             {
                 var treatmentPlan = await _skinTimeService.GetAllTreatmentplant();
-                return Ok(treatmentPlan);
+                return treatmentPlan;
             });
         }
         [HttpPost]
-        public async Task<IActionResult> CreateService(ServiceCreateDTO serviceDTO)
+        public async Task<IActionResult> CreateService([FromForm] ServiceCreateDTO serviceDTO)
         {
             return await HandleServiceCall<ApiResponse>(async () =>
             {
                 var service = _mapper.Map<Service>(serviceDTO);
-                var result = await _skinTimeService.CreateService(service, serviceDTO.ServiceImages, serviceDTO.SkintypeIds);
+                var result = await _skinTimeService.CreateService(serviceDTO);
 
                 if (result.IsSuccess)
                 {

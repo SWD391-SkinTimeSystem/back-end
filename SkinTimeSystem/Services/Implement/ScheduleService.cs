@@ -4,6 +4,7 @@ using BusinessObject.Schedule;
 using Microsoft.EntityFrameworkCore;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Schedule;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -138,7 +139,7 @@ namespace Services.Implement
             IDictionary<TimeOnly, bool> availability = new Dictionary<TimeOnly, bool>();
 
             IEnumerable<Schedule> filtered = await _unitOfWork
-                .Repository<Schedule>().ListAsync(x => x.Status != ScheduleStatus.Canceled);
+                .Repository<Schedule>().ListAsync(x => x.Status != ScheduleStatus.Canceled && x.Date == date);
 
             int amountOfTherapist = (await _unitOfWork.Repository<Therapist>()
                 .ListAsync(x => x.Status == TherapistStatus.Available))
@@ -194,6 +195,14 @@ namespace Services.Implement
 
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
         }
+
+        //public async Task<ServiceResult<Schedule>> ReSchedule(UserRole userRole,RescheduleDTO rescheduleDTO)
+        //{
+        // // return async _unitOfWork.Schedules.ReSchedule(rescheduleDTO.IdSchedule, rescheduleDTO.Date, rescheduleDTO.TimeStart);
+        //    if (userRole == UserRole.Customer) {
+              
+        //    }
+        //}
 
         public Task<ServiceResult<Schedule>> UpdateSchedule(Guid id, Schedule schedule)
         {

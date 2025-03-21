@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Entities;
 using Services.Commons;
+using Services.Commons.DTOs.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Services.Interfaces
     {
         Task<ServiceResult<bool>> SaveCategory(ServiceCategory serviceCategory);
         Task<ServiceResult<ICollection<Service>>> ListServiceByCategory(Guid id);
+        Task<ServiceResult<ICollection<CategoryDetailDTO>>> GetAllCategory();
 
     }
 }

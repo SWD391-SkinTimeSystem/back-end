@@ -24,10 +24,6 @@ namespace SkinTime.Controllers
         {
             _service = bookingService;
         }
-        /// <summary>
-        ///     Get all user's booking general informations.
-        /// </summary>
-        /// <returns>List of created booking</returns>
         [Authorize]
         [HttpGet("status/{status}")]
         public async Task<ActionResult> GetAppointments([FromRoute] string status)
@@ -45,7 +41,7 @@ namespace SkinTime.Controllers
                 var returnAction = Url.Action("TransactionCallback", "Transaction",null, Request.Scheme);
             return await HandleServiceCall(async () =>
             {            
-                return ServiceResult.Success(await _service.CreateBooking(booking, userId,returnAction));
+                return await _service.CreateBooking(booking, userId,returnAction);
             });
 
         }
@@ -55,7 +51,7 @@ namespace SkinTime.Controllers
         {
             return await HandleServiceCall(async () =>
             {
-                return ServiceResult.Success(await _service.GetBookingInformation(id));
+                return await _service.GetBookingInformation(id);
             });
         }
 

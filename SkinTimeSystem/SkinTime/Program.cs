@@ -15,7 +15,7 @@ namespace SkinTime
             services.AddDatabaseConfig(config);
             services.AddApplicationServices(config);
             services.ConfigurateAuthenticationMethod(config);
-            services.AddBlobService(config);
+           // services.AddBlobService(config);
             services.AddRedisService(config);
             services.AddControllers();
             services.AddSignalR().AddNewtonsoftJsonProtocol(); ;
@@ -26,10 +26,10 @@ namespace SkinTime
                 options.AddPolicy("AllowAll",
                     policy =>
                     {
-                        policy.WithOrigins("http://localhost:5173") // ✅ Chỉ cho phép frontend này
+                        policy.WithOrigins("http://localhost:5173") 
                               .AllowAnyMethod()
                               .AllowAnyHeader()
-                              .AllowCredentials(); // ✅ Bật credentials
+                              .AllowCredentials(); 
                     });
             });
 

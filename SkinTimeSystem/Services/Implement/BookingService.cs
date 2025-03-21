@@ -34,7 +34,7 @@ namespace Services.Implement
             _cache = cache;
         }
 
-        public async Task<ServiceResult<string>> CreateBooking(BookingServiceDTO booking, Guid userId,string? returnAction)
+        public async Task<ServiceResult<string>> CreateBooking(BookingServiceDTO booking, Guid userId, string? returnAction)
         {
             var service = _unitOfWork.Repository<Service>().GetById(booking.ServiceId);
             var bookingWithId = booking as BookingServiceWithIdDTO ?? new BookingServiceWithIdDTO(booking, userId);
@@ -71,12 +71,7 @@ namespace Services.Implement
         {
 
 
-            var booking = _unitOfWork.Bookings.GetBookingInformation(bookingId);
-
-            if (booking == null)
-            {
-                return ServiceResult<BookingDetailDTO>.Failed(ServiceError.NotExisted("Can not find any booking information with the provided id"));
-            }
+            var booking = await  _unitOfWork.Bookings.GetBookingInformation(bookingId);
             var bookingDTO = _mapper.Map<BookingDetailDTO>(booking);
             return ServiceResult<BookingDetailDTO>.Success(bookingDTO);
         }
