@@ -123,7 +123,7 @@ namespace Repositories.Interface
         ///     The result will be the enumeration list of existing entity of type <typeparamref name="T"/>.
         /// </returns>
         Task<IEnumerable<T>> ListAsync(
-            Func<IQueryable<T>, IIncludableQueryable<T, object?>> includeProperties,
+            Func<IQueryable<T>, IIncludableQueryable<T, object?>>? includeProperties,
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
         );
@@ -221,5 +221,7 @@ namespace Repositories.Interface
         /// <returns>The number of entity in the context</returns>
         Task<int> CountAsync();
         Task DeleteRange(IEnumerable<T> entities);
+
+        Task<PaginationResult<T>> AsPaginated(int page, int pageSize, Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IIncludableQueryable<T, object?>>? includes = null, Func<IQueryable<T>, IOrderedQueryable<T>>? order = null);
     }
 }

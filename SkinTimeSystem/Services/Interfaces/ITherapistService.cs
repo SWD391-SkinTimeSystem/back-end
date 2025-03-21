@@ -1,5 +1,8 @@
 ﻿using BusinessObject.Entities;
+using BusinessObject.Enum;
+using Repositories;
 using Services.Commons;
+using Services.Commons.DTOs.Therapist;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +14,11 @@ namespace Services.Interfaces
 {
     public interface ITherapistService
     {
-        Task<ServiceResult<Therapist>> GetTherapistWithId(Guid id);
+        Task<ServiceResult<TherapistDTO>> GetTherapistWithId(Guid id);
 
-        Task<ServiceResult<ICollection<Therapist>>> GetAllTherapist();
+        Task<PaginationResult<TherapistDTO>> GetAllTherapist(int page, int pageSize);
 
-        Task<ServiceResult<ICollection<Therapist>>> GetAllTherapist(Expression<Func<Therapist, bool>> predicate);
+        Task<PaginationResult<TherapistDTO>> GetAllTherapistWithStatus(int page, int pageSize, TherapistStatus status);
 
         /// <summary>
         ///     This method is used to get list of therapists with AVAILABLE status.
@@ -24,7 +27,7 @@ namespace Services.Interfaces
         ///     An asynchronous task that represent the find operation.
         ///     the result of the task is a <seealso cref="ICollection{Therapist}"/>.
         /// </returns>
-        Task<ServiceResult<ICollection<Therapist>>> GetAvailableTherapist();
+        Task<PaginationResult<TherapistDTO>> GetAvailableTherapist(int page, int pageSize);
 
         /// <summary>
         ///     This method is used to get list of therapists with AVAILABLE status and currently does not have any scheduled
@@ -34,7 +37,7 @@ namespace Services.Interfaces
         ///     An asynchronous task that represent the find operation.
         ///     the result of the task is a <seealso cref="ICollection{Therapist}"/>.
         /// </returns>
-        Task<ServiceResult<ICollection<Therapist>>> GetAvailableTherapist(DateOnly date, TimeOnly startTime, int duration);
+        Task<ICollection<TherapistDTO>> GetAvailableTherapist(DateOnly date, TimeOnly startTime, int duration);
 
         /// <summary>
         ///     This method is the same as <see cref="GetAvailableTherapist()"/> but will instead return the first available therapist.
@@ -46,7 +49,7 @@ namespace Services.Interfaces
         ///     An asynchronous task that represent the find operation.
         ///     the result of the task is a <seealso cref="Therapist"/>.
         /// </returns>
-        Task<ServiceResult<Therapist>> GetFirstAvailableTherapist(DateOnly date, TimeOnly startTime, int duration);
+        Task<ServiceResult<TherapistDTO>> GetFirstAvailableTherapist(DateOnly date, TimeOnly startTime, int duration);
 
         Task<ServiceResult<Guid>> AddTherapist(Therapist therapist);
 

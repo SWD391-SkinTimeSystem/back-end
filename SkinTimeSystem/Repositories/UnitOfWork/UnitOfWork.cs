@@ -17,11 +17,21 @@ namespace Repositories.UnitOfWork
         private readonly Dictionary<Type, object> _repositories = new();
         public IBookingRepository Bookings { get; private set; }
         public IServiceRepository Services { get; private set; }
+        public IUserRepository UserRepository {get; private set; }
+        public ITherapistRepository TherapistRepository { get; private set; }
+        public IEventRepository EventRepository { get; private set; }
+        public ITrackingRepository Trackings { get; private set; }
+        public IScheduleRepository Schedules { get; private set; }
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Bookings = new BookingRepository(context);
             Services = new ServiceRepository(context);
+            Trackings = new TrackingRepository(context);
+            Schedules = new ScheduleRepository(context);
+            UserRepository = new UserRepository(context);
+            TherapistRepository = new TherapistRepository(context);
+            EventRepository = new EventRepository(context);
         }
         public async Task<int> Complete()
         {

@@ -22,7 +22,7 @@ namespace BusinessObject.Entities
         public required DateOnly Date { get; set; }
 
         [Column("reserved_time_start", TypeName = "TIME")]
-        public required TimeOnly ReservedStartTime { get; set; }
+        public required TimeOnly ReservedStartTime { get; set; } 
 
         public TimeOnly ReservedEndTime { get; set; }
 

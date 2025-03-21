@@ -33,10 +33,10 @@ namespace SkinTime.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllService()
         {
-            return await HandleServiceCall<ICollection<ServiceDTO>>(async () =>
+            return await HandleServiceCall(async () =>
             {
                 var services = await _skinTimeService.GetAllService();
-                return ServiceResult<ICollection<Service>>.Success(services);
+                return services;
             });
         }
 
@@ -46,27 +46,26 @@ namespace SkinTime.Controllers
             return await HandleApiCallAsync(async () =>
             {
                 var treatmentPlan = await _skinTimeService.GetTreatmentplant(id);
-                var treatmentPlanDTO = _mapper.Map<TreatmentPlanDTO>(treatmentPlan);
-                return treatmentPlanDTO;
+                return treatmentPlan;
             });
         }
 
-        [HttpGet("treatment-plan")]// 35. Lấy danh sách thông tin của treatment plan 
+        [HttpGet("treatment-plan")]
         public async Task<IActionResult> GetAllTreatmentPlan()
         {
             return await HandleApiCallAsync(async () =>
             {
                 var treatmentPlan = await _skinTimeService.GetAllTreatmentplant();
-                return Ok(treatmentPlan);
+                return treatmentPlan;
             });
         }
         [HttpPost]
-        public async Task<IActionResult> CreateService(ServiceCreateDTO serviceDTO)
+        public async Task<IActionResult> CreateService([FromForm] ServiceCreateDTO serviceDTO)
         {
             return await HandleServiceCall<ApiResponse>(async () =>
             {
                 var service = _mapper.Map<Service>(serviceDTO);
-                var result = await _skinTimeService.CreateService(service, serviceDTO.ServiceImages, serviceDTO.SkintypeIds);
+                var result = await _skinTimeService.CreateService(serviceDTO);
 
                 if (result.IsSuccess)
                 {

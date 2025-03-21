@@ -172,7 +172,7 @@ namespace Repositories.Implement
         }
 
         public async Task<IEnumerable<T>> ListAsync(
-            Func<IQueryable<T>, IIncludableQueryable<T, object?>> includeProperties,
+            Func<IQueryable<T>, IIncludableQueryable<T, object?>>? includeProperties,
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null
         )
@@ -211,6 +211,22 @@ namespace Repositories.Implement
         {
             _context.Set<T>().RemoveRange(entities);
             return Task.CompletedTask;
+        }
+
+        public async Task<PaginationResult<T>> AsPaginated(int page, int pageSize, Expression<Func<T, bool>>? filter, Func<IQueryable<T>, IIncludableQueryable<T, object?>>? includes, Func<IQueryable<T>, IOrderedQueryable<T>>? order)
+        {
+            IEnumerable<T> items = await ListAsync(includeProperties: includes, filter: filter, orderBy: order);
+
+            Console.WriteLine(items.Count());
+
+            return new PaginationResult<T>
+            {
+                Content = items.Skip((page - 1) * pageSize).Take(pageSize).ToList(),
+                ItemAmount = items.Count(),
+                CurrentPage = page,
+                PageSize = pageSize,
+
+            };
         }
     }
 }

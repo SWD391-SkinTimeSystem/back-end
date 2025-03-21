@@ -35,7 +35,7 @@ namespace Services.PaymentSetting
         {
             string ipAddress = await GetIpAddress();
             await ConfigureRequest(amount, returnUrl, ipAddress, serviceName);
-            return await CreatePaymentUrlAsync();
+            return await CreateRequestUrl(BaseUrl, HashSecret);
         }
 
         public async Task<string> CreateVnPayRefund(Transaction transaction) 
@@ -51,7 +51,6 @@ namespace Services.PaymentSetting
         public async Task ConfigureRequest(decimal? amount, string returnUrl, string ipAddress, string serviceName)
         {
             _requestData.Clear();
-            // Thêm đầy đủ các tham số vào _requestData
             AddRequestData("vnp_Version", Version);
             AddRequestData("vnp_Command", Command);
             AddRequestData("vnp_TmnCode", TmnCode);
@@ -60,7 +59,7 @@ namespace Services.PaymentSetting
             AddRequestData("vnp_CurrCode", CurrCode);
             AddRequestData("vnp_IpAddr", ipAddress);
             AddRequestData("vnp_Locale", Locale);
-            AddRequestData("vnp_OrderInfo", "Thanh toán cho dịch vụ:" + serviceName); 
+            AddRequestData("vnp_OrderInfo", "Thanh toan dich vu"); 
             AddRequestData("vnp_OrderType", "other");
             AddRequestData("vnp_ReturnUrl", returnUrl);
             AddRequestData("vnp_TxnRef", Guid.NewGuid().ToString());
@@ -178,16 +177,7 @@ namespace Services.PaymentSetting
             }
         }
 
-        public async Task<string> CreatePaymentUrlAsync()
 
-        {
-            if (string.IsNullOrEmpty(BaseUrl))
-                throw new Exception("VNPay BaseUrl is null!");
-            if (string.IsNullOrEmpty(HashSecret))
-                throw new Exception("VNPay HashSecret is null!");
-
-            return await CreateRequestUrl(BaseUrl, HashSecret);
-        }
         public async Task<string> GetIpAddress()
         {
             IHttpContextAccessor httpContextAccessor = new HttpContextAccessor();

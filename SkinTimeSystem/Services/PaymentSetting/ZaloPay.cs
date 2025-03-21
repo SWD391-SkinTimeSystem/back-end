@@ -212,7 +212,7 @@ namespace Services.PaymentSetting
     };
 
             string data = $"{AppId}|{appTransId}|{Key1}";
-            param.Add("mac", Compute(ZaloPayHMAC.HMACSHA256, Key2, data));
+            param.Add("mac", Compute(ZaloPayHMAC.HMACSHA256, Key1, data));
 
             var response = await PostFormAsync<Dictionary<string, string>>(QueryOrderUrl, param);
 

@@ -56,7 +56,7 @@ namespace SharedLibrary.EmailUtilities
                     await client.SendMailAsync(message);
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return false;
                 }

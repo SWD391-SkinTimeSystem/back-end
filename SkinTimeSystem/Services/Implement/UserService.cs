@@ -1,9 +1,14 @@
-﻿using BusinessObject.Entities;
+﻿using AutoMapper;
+using BusinessObject.Entities;
 using BusinessObject.Enum;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.User;
+using Services.Commons.DTOs.Users;
 using Services.Interfaces;
+using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
 using System;
 using System.Collections.Generic;
@@ -20,96 +25,18 @@ namespace Services.Implement
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenUtilities _tokenUtils;
-        public UserService(IUnitOfWork unitOfWork, ITokenUtilities tokenUtilities)
+        private readonly IEmailUtilities _emailUtils;
+        private readonly IMapper _mapper;
+
+        public UserService(IUnitOfWork unitOfWork, ITokenUtilities tokenUtilities, IMapper mapper, IEmailUtilities emailUtilities)
         {
             _unitOfWork = unitOfWork;
             _tokenUtils = tokenUtilities;
+            _emailUtils = emailUtilities;
+            _mapper = mapper;
         }
 
-        public async Task CreateUser(User user)
-        {
-            var userRepository = _unitOfWork.Repository<User>().AddAsync(user);
-            await _unitOfWork.Complete();
-        }
-
-        public async Task<ServiceResult<User>> DeleteUser(string id)
-        {
-            if (Guid.TryParse(id, out var parsedGuid))
-            {
-                var result = await _unitOfWork.Repository<User>().GetByIdAsync(parsedGuid);
-
-                if (result != null)
-                {
-                    result.Status = UserStatus.Deleted;
-                    _unitOfWork.Repository<User>().Update(result);
-
-                    await _unitOfWork.Complete();
-
-                    return ServiceResult<User>.Success(result);
-                }
-
-                return ServiceResult<User>.Failed(ServiceError.NotFound("Can not find user entity with provided id"));
-            }
-
-            return ServiceResult<User>.Failed(ServiceError.ValidationFailed("The provided id is not in the right format"));
-        }
-
-        public async Task<ServiceResult<ICollection<User>>> GetAllUsers()
-        {
-            return ServiceResult<ICollection<User>>.Success(await _unitOfWork.Repository<User>().GetAllAsync());
-        }
-
-        public async Task<ServiceResult<User>> GetUser(string id)
-        {
-            if (Guid.TryParse(id, out var parsedGuid))
-            {
-                var user = await _unitOfWork.Repository<User>().GetByIdAsync(parsedGuid);
-
-                if (user != null)
-                {
-                    return ServiceResult<User>.Success(user);
-                }
-                return ServiceResult<User>.Failed(ServiceError.NotFound("Can not find the user entity with provided id."));
-            }
-            return ServiceResult<User>.Failed(ServiceError.ValidationFailed("The provided user id format does not match."));
-        }
-
-        public async Task<ServiceResult> UpdateUser(string id, User user)
-        {
-            if (Guid.TryParse(id, out var parsedGuid))
-            {
-                var existingUser = _unitOfWork.Repository<User>().GetById(parsedGuid);
-
-                if (existingUser == null)
-                {
-                    return ServiceResult.Failed(ServiceError.NotFound("Unknown user with provided Id."));
-                }
-
-                existingUser.Username = user.Username;
-                existingUser.Email = user.Email;
-                existingUser.Phone = user.Phone;
-                existingUser.DateOfBirth = user.DateOfBirth;
-                existingUser.Avatar = user.Avatar;
-                existingUser.FullName = user.FullName;
-                existingUser.Password = _tokenUtils.HashPassword(user.Password);
-
-                _unitOfWork.Repository<User>().Update(existingUser);
-                await _unitOfWork.Complete();
-
-                return ServiceResult.Success();
-            }
-
-            return ServiceResult.Failed(ServiceError.ValidationFailed("Can not parse user id to a valid format"));
-        }
-
-        public async Task<ServiceResult<IReadOnlyCollection<User>>> GetUsersAsReadOnly()
-        {
-            var result = await _unitOfWork.Repository<User>().ToListAsReadOnly();
-
-            return ServiceResult<IReadOnlyCollection<User>>.Success(result);
-        }
-
-        public async Task<ServiceResult<User>> CreateUserAccount(User userInformation)
+        private async Task<ServiceResult<User>> CreateUserAccount(User userInformation)
         {
             var repository = _unitOfWork.Repository<User>();
 
@@ -141,7 +68,6 @@ namespace Services.Implement
 
             /******* Data Processing ********/
 
-
             userInformation.Password = _tokenUtils.HashPassword(userInformation.Password); // Set user password using the newly created hashed password string.
             /******* Data Storage ********/
 
@@ -149,6 +75,127 @@ namespace Services.Implement
             await _unitOfWork.Complete();
 
             return ServiceResult<User>.Success(userInformation);
+        }
+
+        public async Task<PaginationResult<AccountInformation>> GetAllUser(int page, int page_size)
+        {
+            var result = await _unitOfWork.UserRepository.AsPaginated(page, page_size);
+
+            ICollection<AccountInformation> information = _mapper.Map<ICollection<AccountInformation>>(result.Content);
+
+            return new PaginationResult<AccountInformation>
+            {
+                Content = information,
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = page_size,
+            };
+        }
+
+        public async Task<ServiceResult> GetUserById(Guid id)
+        {
+            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
+
+            if (user != null)
+            {
+                return ServiceResult.Success(_mapper.Map<AccountInformation>(user));
+            }
+            return ServiceResult.Failed(ServiceError.NotFound("Can not find the user entity with provided id."));
+        }
+
+        public async Task<ServiceResult> CreateAccount(AccountRegistration account)
+        {
+            User userInformation = _mapper.Map<User>(account);
+            return await CreateUserAccount(userInformation);
+        }
+
+        public async Task<ServiceResult> CreateCustomerAccount(CustomerRegistration account)
+        {
+            ServiceResult<User> result = await CreateUserAccount(_mapper.Map<User>(account));
+
+            if (result.IsFailed)
+            {
+                return result;
+            }
+
+            var content = System.IO.File.ReadAllText(".\\StaticResoucres\\register_email.html");
+            await _emailUtils.SendGoogleEmailAsync(account.Email, "SkinTime - New Registration Notice", content.Replace("[0]", account.Fullname));
+
+            return ServiceResult.Success(result.Data!.Id);
+        }
+
+        public async Task<ServiceResult> UpdateUserInformation(Guid id, AccountUpdateInformation account)
+        {
+            var existingUser = _unitOfWork.UserRepository.GetById(id);
+
+            if (existingUser == null)
+            {
+                return ServiceResult.Failed(ServiceError.NotFound("Unknown user with provided Id."));
+            }
+
+            existingUser.Username = account.Username;
+            existingUser.Email = account.Email;
+            existingUser.Phone = account.Phone;
+            existingUser.DateOfBirth = account.DateOfBirth;
+            existingUser.FullName = account.FullName;
+
+            _unitOfWork.UserRepository.Update(existingUser);
+            await _unitOfWork.Complete();
+
+            return ServiceResult.Success();
+        }
+
+        public async Task<ServiceResult> UpdateUserPassword(Guid id, string oldPassword, string newPassword)
+        {
+            var existingUser = _unitOfWork.UserRepository.GetById(id);
+
+            if (existingUser == null)
+            {
+                return ServiceResult.Failed(ServiceError.NotFound("Unknown user with provided Id."));
+            }
+
+            byte[] userHashedPassword = Convert.FromBase64String(existingUser.Password);
+
+            byte[] saltBytes = new byte[16];
+            Array.Copy(userHashedPassword, 0, saltBytes, 0, 16);
+
+            // Regenerating the password hash with the given password.
+            Rfc2898DeriveBytes hashingFunction = new Rfc2898DeriveBytes(oldPassword, saltBytes, 10000, HashAlgorithmName.SHA256);
+            byte[] hashedPasswordBytes = hashingFunction.GetBytes(40);
+
+            byte[] recreatedHash = new byte[saltBytes.Length + hashedPasswordBytes.Length];
+            Array.Copy(saltBytes, 0, recreatedHash, 0, 16);
+            Array.Copy(hashedPasswordBytes, 0, recreatedHash, 16, hashedPasswordBytes.Length);
+
+            // Check if the recreated hash is the same as the password hash (in base 64 string).
+            if (!(Convert.ToBase64String(recreatedHash) == existingUser.Password))
+            {
+                return ServiceResult.Failed(ServiceError.ValidationFailed("old password does not match"));
+            }
+
+            existingUser.Password = _tokenUtils.HashPassword(newPassword);
+
+            _unitOfWork.UserRepository.Update(existingUser);
+            await _unitOfWork.Complete();
+
+            return ServiceResult.Success();
+        }
+
+        public async Task<ServiceResult> UpdateUserStatus(Guid id, UserStatus status)
+        {
+            var existingUser = _unitOfWork.Repository<User>().GetById(id);
+
+            if (existingUser == null)
+            {
+                return ServiceResult.Failed(ServiceError.NotFound("Unknown user with provided Id."));
+            }
+
+            existingUser.Status = status;
+
+            _unitOfWork.UserRepository.Update(existingUser);
+            await _unitOfWork.Complete();
+
+            return ServiceResult.Success();
         }
     }
 }

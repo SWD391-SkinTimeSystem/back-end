@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Entities;
 using Services.Commons;
+using Services.Commons.DTOs.Question;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Services.Interfaces
 
         Task<ServiceResult> UpdateQuestion(Question questions);
 
-        Task<ServiceResult> UpdateAllQuestion(ICollection<Question> questions);
+        Task<ServiceResult> UpdateAllQuestion(ICollection<QuestionCreationDTO> questions);
 
         Task<ServiceResult> DeleteQuestion(Question questions);
 

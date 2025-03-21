@@ -16,12 +16,10 @@ namespace SkinTime.Controllers
     public class TicketController : BaseController
     {
         private ITicketService _service;
-        private readonly IDatabase _redisCache;
 
-        public TicketController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, ITicketService service, IDatabase cache) : base(mapper, emailUtilities, tokenUtilities)
+        public TicketController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities, ITicketService service) : base(mapper, emailUtilities, tokenUtilities)
         {
             _service = service;
-            _redisCache = cache;
         }
 
         [Authorize(Roles = "Customer")]

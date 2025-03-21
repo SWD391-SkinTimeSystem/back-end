@@ -3,7 +3,7 @@
     public interface ITokenUtilities
     {
         string HashPassword(string password);
-        string CreateJwtFromDictionary(Dictionary<string, string> data);
+        string CreateJwtFromDictionary(IDictionary<string, string> data);
         public string CreateBase64RefreshToken(string id);
         Dictionary<string, string> GetDataDictionaryFromJwt(string token);
         bool ValidateJwt(string token);

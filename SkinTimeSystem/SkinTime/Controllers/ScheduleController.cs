@@ -175,6 +175,22 @@ namespace SkinTime.Controllers
                 return ServiceResult.Success(collection);
             });
         }
+        [Authorize(Roles = "Customer,Therapist")]
+        [HttpGet("reschedule")]
+        public async Task<ActionResult> GetPersonalSchedule(RescheduleDTO rescheduleDTO)
+        {
+            Guid userrole= Guid.Parse(GetUserIdFromJwt());
+
+
+            //return await HandleServiceCall<ICollection<ScheduleDTO>>(async () =>
+            //{
+
+
+            //    return ServiceResult.Success(collection);
+            //});
+            return Ok();
+        }
+
         
     }
 }

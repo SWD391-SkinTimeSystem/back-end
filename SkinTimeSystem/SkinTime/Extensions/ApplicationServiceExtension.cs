@@ -11,7 +11,6 @@ using SharedLibrary.EmailUtilities;
 using SkinTime.Helpers;
 using System.Security.Cryptography;
 using System.Configuration;
-using Services.FileSetting;
 using Repositories.Implement;
 using Repositories.Interface;
 
@@ -25,6 +24,10 @@ namespace SkinTime.Extensions
             IConfiguration config
         )
         {// khai báo tất cả các service ở đây => tìm hiểu midderware, tìm hiểu thêm về addscoped vs addtransient vs addsingleton
+
+            // Shared Libraries
+            services.AddTransient<ITokenUtilities, TokenUtilities>();
+            services.AddTransient<IEmailUtilities, EmailUtilities>();
 
             // Repositories and Unit of work.
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -41,8 +44,8 @@ namespace SkinTime.Extensions
             services.AddScoped<ISkintypeService, SkintypeService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ITrackingService, TrackingService>();
             services.AddScoped<ICache, Cache>();
-            services.AddScoped<FileService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ITicketService, TicketService>();
@@ -64,10 +67,6 @@ namespace SkinTime.Extensions
 
             // Auto mapper
             services.AddAutoMapper(typeof(Mapping).Assembly);
-
-            // Shared Libraries
-            services.AddTransient<ITokenUtilities, TokenUtilities>();
-            services.AddTransient<IEmailUtilities, EmailUtilities>();
 
             // Middlewares
 

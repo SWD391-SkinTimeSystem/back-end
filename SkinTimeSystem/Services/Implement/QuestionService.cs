@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Question;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -146,6 +147,11 @@ namespace Services.Implement
 
             return (skinTypePercentages, services.ToList());
 
+        }
+
+        public Task<ServiceResult> UpdateAllQuestion(ICollection<QuestionCreationDTO> questions)
+        {
+            throw new NotImplementedException();
         }
     }
 }

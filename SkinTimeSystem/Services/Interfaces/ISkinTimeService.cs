@@ -13,9 +13,9 @@ namespace Services.Interfaces
     public interface ISkinTimeService
     {
         Task<ServiceResult<ServiceDTO>> GetService(Guid idService);
-        Task<Service> GetTreatmentplant(Guid idService);
-        Task<ICollection<Service>> GetAllTreatmentplant();
-        Task<ICollection<Service>> GetAllService();
-        Task<ServiceResult<bool>> CreateService(Service service,ICollection<IFormFile> serviceImages, ICollection<Guid> skintypeIds);
+        Task<ServiceResult<ServiceDTO>> GetTreatmentplant(Guid idService);
+        Task<ServiceResult<ICollection<ServiceDTO>>> GetAllTreatmentplant();
+        Task<ServiceResult<ICollection<ServiceDTO>>> GetAllService();
+        Task<ServiceResult<bool>> CreateService(ServiceCreateDTO serviceDTO);
     }
 }

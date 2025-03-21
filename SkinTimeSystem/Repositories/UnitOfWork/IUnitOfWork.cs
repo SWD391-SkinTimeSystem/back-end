@@ -12,6 +12,14 @@ namespace Repositories.UnitOfWork
     {
         IBookingRepository Bookings { get; }
         IServiceRepository Services { get; }
+        IUserRepository UserRepository { get; }
+        ITherapistRepository TherapistRepository { get; }
+        IEventRepository EventRepository { get; }
+
+        ITrackingRepository Trackings { get; }
+
+        IScheduleRepository Schedules { get; }
+
         IGenericRepository<TEntity> Repository<TEntity>()
            where TEntity : BaseEntity;
 

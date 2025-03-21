@@ -32,34 +32,101 @@ namespace Repositories.Implement
 
             await _context.Bookings.AddAsync(booking);
 
-            var firstStepServiceDetail = service.ServiceDetailNavigation
-                .Where(sd => !sd.IsDetele)
-                .OrderBy(sd => sd.Step)
-                .FirstOrDefault();
+            //var firstStepServiceDetail = service.ServiceDetailNavigation
+            //    .Where(sd => !sd.IsDetele)
+            //    .OrderBy(sd => sd.Step)
+            //    .FirstOrDefault();
 
-            if (firstStepServiceDetail == null)
+            //if (firstStepServiceDetail == null)
+            //{
+            //    return false;
+            //}
+
+            //var newSchedule = new Schedule
+            //{
+            //    Id = Guid.NewGuid(),
+            //    BookingId = booking.Id,
+            //    ServiceDetailId = firstStepServiceDetail.Id,
+            //    Status = ScheduleStatus.NotStarted,
+            //    ReservedStartTime = serviceHour,
+            //    ReservedEndTime = TimeOnly.FromTimeSpan(
+            //        serviceHour.ToTimeSpan().Add(TimeSpan.FromMinutes(firstStepServiceDetail.Duration))
+            //    ),
+            //    Date = DateOnly.FromDateTime(booking.ReservedTime)
+            //};
+
+
+            var serviceDetails = service.ServiceDetailNavigation
+               .Where(sd => !sd.IsDetele)
+               .OrderBy(sd => sd.Step)
+               .ToList();
+
+            if (!serviceDetails.Any())
             {
                 return false;
             }
 
-            var newSchedule = new Schedule
-            {
-                Id = Guid.NewGuid(),
-                BookingId = booking.Id,
-                ServiceDetailId = firstStepServiceDetail.Id,
-                Status = ScheduleStatus.NotStarted,
-                ReservedStartTime = serviceHour,
-                ReservedEndTime = TimeOnly.FromTimeSpan(
-                    serviceHour.ToTimeSpan().Add(TimeSpan.FromMinutes(firstStepServiceDetail.Duration))
-                ),
-                Date = DateOnly.FromDateTime(booking.ReservedTime)
-            };
+            List<Schedule> schedules = new List<Schedule>();
 
-            await _context.Schedules.AddAsync(newSchedule);
+            //TimeOnly defaultTime = new TimeOnly(0, 0); // Giờ mặc định
+            //DateOnly defaultDate = new DateOnly(1,1,1); // Sử dụng null thay vì DateOnly(0, 0, 0)
+
+            //for (int i = 0; i < serviceDetails.Count; i++)
+            //{
+            //    var step = serviceDetails[i];
+
+            //    var schedule = new Schedule
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        BookingId = booking.Id,
+            //        ServiceDetailId = step.Id,
+            //        Status = ScheduleStatus.NotStarted,
+            //        ReservedStartTime = i == 0 ? serviceHour : defaultTime, // Step đầu có giờ, các step sau dùng defaultTime
+            //        ReservedEndTime = i == 0
+            //            ? TimeOnly.FromTimeSpan(serviceHour.ToTimeSpan().Add(TimeSpan.FromMinutes(step.Duration)))
+            //            : defaultTime, // Step sau mặc định = 00:00
+            //        Date = i == 0 ? DateOnly.FromDateTime(booking.ReservedTime) : defaultDate // Để null nếu không phải step đầu
+            //    };
+
+            //    schedules.Add(schedule);
+            //}
+
+            TimeOnly defaultTime = new TimeOnly(0, 0); // Giờ mặc định
+            DateOnly currentDate = DateOnly.FromDateTime(booking.ReservedTime); // Ngày step đầu tiên
+
+            for (int i = 0; i < serviceDetails.Count; i++)
+            {
+                var step = serviceDetails[i];
+
+                var schedule = new Schedule
+                {
+                    Id = Guid.NewGuid(),
+                    BookingId = booking.Id,
+                    ServiceDetailId = step.Id,
+                    Status = ScheduleStatus.NotStarted,
+                    ReservedStartTime = i == 0 ? serviceHour : defaultTime, // Chỉ step đầu có giờ
+                    ReservedEndTime = i == 0
+                        ? TimeOnly.FromTimeSpan(serviceHour.ToTimeSpan().Add(TimeSpan.FromMinutes(step.Duration)))
+                        : defaultTime, // Các step sau không có giờ
+                    Date = currentDate // Gán ngày đã tính toán
+                };
+
+                schedules.Add(schedule);
+
+                // Nếu không phải step cuối cùng, cộng thêm DayToNextStep của step hiện tại vào ngày hiện tại
+                if (i < serviceDetails.Count - 1)
+                {
+                    currentDate = currentDate.AddDays(step.DateToNextStep);
+                }
+            }
+
+            await _context.Schedules.AddRangeAsync(schedules);
             await _context.SaveChangesAsync();
 
             return true;
         }
+
+        
 
         public async Task<Booking?> GetBookingInformation(Guid bookingId)
         {

@@ -14,6 +14,8 @@ public class BaseController : ControllerBase
     protected readonly ITokenUtilities _tokenUtils;
     protected readonly IEmailUtilities _emailUtils;
 
+    public BaseController() { }
+
     public BaseController(IMapper mapper, IEmailUtilities emailUtilities, ITokenUtilities tokenUtilities)
     {
         _mapper = mapper;
@@ -59,7 +61,16 @@ public class BaseController : ControllerBase
         // Split the bearer token ("Bearer adfbnenofcsa...") into two parts and take the jwt part to decode and get the user id.
         return _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["id"];
     }
+    protected string GetUserRoleFromJwt()
+    {
+        string? jwt = Request.Headers.Authorization.First();
+        if (jwt == null)
+        {
+            throw new InvalidOperationException("Can not use this method with endpoint allows anonymous access.");
+        }
 
+        return _tokenUtils.GetDataDictionaryFromJwt(jwt.Split()[1])["role"];
+    }
     protected async Task<IActionResult> HandleApiCallAsync<T>(Func<Task<T>> func)
     {
         try
@@ -71,6 +82,18 @@ public class BaseController : ControllerBase
         {
             return StatusCode(500, new { message = ERORR_MESSAGE, error = ex.Message });
         }
+    }
+
+    protected ActionResult HandleServiceCall(ServiceResult result, string success_message = "Success")
+    {
+        var ErrorResponse = HandleError(result);
+
+        if (ErrorResponse != null)
+        {
+            return ErrorResponse;
+        }
+
+        return Ok(new ApiResponse(true, success_message, result.Data));
     }
 
     protected async Task<ActionResult> HandleServiceCall(Func<Task<ServiceResult>> func)

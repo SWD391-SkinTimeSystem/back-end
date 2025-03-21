@@ -18,7 +18,7 @@ namespace SharedLibrary.TokenUtilities
             Key = config.GetSection("JWT:Key").Value!;
         }
 
-        public string CreateJwtFromDictionary(Dictionary<string, string> data)
+        public string CreateJwtFromDictionary(IDictionary<string, string> data)
         {
             var claims = new ClaimsIdentity();
 
