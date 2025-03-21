@@ -62,16 +62,15 @@ namespace SkinTime.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateService([FromForm] ServiceCreateDTO serviceDTO)
         {
-            return await HandleServiceCall<ApiResponse>(async () =>
+            return await HandleServiceCall(async () =>
             {
-                var service = _mapper.Map<Service>(serviceDTO);
                 var result = await _skinTimeService.CreateService(serviceDTO);
 
                 if (result.IsSuccess)
                 {
-                    return ServiceResult<ApiResponse>.Success(new ApiResponse(true, "Service created successfully", null));
+                    return ServiceResult.Success();
                 }
-                return ServiceResult<ApiResponse>.Failed(new ServiceError(result.Error.Code, result.Error.Description));
+                return ServiceResult.Failed(new ServiceError(result.Error.Code, result.Error.Description));
             });
         }
     }

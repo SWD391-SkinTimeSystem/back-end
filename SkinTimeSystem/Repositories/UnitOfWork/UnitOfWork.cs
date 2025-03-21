@@ -2,6 +2,7 @@
 using Repositories.Data;
 using Repositories.Implement;
 using Repositories.Interface;
+using SharedLibrary.FIleSetting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Repositories.UnitOfWork
     {
         private readonly ApplicationDbContext _context;
         private readonly Dictionary<Type, object> _repositories = new();
+        private readonly FirebaseStorageService _fileService;
         public IBookingRepository Bookings { get; private set; }
         public IServiceRepository Services { get; private set; }
         public IUserRepository UserRepository {get; private set; }
@@ -23,11 +25,11 @@ namespace Repositories.UnitOfWork
         public ITrackingRepository Trackings { get; private set; }
         public IScheduleRepository Schedules { get; private set; }
         public IEventTicketRepository EventTicket { get; private set; }
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(ApplicationDbContext context,FirebaseStorageService fileService)
         {
             _context = context;
             Bookings = new BookingRepository(context);
-            Services = new ServiceRepository(context);
+            Services = new ServiceRepository(context,fileService);
             Trackings = new TrackingRepository(context);
             Schedules = new ScheduleRepository(context);
             UserRepository = new UserRepository(context);

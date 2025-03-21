@@ -41,7 +41,7 @@ namespace Services.Implement
             var bank = Enum.TryParse(booking.PaymentMethod, true, out PaymentMethod pm) && Enum.IsDefined(pm) ? pm : (PaymentMethod?)null;
             string redisKey = $"{Guid.NewGuid()}";
             await _cache.SetAsync(redisKey, JsonConvert.SerializeObject(bookingWithId), TimeSpan.FromMinutes(30));
-            returnAction = QueryHelpers.AddQueryString(returnAction, "redisKey", redisKey);
+            returnAction = QueryHelpers.AddQueryString(returnAction, "key", redisKey);
 
             string? result = null;
 

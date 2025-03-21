@@ -253,6 +253,8 @@ namespace SkinTime.Helpers
 
             CreateMap<Schedule, BookingStepDetailsDTO>()
                  .ForMember(dest => dest.ServiceDetailsName, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Name))
+                 .ForMember(dest => dest.Step, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Step))
+                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.ReservedStartTime))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Description))
                 .ForMember(dest => dest.StartEnd, opt => opt.MapFrom(src => src.ReservedEndTime))
@@ -328,7 +330,6 @@ namespace SkinTime.Helpers
             CreateMap<ServiceDetail, ServiceDetailsDTO>().ReverseMap();
             CreateMap<ServiceCreateDTO, Service>()
            .ForMember(dest => dest.Thumbnail, opt => opt.Ignore()) 
-           .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ServiceStatus>(src.Status))) 
            .ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
 
 

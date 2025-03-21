@@ -1,8 +1,10 @@
 ﻿using BusinessObject.Entities;
+using BusinessObject.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Data;
 using Repositories.Interface;
+using SharedLibrary.FIleSetting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,32 +15,33 @@ namespace Repositories.Implement
 {
     public class ServiceRepository : GenericRepository<Service>, IServiceRepository
     {
-        public ServiceRepository(ApplicationDbContext context) : base(context)
-        {}
+        private readonly FirebaseStorageService _fileService;
+        public ServiceRepository(ApplicationDbContext context, FirebaseStorageService fileService) : base(context)
+        {
+            _fileService = fileService;
+        }
 
-        public async Task CreateService(Service service, ICollection<Guid> SkintypeIds, ICollection<IFormFile> ServiceImages, ICollection<ServiceDetail> ServiceDetails)
+        public async Task CreateService(IFormFile thumnail, Service service, ICollection<Guid> SkintypeIds, ICollection<IFormFile> ServiceImages, ICollection<ServiceDetail> ServiceDetails)
         {
             var listURL = new List<string>();
             service.Id = Guid.NewGuid();
-
-            //// Upload các hình ảnh và lưu URL
-            //foreach (var file in ServiceImages)
-            //{
-            //    if (file.Length > 0)
-            //    {
-            //        string fileUrl = await _fileService.Upload(file);
-            //        listURL.Add(fileUrl);
-            //    }
-            //}
-
-            // Gán ID cho ServiceDetails
+            service.Status = ServiceStatus.Available;
+            service.Duration = ServiceDetails.Sum(detail => detail.Duration);
+            service.Thumbnail = await _fileService.Upload(thumnail);
+            foreach (var file in ServiceImages)
+            {
+                if (file.Length > 0)
+                {
+                    string fileUrl = await _fileService.Upload(file);
+                    listURL.Add(fileUrl);
+                }
+            }
             foreach (var detail in ServiceDetails)
             {
                 detail.ServiceID = service.Id;
+                service.ServiceDetailNavigation.Add(detail);
             }
-
-            // Gán ServiceDetails vào Service
-            service.ServiceDetailNavigation = ServiceDetails;
+            //service.ServiceDetailNavigation = ServiceDetails;
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
 

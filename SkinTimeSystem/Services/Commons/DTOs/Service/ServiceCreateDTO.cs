@@ -15,7 +15,6 @@ namespace Services.Commons.DTOs.Service
         public required IFormFile Thumbnail { get; set; } 
       //  public required int Duration { get; set; }// => tự tính dự vào duẩtion của từng step 
         public required decimal Price { get; set; }
-        public required string Status { get; set; }// sẽ là string và sao đó sẽ map lại 
 
         public Guid ServiceCategoryID { get; set; }
 

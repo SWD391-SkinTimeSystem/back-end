@@ -150,7 +150,6 @@ namespace Services.Implement
 
             for (TimeOnly y = startOfDay; y <= endOfDay; y = y.AddMinutes(30))
             {
-                // If the current time is over the checking time, the slot is automatically un available.
                 DateTime checking = date.ToDateTime(y);
                 if (DateTime.UtcNow > checking)
                 {
@@ -196,13 +195,11 @@ namespace Services.Implement
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
         }
 
-        //public async Task<ServiceResult<Schedule>> ReSchedule(UserRole userRole,RescheduleDTO rescheduleDTO)
-        //{
-        // // return async _unitOfWork.Schedules.ReSchedule(rescheduleDTO.IdSchedule, rescheduleDTO.Date, rescheduleDTO.TimeStart);
-        //    if (userRole == UserRole.Customer) {
-              
-        //    }
-        //}
+        public async Task<ServiceResult<Schedule>> ReSchedule(RescheduleDTO rescheduleDTO)
+        {
+            var schedule = await _unitOfWork.Schedules.ReSchedule(rescheduleDTO.IdSchedule, rescheduleDTO.Date, rescheduleDTO.TimeStart);
+            return ServiceResult<Schedule>.Success(schedule);
+        }
 
         public Task<ServiceResult<Schedule>> UpdateSchedule(Guid id, Schedule schedule)
         {
