@@ -16,12 +16,12 @@ namespace Repositories.Implement
         
 
         public async Task<bool> CreateTracking(Tracking tracking)
-        {
+        { 
             var schedule =  _context.Schedules.SingleOrDefault(x => x.Id == tracking.ScheduleId);
             tracking.TherapistId = schedule.BookingNavigation.TherapistId;
             tracking.CheckinTime = DateTime.Now;
             tracking.Id = Guid.NewGuid();
-            _context.Trackings.Add(tracking);
+            _context.Trackings.Add(tracking);    
             await _context.SaveChangesAsync();
             return true;
         }

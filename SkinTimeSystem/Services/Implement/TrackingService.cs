@@ -17,12 +17,10 @@ namespace Services.Implement
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ApplicationDbContext _context;
-        public TrackingService(IUnitOfWork unitOfWork, IMapper mapper, ApplicationDbContext context)
+        public TrackingService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _context = context;
         }
 
 
@@ -55,7 +53,7 @@ namespace Services.Implement
             {
                 return ServiceResult<string>.Failed(ServiceError.ValidationFailed("Invalid OTP"));
             }
-
+             
             // Nếu OTP đúng, tiếp tục xử lý tracking
             var tracking = _mapper.Map<Tracking>(creationalTrackingDTO);
             var result =  await _unitOfWork.Trackings.CreateTracking(tracking);

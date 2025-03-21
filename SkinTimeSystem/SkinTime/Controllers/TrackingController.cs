@@ -22,7 +22,7 @@ namespace API.Controllers
         public async Task<IActionResult> TrackingBooking(CreationalTrackingDTO creationalTrackingDTO)
         {
             return await HandleServiceCall(async () =>
-            {
+              {
                 return ServiceResult.Success(await _trackingService.CreateTracking(creationalTrackingDTO));
             });
 

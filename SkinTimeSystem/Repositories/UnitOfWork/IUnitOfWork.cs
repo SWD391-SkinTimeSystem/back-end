@@ -14,7 +14,7 @@ namespace Repositories.UnitOfWork
         IServiceRepository Services { get; }
         ITrackingRepository Trackings { get; }
 
-        IScheduleRepository Schedules { get; }
+        IScheduleRepository Schedules { get; }  
 
         IGenericRepository<TEntity> Repository<TEntity>()
            where TEntity : BaseEntity;
