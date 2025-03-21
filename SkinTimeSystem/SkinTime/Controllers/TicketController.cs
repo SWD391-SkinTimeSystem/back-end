@@ -1,13 +1,22 @@
-﻿using AutoMapper;
+﻿using API.Model;
+using AutoMapper;
+using BusinessObject.Enum;
+using BusinessObject.EventEnums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
+using Services.Commons;
+using Services.Commons.DTOs.Therapist;
 using Services.Commons.DTOs.Ticket;
+using Services.Implement;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
 using SkinTime.Extensions;
 using StackExchange.Redis;
+using System.Drawing.Printing;
 
 namespace SkinTime.Controllers
 {
@@ -33,6 +42,53 @@ namespace SkinTime.Controllers
                 return await _service.GetAllCustomerTicket(userId, status);
             });
         }
+
+
+        [Authorize(Roles = "Staff")]
+        [HttpGet("{eventId}/available-list")]
+        [ProducesResponseType<ApiResponse<PaginationResult<TicketRegisterListDTO>>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEventTicketRegisterList( Guid eventId, int page = 1, int pageSize = 20)
+        {
+
+            PaginationResult result = await _service.GetRegisterEventTicket(eventId, page, pageSize);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "success",
+                Data = result,
+            });
+        }
+
+
+        [Authorize(Roles = "Staff")]
+        [HttpGet("{eventId}/list")]
+        [ProducesResponseType<ApiResponse<PaginationResult<TicketRegisterListDTO>>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEventTicketList( Guid eventId, int page = 1, int page_size = 20)
+        {
+
+            PaginationResult result = await _service.GetAllEventTicket(eventId, page, page_size);
+            return Ok(new ApiResponse
+            {
+                Success = true,
+                Message = "success",
+                Data = result,
+            });
+        }
+
+
+        [Authorize(Roles = "Staff")]
+        [HttpGet("{ticketId}/checkin")]
+        public async Task<IActionResult> CheckInTicket([FromQuery]Guid eventId,Guid ticketId, [FromQuery] string otp)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.CheckinTicket(eventId, ticketId, otp);
+            });
+        }
+
+
+
+
 
         //[HttpPost("register")]
         //public async Task<IActionResult> RegisterServiceTicket([FromBody] TicketRegistrationDTO registration)

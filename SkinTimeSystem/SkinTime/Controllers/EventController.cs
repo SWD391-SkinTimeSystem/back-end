@@ -5,9 +5,12 @@ using BusinessObject.EventEnums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Repositories;
 using Services.Commons;
 using Services.Commons.DTOs.Event;
+using Services.Commons.DTOs.Ticket;
+using Services.Implement;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
@@ -116,5 +119,7 @@ namespace SkinTime.Controllers
 
             return HandleServiceCall(result);
         }
+
+
     }
 }

@@ -22,6 +22,7 @@ namespace Repositories.UnitOfWork
         public IEventRepository EventRepository { get; private set; }
         public ITrackingRepository Trackings { get; private set; }
         public IScheduleRepository Schedules { get; private set; }
+        public IEventTicketRepository EventTicket { get; private set; }
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -32,6 +33,7 @@ namespace Repositories.UnitOfWork
             UserRepository = new UserRepository(context);
             TherapistRepository = new TherapistRepository(context);
             EventRepository = new EventRepository(context);
+            EventTicket = new EventTicketRepository(context);
         }
         public async Task<int> Complete()
         {

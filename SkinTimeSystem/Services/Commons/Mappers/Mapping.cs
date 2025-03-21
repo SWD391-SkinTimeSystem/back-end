@@ -330,6 +330,10 @@ namespace SkinTime.Helpers
            .ForMember(dest => dest.Thumbnail, opt => opt.Ignore()) 
            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ServiceStatus>(src.Status))) 
            .ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
+
+
+            CreateMap<EventTicket, TicketRegisterListDTO>();
+                
         }
 
         
