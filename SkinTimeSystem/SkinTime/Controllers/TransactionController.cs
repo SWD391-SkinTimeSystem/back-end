@@ -28,10 +28,10 @@ namespace SkinTime.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> TransactionCallback(string redisKey)
+        public async Task<IActionResult> TransactionCallback(string key)
         {
                 var data = Request.Query;
-                var url = await _service.CallbackPayment(redisKey, data);
+                var url = await _service.CallbackPayment(key, data);
                 return  Redirect(url); 
         }
         [HttpPost]

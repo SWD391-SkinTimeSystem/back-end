@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Configuration;
 using Repositories.Implement;
 using Repositories.Interface;
+using SharedLibrary.FIleSetting;
 
 
 namespace SkinTime.Extensions
@@ -45,6 +46,7 @@ namespace SkinTime.Extensions
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ITrackingService, TrackingService>();
+            services.AddSingleton<FirebaseStorageService>();
             services.AddScoped<ICache, Cache>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ITransactionService, TransactionService>();

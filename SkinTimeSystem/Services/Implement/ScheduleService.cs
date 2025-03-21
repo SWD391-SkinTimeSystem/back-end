@@ -196,13 +196,16 @@ namespace Services.Implement
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
         }
 
-        //public async Task<ServiceResult<Schedule>> ReSchedule(UserRole userRole,RescheduleDTO rescheduleDTO)
-        //{
-        // // return async _unitOfWork.Schedules.ReSchedule(rescheduleDTO.IdSchedule, rescheduleDTO.Date, rescheduleDTO.TimeStart);
-        //    if (userRole == UserRole.Customer) {
-              
-        //    }
-        //}
+        public async Task<ServiceResult<Schedule>> ReSchedule(string role, RescheduleDTO rescheduleDTO)
+        {
+            var userRole = Enum.TryParse<UserRole>(role, true, out var parsed) ? parsed : UserRole.Customer;
+
+            if (userRole == UserRole.Customer && await _unitOfWork.Schedules.CheckFirstStep(rescheduleDTO.IdSchedule))
+                return ServiceResult<Schedule>.Failed(ServiceError.ValidationFailed("Cannot reschedule first step as Customer"));
+
+            var schedule = await _unitOfWork.Schedules.ReSchedule(rescheduleDTO.IdSchedule, rescheduleDTO.Date, rescheduleDTO.TimeStart);
+            return ServiceResult<Schedule>.Success(schedule);
+        }
 
         public Task<ServiceResult<Schedule>> UpdateSchedule(Guid id, Schedule schedule)
         {

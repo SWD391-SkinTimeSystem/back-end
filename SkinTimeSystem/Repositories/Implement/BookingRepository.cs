@@ -28,6 +28,7 @@ namespace Repositories.Implement
             }
 
             booking.Id = Guid.NewGuid();
+            booking.Status = BookingStatus.Doing;
             booking.TotalPrice = service.Price;
 
             await _context.Bookings.AddAsync(booking);

@@ -7,7 +7,6 @@
         public required string TherapistName { get; set; }
         public string Thumbnail { get; set; }
         public required string ServiceName { get; set; }
-
         public string Status { get; set; }
 
         public int TotalStep { get; set; }

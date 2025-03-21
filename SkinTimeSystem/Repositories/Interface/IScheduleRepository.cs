@@ -11,6 +11,6 @@ namespace Repositories.Interface
     {
         Task<bool> GetScheduleById(Guid scheduleId);
         Task<Schedule> ReSchedule(Guid iDSchedule,DateOnly date, TimeOnly time);
-       // Task<bool> CheckFirstStep(Guid idSchedule);
+        Task<bool> CheckFirstStep(Guid idSchedule);
     }
 }

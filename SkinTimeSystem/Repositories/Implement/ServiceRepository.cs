@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Data;
 using Repositories.Interface;
+using SharedLibrary.FIleSetting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,23 +14,26 @@ namespace Repositories.Implement
 {
     public class ServiceRepository : GenericRepository<Service>, IServiceRepository
     {
-        public ServiceRepository(ApplicationDbContext context) : base(context)
-        {}
+        private readonly FirebaseStorageService _fileService;
+        public ServiceRepository(ApplicationDbContext context, FirebaseStorageService fileService) : base(context)
+        {
+            _fileService = fileService;
+        }
 
         public async Task CreateService(Service service, ICollection<Guid> SkintypeIds, ICollection<IFormFile> ServiceImages, ICollection<ServiceDetail> ServiceDetails)
         {
             var listURL = new List<string>();
             service.Id = Guid.NewGuid();
 
-            //// Upload các hình ảnh và lưu URL
-            //foreach (var file in ServiceImages)
-            //{
-            //    if (file.Length > 0)
-            //    {
-            //        string fileUrl = await _fileService.Upload(file);
-            //        listURL.Add(fileUrl);
-            //    }
-            //}
+            // Upload các hình ảnh và lưu URL
+            foreach (var file in ServiceImages)
+            {
+                if (file.Length > 0)
+                {
+                    string fileUrl = await _fileService.Upload(file);
+                    listURL.Add(fileUrl);
+                }
+            }
 
             // Gán ID cho ServiceDetails
             foreach (var detail in ServiceDetails)

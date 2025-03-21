@@ -40,9 +40,12 @@ namespace Services.Implement
             string jsonData = await _cache.GetAsync<string>(redisKey);
             Guid key = Guid.Parse(redisKey);
             var bookingDto = JsonConvert.DeserializeObject<BookingServiceWithIdDTO>(jsonData);
-            
 
-            var bank = Enum.TryParse(bookingDto.PaymentMethod, true, out PaymentMethod pm) && Enum.IsDefined(pm) ? pm : (PaymentMethod?)null;
+
+            PaymentMethod? bank = Enum.IsDefined(typeof(PaymentMethod), bookingDto.PaymentMethod)
+                ? Enum.Parse<PaymentMethod>(bookingDto.PaymentMethod, true)
+                : null;
+
             bool isSuccess = true;
 
             if (bank == PaymentMethod.VnPay)

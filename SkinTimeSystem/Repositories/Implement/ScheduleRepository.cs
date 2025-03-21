@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Entities;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Data;
 using Repositories.Interface;
 using System;
@@ -13,11 +14,14 @@ namespace Repositories.Implement
     {
         public ScheduleRepository(ApplicationDbContext context) : base(context) { }
 
-        //public Task<bool> CheckFirstStep(Guid idSchedule)
-        //{
-        //    var
-        //}
+        public async Task<bool> CheckFirstStep(Guid idSchedule)
+        {
+            var schedule = await _context.Schedules
+                .Include(s => s.ServiceDetailNavigation) 
+                .FirstOrDefaultAsync(s => s.Id == idSchedule);
 
+            return schedule.ServiceDetailNavigation.Step == 1;
+        }
         public async Task<bool> GetScheduleById(Guid scheduleId)
         {
             var schedule =  _context.Schedules.SingleOrDefault(x => x.Id == scheduleId);
