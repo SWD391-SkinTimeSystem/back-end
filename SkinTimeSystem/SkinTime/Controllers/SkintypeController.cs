@@ -1,17 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Services.Commons.DTOs.Service;
-using Services.Commons.DTOs.Skintype;
 using Services.Commons.DTOs.SkinType;
-using Services.Implement;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/skinType")]
+
     [ApiController]
     public class SkinTypeController : BaseController
     {
@@ -31,6 +29,14 @@ namespace API.Controllers
 
             });
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllSkintype()
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.GetAllSkintype();
 
+            });
+        }
     }
 }
