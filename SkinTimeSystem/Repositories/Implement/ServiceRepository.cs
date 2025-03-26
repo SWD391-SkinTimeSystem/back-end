@@ -21,49 +21,60 @@ namespace Repositories.Implement
             _fileService = fileService;
         }
 
-        public async Task CreateService(IFormFile thumnail, Service service, ICollection<Guid> SkintypeIds, ICollection<IFormFile> ServiceImages, ICollection<ServiceDetail> ServiceDetails)
+        public async Task CreateServiceAdvand(Guid idService, IFormFile? thumbnail, ICollection<IFormFile>? serviceImages)
         {
-            var listURL = new List<string>();
-            service.Id = Guid.NewGuid();
-            service.Status = ServiceStatus.Available;
-            service.Duration = ServiceDetails.Sum(detail => detail.Duration);
-            service.Thumbnail = await _fileService.Upload(thumnail);
-            foreach (var file in ServiceImages)
+            var service = await _context.Services.FindAsync(idService);
+
+                service.Thumbnail = await _fileService.Upload(thumbnail);
+       
+
+            var imageEntities = new List<ServiceImage>();
+
+            if (serviceImages != null && serviceImages.Any())
             {
-                if (file.Length > 0)
+                foreach (var file in serviceImages)
                 {
-                    string fileUrl = await _fileService.Upload(file);
-                    listURL.Add(fileUrl);
+                    if (file.Length > 0)
+                    {
+                        string fileUrl = await _fileService.Upload(file);
+                        imageEntities.Add(new ServiceImage
+                        {
+                            ImageUrl = fileUrl,
+                            ServiceId = service.Id
+                        });
+                    }
+                }
+                if (imageEntities.Count > 0)
+                {
+                    _context.ServiceImages.AddRange(imageEntities);
                 }
             }
-            foreach (var detail in ServiceDetails)
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task<Guid> CreateServiceBasic(Service service, ICollection<Guid> skintypeIds, ICollection<ServiceDetail> serviceDetails)
+        {
+            service.Id = Guid.NewGuid();
+            service.Status = ServiceStatus.Available;
+            service.Duration = serviceDetails.Sum(detail => detail.Duration);
+
+            foreach (var detail in serviceDetails)
             {
                 detail.ServiceID = service.Id;
-                service.ServiceDetailNavigation.Add(detail);
             }
-            //service.ServiceDetailNavigation = ServiceDetails;
+
+            service.ServiceDetailNavigation = serviceDetails.ToList();
+
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
 
-            foreach (var url in listURL)
-            {
-                _context.ServiceImages.Add(new ServiceImage
-                {
-                    ImageUrl = url,
-                    ServiceId = service.Id
-                });
-            }
+            var skinTypes = await _context.SkinTypes
+                                 .Where(st => skintypeIds.Contains(st.Id))
+                                 .ToListAsync();
+            service.SkinTypes = skinTypes;
 
-            foreach (var skinTypeId in SkintypeIds)
-            {
-                _context.ServiceRecommendation.Add(new ServiceRecommendation
-                {
-                    ServiceID = service.Id,
-                    SkinTypeID = skinTypeId
-                });
-            }
-
-            await _context.SaveChangesAsync();
+            return service.Id;
         }
 
 

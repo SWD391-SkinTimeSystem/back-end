@@ -13,7 +13,6 @@ namespace Repositories.Data
         public DbSet<Service> Services { get; set; } = null!;
         public DbSet<ServiceDetail> ServiceDetails { get; set; } = null!;
         public DbSet<ServiceImage> ServiceImages { get; set; } = null!;
-        public DbSet<QuestionOptionSkintype> QuestionOptionSkintypes { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Therapist> Therapists { get; set; } = null!;
         public DbSet<TherapistCertification> TherapistCertifications {get; set; } = null!;
@@ -31,7 +30,6 @@ namespace Repositories.Data
         public DbSet<Message> Messages { get; set; } = null!;
         public DbSet<Notification> Notifications { get; set; } = null!;
         public DbSet<SkinType> SkinTypes { get; set; } = null!;
-        public DbSet<ServiceRecommendation> ServiceRecommendation { get; set; } = null!;
 
         public DbSet<Question> Questions { get; set; } = null!;
         public DbSet<QuestionOption> QuestionOptions { get; set; } = null!;

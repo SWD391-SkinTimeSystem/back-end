@@ -16,7 +16,7 @@ namespace Services.Interfaces
 
         Task<SkinType> GetSkinTypeById(Guid id);
 
-        Task<ServiceResult> CreateSkinType(SkinTypeCreationDTO skintype);
+        Task<ServiceResult<bool>> CreateSkinType(SkinTypeCreationDTO skintype);
 
         Task<ServiceResult> UpdateSkinType(Guid id, SkinType skintype);
         Task<ServiceResult<ICollection<SkintypeDetailDTO>>> GetAllSkintype();

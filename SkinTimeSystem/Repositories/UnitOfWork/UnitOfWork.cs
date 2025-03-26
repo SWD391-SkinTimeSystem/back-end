@@ -34,8 +34,8 @@ namespace Repositories.UnitOfWork
             Schedules = new ScheduleRepository(context);
             UserRepository = new UserRepository(context);
             TherapistRepository = new TherapistRepository(context);
-            EventRepository = new EventRepository(context);
             EventTicket = new EventTicketRepository(context);
+            EventRepository = new EventRepository(context,fileService);
         }
         public async Task<int> Complete()
         {

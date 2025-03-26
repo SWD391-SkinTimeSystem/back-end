@@ -92,7 +92,7 @@ namespace SkinTime.Controllers
         [HttpPost("create")]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreatEvent([FromBody] EventCreationDTO eventInformation)
+        public async Task<IActionResult> CreatEvent( EventCreationDTO eventInformation)
         {
             ServiceResult result = await _services.CreateNewEvent(eventInformation);
 

@@ -18,9 +18,6 @@ namespace BusinessObject.Entities
         public required Guid ToUserId { get; set; }
         [Column("is_read")]
         public bool IsRead { get; set; } = false;
-        [Column("return_url")]
-        [MaxLength(2048)]
-        public string? ReturnUrl { get; set; }
         [Column("about_id")]
         public Guid? AboutId { get; set; }
 

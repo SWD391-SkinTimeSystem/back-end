@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Repositories.UnitOfWork;
 using Services.Commons;
 using Services.Commons.DTOs.Category;
+using Services.Commons.DTOs.Service;
 using Services.Commons.DTOs.Skintype;
 using Services.Commons.DTOs.SkinType;
 using Services.Interfaces;
@@ -26,9 +27,17 @@ namespace Services.Implement
             _mapper = mapper;
         }
 
-        public Task<ServiceResult> CreateSkinType(SkinTypeCreationDTO skintype)
+        public async Task<ServiceResult<bool>> CreateSkinType(SkinTypeCreationDTO skintype)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = _unitOfWork.Repository<SkinType>().AddAsync(_mapper.Map<SkinType>(skintype));
+                return ServiceResult<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<bool>.Failed(ServiceError.UnhandledException(ex.Message));
+            }      
         }
 
         public async Task<ServiceResult<ICollection<SkintypeDetailDTO>>> GetAllSkintype()

@@ -29,14 +29,34 @@ namespace Services.Implement
             _mapper = mapper;
         }
 
-        public async Task<ServiceResult<bool>> CreateService(ServiceCreateDTO serviceDTO)
+        public async Task<ServiceResult<bool>> CreateServiceAdvand(ServiceCreateAdvandDTO serviceDTO)
         {
+            try
+            {
+                await _unitOfWork.Services.CreateServiceAdvand(serviceDTO.IdService, serviceDTO.Thumbnail, serviceDTO.ServiceImages);
+                return ServiceResult<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<bool>.Failed(ServiceError.UnhandledException(ex.Message));
+            }
+        }
+
+        public async Task<ServiceResult<Guid>> CreateServiceBasic(ServiceCreateBasicDTO serviceDTO)
+        {
+            try
+            {
                 var service = _mapper.Map<Service>(serviceDTO);
                 var servicedetails = _mapper.Map<ICollection<ServiceDetail>>(serviceDTO.ServiceDetails);
-                await _unitOfWork.Services.CreateService(serviceDTO.Thumbnail,service,serviceDTO.SkintypeIds, serviceDTO.ServiceImages, servicedetails);
-                return ServiceResult<bool>.Success(true);
-
+                var result = await _unitOfWork.Services.CreateServiceBasic(service, serviceDTO.SkintypeIds, servicedetails);
+                return ServiceResult<Guid>.Success(result);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult<Guid>.Failed(ServiceError.UnhandledException(ex.Message));
+            }
         }
+
 
         public async Task<ServiceResult<ICollection<ServiceDTO>>> GetAllService() { 
            var listService = await _unitOfWork.Repository<Service>().GetAllAsync();
