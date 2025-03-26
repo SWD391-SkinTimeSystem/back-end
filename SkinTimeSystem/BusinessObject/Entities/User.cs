@@ -45,7 +45,6 @@ namespace BusinessObject.Entities
         // Navigational virtual properties represent entity relationship with other entities.
         public virtual Therapist TherapistNavigation { get; set; } = null!;
         public virtual ICollection<Booking> BookingNavigation { get; set; } = new Collection<Booking>();
-        public virtual ICollection<UserChoice> UserChoices { get; set; } = new Collection<UserChoice>();
         public virtual ICollection<EventTicket> EventTickets { get; set; } = new Collection<EventTicket>();
         public virtual ICollection<Notification> Notifications { get; set; } = new Collection<Notification>();
         public virtual ICollection<Message> Messages { get; set; } = new Collection<Message>();

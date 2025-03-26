@@ -175,7 +175,7 @@ namespace SkinTime.Controllers
                 return ServiceResult.Success(collection);
             });
         }
-        [Authorize(Roles = "Customer,Staff")]
+       // [Authorize(Roles = "Customer,Staff")]
         [HttpPost("reschedule")]
         public async Task<ActionResult> ChangSchedule(RescheduleDTO rescheduleDTO)
         {

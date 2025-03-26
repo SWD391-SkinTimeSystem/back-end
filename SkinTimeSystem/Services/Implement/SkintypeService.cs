@@ -31,7 +31,8 @@ namespace Services.Implement
         {
             try
             {
-                var result = _unitOfWork.Repository<SkinType>().AddAsync(_mapper.Map<SkinType>(skintype));
+                var result =await  _unitOfWork.Repository<SkinType>().AddAsync(_mapper.Map<SkinType>(skintype));
+                await _unitOfWork.Complete();
                 return ServiceResult<bool>.Success(true);
             }
             catch (Exception ex)

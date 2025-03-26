@@ -25,14 +25,6 @@ namespace SkinTime.Extensions
                 ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnectionMySQL"))
             ));
 
-
-            // Code to use DbContext for SQL Server database engine (commented out)
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //{
-            //    options.UseLazyLoadingProxies();
-            //    options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
-            //});
-
             return services;
         }
 

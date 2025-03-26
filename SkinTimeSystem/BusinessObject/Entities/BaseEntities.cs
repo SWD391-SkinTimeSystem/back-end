@@ -13,9 +13,9 @@ namespace BusinessObject.Entities
         public Guid Id { get; set; }
 
         [Column("created_at")]
-        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedTime { get; set; } = DateTime.Now;
 
         [Column("last_update")]
-        public DateTime LastUpdate { get; set; } = DateTime.UtcNow;
+        public DateTime LastUpdate { get; set; } = DateTime.Now;
     }
 }
