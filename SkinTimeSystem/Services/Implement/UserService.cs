@@ -106,7 +106,21 @@ namespace Services.Implement
         public async Task<ServiceResult> CreateAccount(AccountRegistration account)
         {
             User userInformation = _mapper.Map<User>(account);
-            return await CreateUserAccount(userInformation);
+
+            var result = await CreateUserAccount(userInformation);
+
+            if (result.IsFailed)
+            {
+                return result;
+            }
+
+            string email_content = File.ReadAllText(".\\StaticResoucres\\register_notify")
+                .Replace("[0]", userInformation.FullName)
+                .Replace("[1]", userInformation.Email)
+                .Replace("[2]",userInformation.Password);
+            await _emailUtils.SendGoogleEmailAsync(account.Email, "Account creation notification", email_content);
+
+            return result;
         }
 
         public async Task<ServiceResult> CreateCustomerAccount(CustomerRegistration account)
@@ -195,6 +209,36 @@ namespace Services.Implement
             _unitOfWork.UserRepository.Update(existingUser);
             await _unitOfWork.Complete();
 
+            return ServiceResult.Success();
+        }
+
+        public async Task<ServiceResult> RequestForgetPassword(string email, string reset_page_url)
+        {
+            var user = await _unitOfWork.UserRepository.FindAsync(x => x.Email == email);
+
+            if (user == null)
+            {
+                return ServiceResult.Failed(ServiceError.ValidationFailed(""));
+            }
+
+            string reset_url = $"{reset_page_url}?token={user.Id}";
+            string mail_content = File.ReadAllText(".\\StaticResoucres\\reset_password.html");
+            await _emailUtils.SendGoogleEmailAsync(user.Email, "Skintime - Password reset request", mail_content.Replace("[0]", user.FullName).Replace("[1]", reset_url));
+            return ServiceResult.Success();
+        }
+
+        public async Task<ServiceResult> UpdateForgetPassword(Guid user_id, string password)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(user_id);
+
+            if (user == null)
+            {
+                return ServiceResult.Failed(ServiceError.ValidationFailed(""));
+            }
+
+            user.Password = _tokenUtils.HashPassword(password);
+            _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.Complete();
             return ServiceResult.Success();
         }
     }

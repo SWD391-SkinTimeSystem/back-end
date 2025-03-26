@@ -35,7 +35,7 @@ namespace SharedLibrary.TokenUtilities
                 Subject = claims,
                 Issuer = Issuer,
                 IssuedAt = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key)), SecurityAlgorithms.HmacSha256Signature),
             };
 
@@ -47,7 +47,7 @@ namespace SharedLibrary.TokenUtilities
         public string CreateBase64RefreshToken(string id)
         {
             // The refresh token will has the following pattern {User id}|{createdTime}|{ExpiredTime}
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{id}|{DateTime.UtcNow.ToString()}|{DateTime.UtcNow.AddMinutes(10).ToString()}"));
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{id}|{DateTime.UtcNow.ToString()}|{DateTime.UtcNow.AddDays(2).ToString()}"));
         }
 
         public string? ValidateBase64RefreshToken(string token)
