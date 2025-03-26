@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using BusinessObject.Entities;
+using Repositories;
 using Repositories.Data;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Ticket;
 using Services.Commons.DTOs.TrackingDTO;
 using Services.Interfaces;
 using System;
@@ -25,7 +27,7 @@ namespace Services.Implement
 
 
 
-        public async Task<ServiceResult<string>> CreateTracking(CreationalTrackingDTO creationalTrackingDTO)
+        public async Task<ServiceResult> CreateTracking(CreationalTrackingDTO creationalTrackingDTO)
         {
             var scheduleId = creationalTrackingDTO.ScheduleId;
             var otpInput = creationalTrackingDTO.OtpInput;
@@ -50,13 +52,25 @@ namespace Services.Implement
             // Nếu OTP đúng, tiếp tục xử lý tracking
             var tracking = _mapper.Map<Tracking>(creationalTrackingDTO);
             var result =  await _unitOfWork.Trackings.CreateTracking(tracking);
-            return ServiceResult<string>.Success("Tracking created successfully");
+            var time = result.CheckinTime;         
+
+
+            if (time == null)
+            {
+                return ServiceResult<TimeOnly>.Failed(ServiceError.ValidationFailed("Don't checkin"));
+            }
+
+            string formattedTime = time.Value.ToString("HH:mm:ss");
+            return ServiceResult<string>.Success(formattedTime);
+
+
+            
 
         }
 
         private async Task<bool> IsValidScheduleAsync(Guid scheduleId)
         {
-            bool schedule = await _unitOfWork.Schedules.GetScheduleById(scheduleId);
+            bool schedule = await _unitOfWork.Schedules.CheckScheduleById(scheduleId);
 
             if (schedule)
             {
@@ -85,6 +99,33 @@ namespace Services.Implement
         public async Task<ServiceResult<string>> CheckoutTracking(Guid trackingId) { 
             await _unitOfWork.Trackings.CheckoutTracking(trackingId);
             return ServiceResult<string>.Success("Tracking checkout successfully");
+
+        }
+
+
+
+        public async Task<ServiceResult> CheckScheduleWithTrackId(Guid scheduleID)
+        {
+            var schedule = await _unitOfWork.Schedules.GetScheduleById(scheduleID);
+
+            var tracking = await _unitOfWork.Trackings.GetTrackingWithSchedulId(scheduleID);
+
+            var isCheckin = false;
+            string formattedTime = "";
+            if (tracking != null)
+            {
+                isCheckin = true;
+                formattedTime = tracking.CheckinTime.Value.ToString("HH:mm:ss");
+
+            }
+            
+            return ServiceResult<ScheduleTrackingDTO>.Success(new ScheduleTrackingDTO
+            {
+                ScheduleId = scheduleID,
+                CheckinTime = formattedTime,
+                isCheckin = isCheckin
+            });
+
 
         }
     }

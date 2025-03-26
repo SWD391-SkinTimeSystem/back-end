@@ -9,8 +9,12 @@ namespace Repositories.Interface
 {
     public interface ITrackingRepository : IGenericRepository<Tracking>
     {
-        Task<bool> CreateTracking(Tracking tracking);
+        Task<Tracking> CreateTracking(Tracking tracking);
         Task<bool> NoteTracking(Guid trackingId, string note);
         Task<bool> CheckoutTracking(Guid trackingId);
+
+        Task<Tracking> GetTrackingWithSchedulId(Guid scheduleId);
+
+
     }
 }

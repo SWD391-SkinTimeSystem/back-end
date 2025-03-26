@@ -1,4 +1,5 @@
 ﻿
+using BusinessObject.Entities;
 using Services.Commons;
 using Services.Commons.DTOs.TrackingDTO;
 using System;
@@ -11,8 +12,10 @@ namespace Services.Interfaces
 {
     public interface ITrackingService 
     {
-        Task<ServiceResult<string>> CreateTracking(CreationalTrackingDTO creationalTrackingDTO);
+        Task<ServiceResult> CreateTracking(CreationalTrackingDTO creationalTrackingDTO);
         Task<ServiceResult<string>> NoteTracking(TrackingNoteDTO trackingNoteDTO);
         Task<ServiceResult<string>> CheckoutTracking(Guid trackingId);
+
+        Task<ServiceResult> CheckScheduleWithTrackId(Guid scheduleID);
     }
 }

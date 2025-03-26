@@ -1,10 +1,17 @@
-﻿using BusinessObject.Enum;
+﻿using API.Model;
+using BusinessObject.Entities;
+using BusinessObject.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Repositories;
 using Services.Commons;
 using Services.Commons.DTOs.TrackingDTO;
 using Services.Interfaces;
+using System.Drawing.Printing;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace API.Controllers
 {
@@ -21,6 +28,8 @@ namespace API.Controllers
         [HttpPost("checkin")]
         public async Task<IActionResult> TrackingBooking(CreationalTrackingDTO creationalTrackingDTO)
         {
+
+
             return await HandleServiceCall(async () =>
             {
                 return await _trackingService.CreateTracking(creationalTrackingDTO);
@@ -29,17 +38,33 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = nameof(UserRole.Staff))]
-        [HttpPut("checkout")]
+        [HttpPost("checkout")]
         public async Task<IActionResult> CheckoutTracking([FromBody] Guid trackingId)
         {
             return await HandleServiceCall(async () =>
             {
-                return ServiceResult.Success(await _trackingService.CheckoutTracking(trackingId));
+                return await _trackingService.CheckoutTracking(trackingId);
             });
+
+            
+        }
+
+
+        [Authorize(Roles = nameof(UserRole.Staff))]
+        [HttpGet("check/{scheduleID}")]
+        public async Task<IActionResult> CheckScheduleWithTrackId(Guid scheduleID)
+        {
+
+            return await HandleServiceCall(async () =>
+            {
+                return ServiceResult.Success(await _trackingService.CheckScheduleWithTrackId(scheduleID));
+            });
+
+
         }
 
         [Authorize(Roles = nameof(UserRole.Therapist))]
-        [HttpPut("note")]
+        [HttpPost("note")]
         public async Task<IActionResult> NoteTracking([FromBody] TrackingNoteDTO trackingNoteDTO)
         {
             return await HandleServiceCall(async () =>
@@ -48,6 +73,9 @@ namespace API.Controllers
                 return await _trackingService.NoteTracking(trackingNoteDTO);
             });
         }
+
+
+
         //[HttpPost("")]
         //public async Task<IActionResult> NoteTracking([FromBody] TrackingNoteDTO trackingNoteDTO)
         //{
