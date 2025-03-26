@@ -61,7 +61,6 @@ namespace Services.PaymentSetting
             param.Add("app_trans_id", DateTime.Now.ToString("yyMMdd") + "_" + app_trans_id);
             param.Add("embed_data", JsonConvert.SerializeObject(embed_data));
             param.Add("item", JsonConvert.SerializeObject(items));
-
             param.Add("description", Description + serviceName);
             param.Add("bank_code", BankCode);
             param.Add("callback_url", returnCallBack);

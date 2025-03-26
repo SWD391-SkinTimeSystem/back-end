@@ -48,13 +48,5 @@ namespace API.Controllers
                 return await _trackingService.NoteTracking(trackingNoteDTO);
             });
         }
-        //[HttpPost("")]
-        //public async Task<IActionResult> NoteTracking([FromBody] TrackingNoteDTO trackingNoteDTO)
-        //{
-        //    return await HandleServiceCall(async () =>
-        //    {
-        //        return await _trackingService.NoteTracking(trackingNoteDTO);
-        //    });
-        //}
     }
 }

@@ -10,7 +10,6 @@ namespace SkinTime.Extensions
     {
         public static IServiceCollection AddRedisService(this IServiceCollection services, IConfiguration configuration)
         {
-            // Đọc connection string từ appsettings.json
             string redisConnection = configuration.GetConnectionString("Redis") ?? "localhost:6379";
 
             services.AddSingleton<IConnectionMultiplexer>(sp =>

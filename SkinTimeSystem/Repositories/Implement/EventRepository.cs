@@ -1,8 +1,10 @@
 ﻿using BusinessObject.Entities;
 using BusinessObject.EventEnums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Data;
 using Repositories.Interface;
+using SharedLibrary.FIleSetting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,18 @@ namespace Repositories.Implement
 {
     internal class EventRepository : GenericRepository<Event>, IEventRepository
     {
-        public EventRepository(ApplicationDbContext context): base(context) { }
+        private readonly FirebaseStorageService _fileService;
+        public EventRepository(ApplicationDbContext context,FirebaseStorageService fileService) : base(context) {
+            _fileService = fileService;
+        }
+
+        public async Task CreateNewEvent(Event @event, IFormFile thumbnail)
+        {
+            @event.Id = Guid.NewGuid();
+            @event.Thumbnail = await _fileService.Upload(thumbnail);
+           await _context.Events.AddAsync(@event);
+            await _context.SaveChangesAsync();
+        }
 
         public async Task<IEnumerable<Event>> GetAllEvents()
         {

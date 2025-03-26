@@ -3,10 +3,14 @@ using BusinessObject.Entities;
 using BusinessObject.Enum;
 using BusinessObject.EventEnums;
 using Castle.Core.Resource;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Repositories;
+using Repositories.Interface;
 using Repositories.UnitOfWork;
 using Services.Commons;
+using Services.Commons.DTOs.Booking;
 using Services.Commons.DTOs.Therapist;
 using Services.Commons.DTOs.Ticket;
 using Services.Interfaces;
@@ -26,9 +30,11 @@ namespace Services.Implement
         private readonly VNPay _vnPay;
         private readonly ZaloPay _zaloPay;
         private readonly IMapper _mapper;
+        private readonly ICache _cache;
 
-        public TicketService(IUnitOfWork unitOfWork, VNPay vnPay, ZaloPay zaloPay, IMapper mapper)
+        public TicketService(IUnitOfWork unitOfWork, VNPay vnPay, ZaloPay zaloPay, IMapper mapper, ICache cache)
         {
+            _cache = cache;
             _unitOfWork = unitOfWork;
             _vnPay = vnPay;
             _zaloPay = zaloPay;
@@ -85,28 +91,9 @@ namespace Services.Implement
                 .Failed(ServiceError.ValidationFailed("The given id does not match the required format"));
         }
 
-        public async Task<ServiceResult<string>> CreateTicketForEvent(string userId, string eventId, string paymentMethod, string callbackUrl)
+        public async Task<ServiceResult<string>> CreateTicketForEvent(TicketRegistrationDTO registration, Guid userId, string returnAction)
         {
-            // Validate input
-            if (!Guid.TryParse(userId, out Guid parseUserId))
-            {
-                return ServiceResult<string>.Failed(ServiceError.ValidationFailed("user id does not match the required format")); ;
-            }
-
-            if (!Enum.TryParse<PaymentMethod>(paymentMethod, true, out PaymentMethod parsedMethod))
-            {
-                return ServiceResult<string>.Failed(ServiceError.ValidationFailed("invalid payment method"));
-            }
-
-            if (!Guid.TryParse(eventId, out Guid parsedEventId))
-            {
-                return ServiceResult<string>.Failed(ServiceError.ValidationFailed("event id does not match the required format")); ;
-            }
-
-            // Get data from database for processing
-            var targetEvent = await _unitOfWork.Repository<Event>().GetByIdAsync(parsedEventId, x => x.Include(x => x.TicketNavigation));
-
-            // Processing data
+            var targetEvent = await _unitOfWork.Repository<Event>().GetByIdAsync(registration.EventId);
             if (targetEvent == null)
             {
                 return ServiceResult<string>.Failed(ServiceError.NotExisted("Can not get event information with provided event id"));
@@ -116,17 +103,22 @@ namespace Services.Implement
             {
                 return ServiceResult<string>.Failed(ServiceError.ValidationFailed("This event is out of available ticket"));
             }
-
-            // Create payment url
+            var @even = _unitOfWork.Repository<Event>().GetById(registration.EventId);
+            var tiketEvent = registration as TicketRegistrationCacheDTO ?? new TicketRegistrationCacheDTO(registration, userId);
+            var bank = Enum.TryParse(tiketEvent.PaymentMethod, true, out PaymentMethod pm) && Enum.IsDefined(pm) ? pm : (PaymentMethod?)null;
+            string redisKey = $"{Guid.NewGuid()}";
+            await _cache.SetAsync(redisKey, JsonConvert.SerializeObject(tiketEvent), TimeSpan.FromMinutes(30));
+            returnAction = QueryHelpers.AddQueryString(returnAction, "key", redisKey);
+            
             string returnUrl;
 
-            switch (parsedMethod)
+            switch (bank)
             {
                 case PaymentMethod.ZaloPay:
-                    returnUrl = await _zaloPay.CreateZaloPayOrder(targetEvent.TicketPrice, callbackUrl, $"chuyen khoan ve su kien");
+                    returnUrl = await _zaloPay.CreateZaloPayOrder(targetEvent.TicketPrice, returnAction, $"chuyen khoan ve su kien");
                     break;
                 case PaymentMethod.VnPay:
-                    returnUrl = await _vnPay.CreateVNPayOrder((int)targetEvent.TicketPrice, callbackUrl, $"chuyen khoan ve su kien");
+                    returnUrl = await _vnPay.CreateVNPayOrder((int)targetEvent.TicketPrice, returnAction, $"chuyen khoan ve su kien");
                     break;
                 default:
                     return ServiceResult<string>.Failed(ServiceError.ValidationFailed("Payment method does not supported for this type of action"));

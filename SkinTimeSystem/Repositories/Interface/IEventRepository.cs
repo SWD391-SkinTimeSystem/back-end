@@ -1,5 +1,6 @@
 ﻿using BusinessObject.Entities;
 using BusinessObject.EventEnums;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace Repositories.Interface
         Task<IEnumerable<Event>> GetAllEvents();
 
         Task<Event?> GetEventById(Guid id);
+        Task CreateNewEvent(Event @event,IFormFile thumbnail );
 
         Task<PaginationResult<Event>> GetEventWithStatusPaginated(int page, int pageSize, EventStatus status);
 

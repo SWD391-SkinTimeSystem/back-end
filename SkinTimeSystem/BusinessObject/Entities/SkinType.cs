@@ -17,8 +17,8 @@ namespace BusinessObject.Entities
         [Column("description", TypeName = "NVARCHAR")]
         [MaxLength(250)]
         public string? Description { get; set; }
-        public virtual ICollection<ServiceRecommendation> Recommendations { get; set; } = new List<ServiceRecommendation>();
+        public virtual ICollection<Service> Services { get; set; } = new List<Service>();
 
-        public virtual ICollection<QuestionOptionSkintype> QuestionOptionSkintypes { get; set; } = new List<QuestionOptionSkintype>();
+        public virtual ICollection<QuestionOption> QuestionOptions { get; set; } = new List<QuestionOption>();
     }
 }

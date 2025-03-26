@@ -16,6 +16,7 @@ namespace Services.Interfaces
         Task<ServiceResult<ServiceDTO>> GetTreatmentplant(Guid idService);
         Task<ServiceResult<ICollection<ServiceDTO>>> GetAllTreatmentplant();
         Task<ServiceResult<ICollection<ServiceDTO>>> GetAllService();
-        Task<ServiceResult<bool>> CreateService(ServiceCreateDTO serviceDTO);
+        Task<ServiceResult<bool>> CreateServiceAdvand(ServiceCreateAdvandDTO serviceDTO);
+        Task<ServiceResult<Guid>> CreateServiceBasic(ServiceCreateBasicDTO serviceDTO);
     }
 }

@@ -27,7 +27,6 @@ namespace Services.Implement
 
         public async Task<ServiceResult> CreateQuestions(ICollection<Question> questions)
         {
-            // Validation
             if (questions.Any(x => x.QuestionOptionsNavigation.Count == 0))
             {
                 return ServiceResult.Failed(ServiceError.ValidationFailed("There is questions with 0 choice"));
@@ -88,7 +87,7 @@ namespace Services.Implement
         public async Task<ICollection<Question>> GetAllQuestion()
         {
             var item = (await _unitOfWork.Repository<Question>()
-            .ListAsync(includeProperties: q => q.Include(q => q.QuestionOptionsNavigation).ThenInclude(x => x.QuestionOptionSkintypes)));
+            .ListAsync(includeProperties: q => q.Include(q => q.QuestionOptionsNavigation).ThenInclude(x => x.SkinTypes)));
 
             return item.ToList();
         }
@@ -100,10 +99,11 @@ namespace Services.Implement
             var allSkinTypes = await _unitOfWork.Repository<SkinType>().ListAsync();
 
             var questionOptions = await _unitOfWork.Repository<QuestionOption>()
-     .ListAsync(
-         x => x.Include(qo => qo.QuestionOptionSkintypes), // Include bảng liên kết nếu cần
-         qo => listResult.Contains(qo.Id) // Lọc theo listResult
-     );
+    .ListAsync(
+        x => x.Include(qo => qo.SkinTypes), 
+        qo => listResult.Contains(qo.Id)
+    );
+
 
 
             if (!questionOptions.Any())
@@ -112,9 +112,10 @@ namespace Services.Implement
             }
 
             var skinTypeCounts = questionOptions
-      .SelectMany(qo => qo.QuestionOptionSkintypes)
-      .GroupBy(qos => qos.SkinTypeNavigation)
-      .ToDictionary(g => g.Key, g => g.Count());
+     .SelectMany(qo => qo.SkinTypes)  
+     .GroupBy(st => st)  
+     .ToDictionary(g => g.Key, g => g.Count()); 
+
 
 
             int totalSelections = skinTypeCounts.Values.Sum();
@@ -134,13 +135,12 @@ namespace Services.Implement
                 .ToList();
 
             if (!highestSkinTypes.Any()) return (skinTypePercentages, new List<Service>());
+            var recommendedServices = await _unitOfWork.Repository<Service>()
+    .ListAsync(s => s.SkinTypes.Any(st => highestSkinTypes.Select(hst => hst.Id).Contains(st.Id)), null);
 
-            // Lấy danh sách ServiceRecommendation cho tất cả loại da có % cao nhất
-            var recommendedServices = await _unitOfWork.Repository<ServiceRecommendation>()
-                .ListAsync(sr => highestSkinTypes.Select(st => st.Id).Contains(sr.SkinTypeID), null);
 
-            // Lấy danh sách dịch vụ (tránh trùng lặp)
-            var serviceIds = recommendedServices.Select(sr => sr.ServiceID).Distinct().ToList();
+            var serviceIds = recommendedServices.Select(s => s.Id).Distinct().ToList();
+
 
             var services = await _unitOfWork.Repository<Service>()
                 .ListAsync(s => serviceIds.Contains(s.Id), null);

@@ -42,7 +42,7 @@ namespace BusinessObject.Entities
 
         // Virtual properties for relationship navigation
         public virtual ServiceCategory? ServiceCategory { get; set; }
-        public virtual ICollection<ServiceRecommendation> ServiceRecommendationNavigation { get; set; } = new Collection<ServiceRecommendation>();
+        public virtual ICollection<SkinType> SkinTypes { get; set; } = new Collection<SkinType>();
         public virtual ICollection<ServiceDetail> ServiceDetailNavigation { get; set; } = new Collection<ServiceDetail>();
         public virtual ICollection<ServiceImage> ServiceImageNavigation { get; set; } = new Collection<ServiceImage>();
         public virtual ICollection<Booking> BookingNavigation { get; set; } = new Collection<Booking>();

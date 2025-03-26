@@ -8,18 +8,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace Services.Commons.DTOs.Service
 {
-    public class ServiceCreateDTO
+    public class ServiceCreateBasicDTO
     {
         public required string ServiceName { get; set; }
         public required string Description { get; set; }
-        public required IFormFile Thumbnail { get; set; } 
-      //  public required int Duration { get; set; }// => tự tính dự vào duẩtion của từng step 
         public required decimal Price { get; set; }
-
         public Guid ServiceCategoryID { get; set; }
-
         public required ICollection<Guid> SkintypeIds { get; set; }
         public required ICollection<ServiceDetailsDTO> ServiceDetails { get; set; }
-        public required ICollection<IFormFile> ServiceImages { get; set; } 
     }
 }

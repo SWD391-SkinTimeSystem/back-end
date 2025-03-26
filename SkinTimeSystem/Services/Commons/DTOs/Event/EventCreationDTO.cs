@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
 
 namespace Services.Commons.DTOs.Event
 {
@@ -8,7 +9,7 @@ namespace Services.Commons.DTOs.Event
         public required string EventName { get; set; }
 
         [JsonPropertyName("thumbnail")]
-        public required string EventImage { get; set; }
+        public required IFormFile EventImage { get; set; }
 
         [JsonPropertyName("description")]
         public required string Description { get; set; }

@@ -17,7 +17,7 @@ namespace BusinessObject.Entities
         [ForeignKey(nameof(SkinType))]
         public required Guid QuestionID { get; set; }
 
-        public virtual ICollection<QuestionOptionSkintype> QuestionOptionSkintypes { get; set; } = new List<QuestionOptionSkintype>();
+        public virtual ICollection<SkinType> SkinTypes { get; set; } = new List<SkinType>();
 
     }
 }

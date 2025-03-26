@@ -1,22 +1,39 @@
-﻿namespace Services.Commons.DTOs.Ticket
+﻿using Castle.Core.Resource;
+using Services.Commons.DTOs.Booking;
+using Services.Commons.DTOs.Service;
+
+namespace Services.Commons.DTOs.Ticket
 {
     public class TicketRegistrationDTO
     {
         public Guid EventId { get; set; }
-        public required decimal Price { get; set; }
-        public required string PaymentMethod { get; set; }
-        public required string TotalAmount { get; set; }
-        public required string SuccessCallbackUrl { get; set; }
-        public required string FailureCallbackUrl { get; set; }
+        public  decimal Price { get; set; }
+        public  string PaymentMethod { get; set; }
+        public  string TotalAmount { get; set; }
+        public  string SuccessCallbackUrl { get; set; }
+        public  string FailureCallbackUrl { get; set; }
     }
 
-    public class TicketRegistrationCacheModel : TicketRegistrationDTO
+    public class TicketRegistrationCacheDTO : TicketRegistrationDTO
     {
+        public TicketRegistrationCacheDTO()
+        {
+
+        }
         public Guid Id { get; set; } = Guid.NewGuid();
 
         public Guid UserId { get; set; } = Guid.Empty;
 
         public string Ticket_Otp { get; set; } = string.Empty;
-        public string Base64_QrCode { get; set; } = string.Empty;
+
+        public TicketRegistrationCacheDTO(TicketRegistrationDTO dto, Guid customerId)
+        {
+            EventId = customerId;
+            Price = dto.Price;
+            TotalAmount = dto.TotalAmount;
+            SuccessCallbackUrl = dto.SuccessCallbackUrl;
+            FailureCallbackUrl = dto.FailureCallbackUrl;
+            PaymentMethod = dto.PaymentMethod;
+        }
     }
 }

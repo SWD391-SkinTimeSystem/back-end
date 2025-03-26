@@ -25,7 +25,7 @@ namespace SkinTime.Controllers
         {
             return await HandleServiceCall(async () =>
             {
-                var service = await _skinTimeService.GetService(id);                
+                var service = await _skinTimeService.GetService(id);
                 return service;
             });
         }
@@ -59,18 +59,21 @@ namespace SkinTime.Controllers
                 return treatmentPlan;
             });
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateService([FromForm] ServiceCreateDTO serviceDTO)
+        [HttpPost("basic")]
+        public async Task<IActionResult> CreateServiceBasic(ServiceCreateBasicDTO serviceDTO)
         {
             return await HandleServiceCall(async () =>
             {
-                var result = await _skinTimeService.CreateService(serviceDTO);
+                return await _skinTimeService.CreateServiceBasic(serviceDTO);
 
-                if (result.IsSuccess)
-                {
-                    return ServiceResult.Success();
-                }
-                return ServiceResult.Failed(new ServiceError(result.Error.Code, result.Error.Description));
+            });
+        }
+        [HttpPost("advand")]
+        public async Task<IActionResult> CreateServiceAdvand(ServiceCreateAdvandDTO serviceDTO)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _skinTimeService.CreateServiceAdvand(serviceDTO);  
             });
         }
     }

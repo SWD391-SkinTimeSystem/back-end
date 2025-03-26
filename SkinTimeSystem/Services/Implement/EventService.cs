@@ -46,11 +46,9 @@ namespace Services.Implement
                 return ServiceResult.Failed(ServiceError.ValidationFailed("There is another event curretnly existing in the selected time!"));
             }
 
-            Event eventEntity = _mapper.Map<Event>(eventInformation);
-            eventEntity.Id = Guid.NewGuid();
 
-            eventEntity = await _unitOfWork.Repository<Event>().AddAsync(eventEntity);
-            await _unitOfWork.Complete();
+            Event eventEntity = _mapper.Map<Event>(eventInformation);
+           await _unitOfWork.EventRepository.CreateNewEvent(eventEntity, eventInformation.EventImage);
 
             return ServiceResult<EventDTO>.Success(_mapper.Map<EventDTO>(eventEntity));
         }

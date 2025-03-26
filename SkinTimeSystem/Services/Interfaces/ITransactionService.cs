@@ -14,7 +14,8 @@ namespace Services.Interfaces
 {
     public interface ITransactionService
     {
-         Task<string> CallbackPayment(string redisKey,IQueryCollection data);
+        Task<string> CallbackPayment(string redisKey,IQueryCollection data);
+        Task<string> CallbackPaymentTicket(string redisKey, IQueryCollection data);
         Task<ServiceResult<bool>> RefundPayment(Guid idTransaction);
     }
 }

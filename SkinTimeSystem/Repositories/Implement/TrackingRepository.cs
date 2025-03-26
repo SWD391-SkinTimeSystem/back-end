@@ -36,8 +36,8 @@ namespace Repositories.Implement
 
         public async Task<bool> CheckoutTracking(Guid trackingId)
         {
-            var tracking = _context.Trackings.SingleOrDefault(x => x.Id == trackingId);
-            tracking.CheckoutTime = DateTime.Now;
+            var schedule = _context.Schedules.SingleOrDefault(x => x.Id == trackingId);
+            schedule.TrakingNavigation.CheckoutTime = DateTime.Now;
             await _context.SaveChangesAsync();
             return true;
         }

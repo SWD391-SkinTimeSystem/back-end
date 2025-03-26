@@ -15,7 +15,7 @@ namespace Services.Interfaces
     public interface ITicketService 
     {
 
-        Task<ServiceResult<string>> CreateTicketForEvent(string userId, string eventId, string method, string callbackUrl);
+        Task<ServiceResult<string>> CreateTicketForEvent(TicketRegistrationDTO registration,Guid userId, string callbackUrl);
 
         Task<ServiceResult<ICollection<EventTicket>>> GetAllCustomerTicket(string customerId, string? status);
 

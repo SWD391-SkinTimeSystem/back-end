@@ -10,7 +10,8 @@ namespace Repositories.Interface
 {
     public interface IServiceRepository : IGenericRepository<Service>
     {
-        Task CreateService(IFormFile thumnail,Service service, ICollection<Guid> SkintypeIds, ICollection<IFormFile> ServiceImages, ICollection<ServiceDetail> ServiceDetails);
+        Task<Guid> CreateServiceBasic(Service service, ICollection<Guid> SkintypeIds, ICollection<ServiceDetail> ServiceDetails);
+        Task CreateServiceAdvand(Guid idService, IFormFile? thumbnail, ICollection<IFormFile>? serviceImages);
         Task<ICollection<Service>> GetAllTretmenplan();
         Task<Service> GetService(Guid idService);
         Task<Service> GetTretmenplan(Guid idService);
