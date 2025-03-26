@@ -13,6 +13,7 @@ using Services.Commons.DTOs.Question;
 using Services.Commons.DTOs.Schedule;
 using Services.Commons.DTOs.Service;
 using Services.Commons.DTOs.Skintype;
+using Services.Commons.DTOs.SkinType;
 using Services.Commons.DTOs.Therapist;
 using Services.Commons.DTOs.Ticket;
 using Services.Commons.DTOs.TrackingDTO;
@@ -29,7 +30,7 @@ namespace SkinTime.Helpers
         public Mapping()
         {
             CreateMap<CustomerRegistration, User>()
-                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Email)) 
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "Customer"));
 
             CreateMap<AccountRegistration, User>();
@@ -101,7 +102,8 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.QuestionOptionsNavigation));
 
             CreateMap<QuestionOption, QuestionOptionDTO>()
-                .ForMember(dest => dest.SkinType, opt => opt.MapFrom(src => src.QuestionOptionSkintypes.Select(x => x.SkinTypeID)));
+                .ForMember(dest => dest.SkinType, opt => opt.MapFrom(src => src.SkinTypes.Select(st => st.Id)));
+
 
 
             CreateMap<QuestionCreationDTO, Question>()
@@ -186,7 +188,6 @@ namespace SkinTime.Helpers
             CreateMap<EventCreationDTO, Event>()
                 .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.EventName))
                 .ForMember(dst => dst.EventDate, opt => opt.MapFrom(src => src.Date))
-                .ForMember(dst => dst.Thumbnail, opt => opt.MapFrom(src => src.EventImage))
                 .ForMember(dst => dst.TicketPrice, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dst => dst.TimeStart, opt => opt.MapFrom(src => src.StartTime))
                 .ForMember(dst => dst.TimeEnd, opt => opt.MapFrom(src => src.EndTime))
@@ -220,7 +221,7 @@ namespace SkinTime.Helpers
 
             // Map từ ServiceImage -> ServiceImageDTO
             CreateMap<ServiceImage, ServiceImageDTO>();
-          
+
             CreateMap<Service, TreatmentPlanDTO>()
             .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Price))
@@ -280,7 +281,7 @@ namespace SkinTime.Helpers
                 ))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceNavigation.Description))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.ServiceNavigation.Thumbnail))
-                .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.ScheduleNavigation)) 
+                .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.ScheduleNavigation))
                 .ReverseMap();
 
 
@@ -327,17 +328,24 @@ namespace SkinTime.Helpers
 
             CreateMap<CategoryDetailDTO, ServiceCategory>().ReverseMap();
             CreateMap<SkintypeDetailDTO, SkinType>().ReverseMap();
+
+
+            #region service
+            #region create
+            CreateMap<ServiceCreateBasicDTO, Service>()
+                    .ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
             CreateMap<ServiceDetail, ServiceDetailsDTO>().ReverseMap();
-            CreateMap<ServiceCreateDTO, Service>()
-           .ForMember(dest => dest.Thumbnail, opt => opt.Ignore()) 
-           .ForMember(dest => dest.ServiceDetailNavigation, opt => opt.MapFrom(src => src.ServiceDetails));
+            #endregion
 
+            #endregion
 
-            CreateMap<EventTicket, TicketRegisterListDTO>();
-                
+            #region skintype
+            CreateMap<SkinTypeCreationDTO, SkinType>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
+            #endregion
         }
 
-        
+
 
     }
 

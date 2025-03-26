@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Repositories;
 using Services.Commons;
+using Services.Commons.DTOs.Booking;
 using Services.Commons.DTOs.Therapist;
 using Services.Commons.DTOs.Ticket;
 using Services.Implement;
@@ -85,27 +86,17 @@ namespace SkinTime.Controllers
                 return await _service.CheckinTicket(eventId, ticketId, otp);
             });
         }
+        [Authorize(Roles = nameof(UserRole.Customer))]
+        [HttpPost("register")]
+        public async Task<ActionResult> RegisterServiceTicket(TicketRegistrationDTO registration)
+        {
+            Guid userId = Guid.Parse(GetUserIdFromJwt());
+            var returnAction = Url.Action("TicketTransactionCallback", "Transaction", null, Request.Scheme);
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.CreateTicketForEvent(registration, userId, returnAction);
+            });
 
-
-
-
-
-        //[HttpPost("register")]
-        //public async Task<IActionResult> RegisterServiceTicket([FromBody] TicketRegistrationDTO registration)
-        //{
-        //    string userId = _tokenUtils.GetDataDictionaryFromJwt(Request.Headers.Authorization.Single()!.Split()[1])["id"];
-
-        //    return await HandleServiceCall(async () =>
-        //    {
-        //        TicketRegistrationCacheModel cachedItem = _mapper.Map<TicketRegistrationCacheModel>(registration);
-        //        cachedItem.UserId = Guid.Parse(userId);
-
-        //        await _redisCache.SetAsync<TicketRegistrationCacheModel>(cachedItem.Id.ToString(), cachedItem, TimeSpan.FromMinutes(10));
-
-        //        string callback = Url.Action("TicketTransactionCallback", "Transaction", new { redis = $"{cachedItem.Id}" }, Request.Scheme)!;
-
-        //        return await _service.CreateTicketForEvent(userId, registration.EventId.ToString(), registration.PaymentMethod, callback);
-        //    });
-        //}
+        }
     }
 }

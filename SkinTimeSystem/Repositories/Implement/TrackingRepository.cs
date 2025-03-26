@@ -44,6 +44,7 @@ namespace Repositories.Implement
             tracking.CheckoutTime = DateTime.Now;
             schedule.Status = ScheduleStatus.Completed;
             _context.Schedules.Update(schedule);
+
             await _context.SaveChangesAsync();
             return true;
         }

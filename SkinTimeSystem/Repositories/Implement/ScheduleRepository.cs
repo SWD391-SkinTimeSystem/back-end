@@ -38,10 +38,11 @@ namespace Repositories.Implement
             schchedule.ReservedEndTime = time.AddMinutes(serviceDetail.Duration);
             schchedule.ReservedStartTime = time;
             schchedule.ReservedEndTime = time.AddMinutes(30);
-            schchedule.LastUpdate = DateTime.UtcNow;
+            schchedule.LastUpdate = DateTime.Now;
 
             await _context.SaveChangesAsync();
-            return schchedule;
+            var newSchedule = base.GetByIdAsDetached(idSchedule);
+            return newSchedule;
         }
 
     }

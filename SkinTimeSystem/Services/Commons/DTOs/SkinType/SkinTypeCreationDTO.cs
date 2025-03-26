@@ -9,13 +9,7 @@ namespace Services.Commons.DTOs.SkinType
 {
     public class SkinTypeCreationDTO
     {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("description")]
-        public string Description { get; set; }
-
-        [JsonPropertyName("recommendation")]
-        public ICollection<Guid> RecommendedService = new List<Guid>();
+        public required string Name { get; set; }
+        public required string Description { get; set; }
     }
 }

@@ -34,13 +34,20 @@ namespace SkinTime.Controllers
                 var url = await _service.CallbackPayment(key, data);
                 return  Redirect(url); 
         }
-        [HttpPost]
+        [HttpPost("Refund")]
         public async Task<IActionResult> RefundTransaction([FromBody] Guid idTransaction)
         {
             return await HandleApiCallAsync(async () =>
             {
-                return ServiceResult.Success(await _service.RefundPayment(idTransaction));
-            }); 
+                return await _service.RefundPayment(idTransaction);
+            });
+        }
+        [HttpGet("ticket-callback")]
+        public async Task<IActionResult> TicketTransactionCallback(string key)
+        {
+            var data = Request.Query;
+            var url = await _service.CallbackPaymentTicket(key, data);
+            return Redirect(url);
         }
     }
 }

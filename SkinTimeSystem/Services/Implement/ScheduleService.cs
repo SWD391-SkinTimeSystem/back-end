@@ -1,4 +1,5 @@
-﻿using BusinessObject.Entities;
+﻿using AutoMapper;
+using BusinessObject.Entities;
 using BusinessObject.Enum;
 using BusinessObject.Schedule;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +20,11 @@ namespace Services.Implement
     public class ScheduleService : IScheduleService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ScheduleService(IUnitOfWork unitOfWork)
+        public ScheduleService(IUnitOfWork unitOfWork,IMapper mapper)
         {
+            _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
 
@@ -195,10 +198,11 @@ namespace Services.Implement
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
         }
 
-        public async Task<ServiceResult<Schedule>> ReSchedule(RescheduleDTO rescheduleDTO)
+        public async Task<ServiceResult> ReSchedule(RescheduleDTO rescheduleDTO)                            
         {
             var schedule = await _unitOfWork.Schedules.ReSchedule(rescheduleDTO.IdSchedule, rescheduleDTO.Date, rescheduleDTO.TimeStart);
-            return ServiceResult<Schedule>.Success(schedule);
+            var newSchedule = _mapper.Map<ScheduleDTO>(schedule);
+            return ServiceResult<Schedule>.Success(newSchedule);
         }
 
         public Task<ServiceResult<Schedule>> UpdateSchedule(Guid id, Schedule schedule)

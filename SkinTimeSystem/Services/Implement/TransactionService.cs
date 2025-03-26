@@ -12,6 +12,7 @@ using Repositories.Interface;
 using Repositories.UnitOfWork;
 using Services.Commons;
 using Services.Commons.DTOs.Booking;
+using Services.Commons.DTOs.Ticket;
 using Services.Commons.DTOs.Transaction;
 using Services.Interfaces;
 using Services.PaymentSetting;
@@ -156,14 +157,44 @@ namespace Services.Implement
             var transacion = await _unitOfWork.Repository<Transaction>().FindAsync(tr => tr.Id == idTransaction);
            if(transacion.Method == PaymentMethod.VnPay)
             {
-               await _vnPay.CreateVnPayRefund(transacion);// handle thêm hướng xử lý lưuu và databse 
+               await _vnPay.CreateVnPayRefund(transacion);
             }
             if(transacion.Method == PaymentMethod.ZaloPay){
-                await _zaloPay.CreateZaloPayRefund(transacion); // handle thêm hướng xử lý lưuu và databse 
+                await _zaloPay.CreateZaloPayRefund(transacion); 
             }
            return ServiceResult<bool>.Success(true);
         }
 
+        public async Task<string> CallbackPaymentTicket(string redisKey, IQueryCollection data)
+        {
+            string jsonData = await _cache.GetAsync<string>(redisKey);
+            Guid key = Guid.Parse(redisKey);
+            var ticketRegistration = JsonConvert.DeserializeObject<TicketRegistrationCacheDTO>(jsonData);
 
+
+            PaymentMethod? bank = Enum.IsDefined(typeof(PaymentMethod), ticketRegistration.PaymentMethod)
+                ? Enum.Parse<PaymentMethod>(ticketRegistration.PaymentMethod, true)
+                : null;
+
+            bool isSuccess = true;
+
+            if (bank == PaymentMethod.VnPay)
+            {
+                isSuccess = await HandleVnPayCallback(data, key);
+            }
+            else if (bank == PaymentMethod.ZaloPay)
+            {
+                isSuccess = await HandleZaloPayCallback(data, key);
+            }
+
+            if (!isSuccess)
+            {
+                return ticketRegistration.FailureCallbackUrl;
+            }
+            var ticket = _mapper.Map<EventTicket>(ticketRegistration);
+            var addedTicket = await _unitOfWork.Repository<EventTicket>().AddAsync(ticket);
+            await _cache.DeleteAsync<string>(redisKey);
+            return ticketRegistration.SuccessCallbackUrl;
+        }
     }
 }

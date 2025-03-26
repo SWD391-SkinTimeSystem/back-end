@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Commons.DTOs.Service;
+using Services.Commons.DTOs.Skintype;
+using Services.Commons.DTOs.SkinType;
+using Services.Implement;
 using Services.Interfaces;
 using SharedLibrary.EmailUtilities;
 using SharedLibrary.TokenUtilities;
@@ -16,7 +20,16 @@ namespace API.Controllers
         public SkinTypeController(IMapper mapper, IEmailUtilities emailUtils, ITokenUtilities tokenUtils, ISkintypeService service)
             : base(mapper, emailUtils, tokenUtils)
         {
-            this._service = service;
+            _service = service;
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateSkintype(SkinTypeCreationDTO serviceDTO)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.CreateSkinType(serviceDTO);
+
+            });
         }
 
     }

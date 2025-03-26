@@ -14,35 +14,35 @@ namespace BusinessObject.Entities
     {
         [Column("event_name", TypeName = "NVARCHAR")]
         [MaxLength(50)]
-        public required string Name { get; set; }
+        public required string Name { get; set; }//
 
         [Column("capacity")]
-        public required int Capacity {get; set; }
+        public required int Capacity {get; set; }//
 
         [Column("ticket_price")]
         [Precision(16,2)]
-        public required decimal TicketPrice { get; set; }
+        public required decimal TicketPrice { get; set; }//
 
         [Column("description", TypeName = "NVARCHAR")]
         [MaxLength(250)]
-        public required string Description { get; set; }
+        public required string Description { get; set; }//
 
         [Column("eventdate", TypeName = "DATE")]
-        public required DateOnly EventDate { get; set; }
+        public required DateOnly EventDate { get; set; }//
 
         [Column("time_start", TypeName = "TIME")]
-        public required TimeOnly TimeStart { get; set; }
+        public required TimeOnly TimeStart { get; set; }//
 
         [Column("time_end", TypeName = "TIME")]
         public required TimeOnly TimeEnd { get; set; }
 
         [Column("location", TypeName = "VARCHAR")]
         [MaxLength(50)]
-        public required string Location{ get;set; }
+        public required string Location{ get;set; }//
 
         [Column("thumbnail_url", TypeName = "VARCHAR")]
         [MaxLength(256)]
-        public string Thumbnail { get; set; } = string.Empty;
+        public string Thumbnail { get; set; } = string.Empty;//
 
         [Column("status")]
         public EventStatus Status { get; set; } = EventStatus.ApprovePending;
