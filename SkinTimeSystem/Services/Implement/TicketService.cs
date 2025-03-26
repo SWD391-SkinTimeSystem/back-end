@@ -215,8 +215,8 @@ namespace Services.Implement
             var eventInformation = await _unitOfWork.Repository<Event>().GetByIdAsync(eventId);
             var ticketInformation = await _unitOfWork.Repository<EventTicket>().GetByIdAsync(ticketId);
 
-            //var now = DateTime.Now; // Thời gian hiện tại
-            var now = new DateTime(2025, 11, 22, 6, 40, 0);
+            var now = DateTime.Now; // Thời gian hiện tại
+            //var now = new DateTime(2025, 11, 22, 6, 40, 0);
 
             // Lấy ngày và giờ sự kiện
             var eventDate = eventInformation.EventDate;

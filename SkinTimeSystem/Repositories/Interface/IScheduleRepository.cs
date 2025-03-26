@@ -9,7 +9,8 @@ namespace Repositories.Interface
 {
     public interface IScheduleRepository : IGenericRepository<Schedule>
     {
-        Task<bool> GetScheduleById(Guid scheduleId);
+        Task<bool> CheckScheduleById(Guid scheduleId);
+        Task<Schedule> GetScheduleById(Guid scheduleId);
         Task<Schedule> ReSchedule(Guid iDSchedule,DateOnly date, TimeOnly time);
     }
 }

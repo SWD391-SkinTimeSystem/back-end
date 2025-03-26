@@ -14,7 +14,7 @@ namespace Repositories.Implement
     {
         public ScheduleRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<bool> GetScheduleById(Guid scheduleId)
+        public async Task<bool> CheckScheduleById(Guid scheduleId)
         {
             var schedule =  _context.Schedules.SingleOrDefault(x => x.Id == scheduleId);
             if(schedule == null)
@@ -22,6 +22,12 @@ namespace Repositories.Implement
                 return false;
             }
             return true;
+        }
+
+        public async Task<Schedule> GetScheduleById(Guid scheduleId)
+        {
+            var schedule =  _context.Schedules.SingleOrDefault(x => x.Id == scheduleId);
+            return schedule;
         }
 
         public async Task<Schedule> ReSchedule(Guid idSchedule, DateOnly date, TimeOnly time)

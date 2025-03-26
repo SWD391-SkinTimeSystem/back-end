@@ -78,7 +78,7 @@ namespace SkinTime.Controllers
 
 
         [Authorize(Roles = "Staff")]
-        [HttpGet("{ticketId}/checkin")]
+        [HttpPost("{ticketId}/checkin")]
         public async Task<IActionResult> CheckInTicket([FromQuery]Guid eventId,Guid ticketId, [FromQuery] string otp)
         {
             return await HandleServiceCall(async () =>
