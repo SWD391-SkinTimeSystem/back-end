@@ -54,14 +54,13 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.FullName));
 
-            //CreateMap<Feedback, ServiceFeedbackDTO>()
-            //    .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
-            //    .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
-            //    .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.Username))
-            //    .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => (src.TherapistRating + src.ServiceRating) / 2.0f)) // Trung bình rating
-            //    .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => $"{src.TherapistFeedback} | {src.ServiceFeedback}".Trim()))
-            //    .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.BookingNavigation.ReservedTime)))
-            //    .ReverseMap();
+            CreateMap<Feedback, Services.Commons.DTOs.Feedback.ServiceFeedbackDTO>()
+                .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
+                .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.FullName))
+                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.ServiceRating)) // Trung bình rating
+                .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => $"{src.ServiceFeedback}".Trim()))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.CreatedTime)));
 
             CreateMap<Therapist, TherapistDTO>()
                 .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.UserNavigation.FullName))
