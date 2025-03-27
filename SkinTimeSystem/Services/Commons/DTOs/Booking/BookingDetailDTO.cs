@@ -6,6 +6,8 @@
 
         public required string TherapistName { get; set; }
         public string Thumbnail { get; set; }
+        public Guid TherapistId { get; set; }
+        public Guid TransactionId { get; set; }
         public required string ServiceName { get; set; }
         public string Status { get; set; }
 

@@ -3,6 +3,7 @@ using BusinessObject.Entities;
 using Repositories.UnitOfWork;
 using Services.Commons;
 using Services.Commons.DTOs.Category;
+using Services.Commons.DTOs.Service;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -33,16 +34,17 @@ namespace Services.Implement
 
 
 
-        public async Task<ServiceResult<ICollection<Service>>> ListServiceByCategory(Guid id)
-        {// laay leen maf map 
+        public async Task<ServiceResult<ICollection<ServiceDTO>>> ListServiceByCategory(Guid id)
+        {
             try
             {
-                var services = await _unitOfWork.Repository<Service>().ListAsync(s => s.Id == id);
-                return ServiceResult<ICollection<Service>>.Success(services.ToList());
+                var services = await _unitOfWork.Repository<Service>().ListAsync(s => s.ServiceCategoryID == id);
+                var listService = _mapper.Map<ICollection<ServiceDTO>>(services);
+                return ServiceResult<ICollection<ServiceDTO>>.Success(listService);
             }
             catch (Exception ex)
             {
-                return ServiceResult<ICollection<Service>>.Failed(ServiceError.UnhandledException(ex.Message));
+                return ServiceResult<ICollection<ServiceDTO>>.Failed(ServiceError.UnhandledException(ex.Message));
             }
         }
 

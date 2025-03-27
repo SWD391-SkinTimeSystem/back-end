@@ -196,7 +196,9 @@ namespace Services.Implement
                 return ticketRegistration.FailureCallbackUrl;
             }
             var ticket = _mapper.Map<EventTicket>(ticketRegistration);
+            ticket.TransactionId = key;
             var addedTicket = await _unitOfWork.Repository<EventTicket>().AddAsync(ticket);
+            await _unitOfWork.Complete();
             await _cache.DeleteAsync<string>(redisKey);
             return ticketRegistration.SuccessCallbackUrl;
         }

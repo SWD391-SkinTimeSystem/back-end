@@ -64,6 +64,13 @@ namespace SkinTime.Controllers
             });
         }
 
+        [HttpGet("transaction/{id}")]
+        public async Task<ActionResult> GetTransaction(Guid id)
+        {
 
+                 var idTransaction =  _service.GetTransaction(id);
+            return Ok(idTransaction);
+           
+        }
     }
 }

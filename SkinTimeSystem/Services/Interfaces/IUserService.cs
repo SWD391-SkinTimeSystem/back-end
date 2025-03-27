@@ -26,6 +26,10 @@ namespace Services.Interfaces
 
         Task<ServiceResult> UpdateUserPassword(Guid id, string oldPassword, string newPassword);
 
+        Task<ServiceResult> RequestForgetPassword(string email, string reset_page_url);
+
+        Task<ServiceResult> UpdateForgetPassword(Guid user_id, string password);
+
         Task<ServiceResult> UpdateUserStatus(Guid id, UserStatus status);
     }
 }

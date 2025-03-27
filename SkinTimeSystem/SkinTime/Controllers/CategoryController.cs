@@ -43,14 +43,14 @@ namespace SkinTime.Controllers
         [HttpGet("/list-services/{id}")]
         public async Task<ActionResult> GetServiceByCategory(Guid id)
         {
-            return await HandleServiceCall<ApiResponse>(async () =>
+            return await HandleServiceCall(async () =>
             {
-                //var result = await _service.CreateNewFeedback(_mapper.Map<Feedback>(feedback));
-                //if (result.IsFailed)
-                //{
-                //    return result;
-                //}
-                return ServiceResult.Success(new ApiResponse(true, "Successfully added the feedback"));
+                var result = await _categoryService.ListServiceByCategory(id);
+                if (result.IsFailed)
+                {
+                    return result;
+                }
+                return result;
             });
         }
     }

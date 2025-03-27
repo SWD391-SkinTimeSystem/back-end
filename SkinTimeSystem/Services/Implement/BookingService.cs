@@ -82,6 +82,13 @@ namespace Services.Implement
             return ServiceResult<BookingDetailDTO>.Success(bookingDTO);
         }
 
+        public async Task<Guid?> GetTransaction(Guid idBooking)
+        {
+            var transaction = await _unitOfWork.Repository<Booking>().FindAsync(x => x.Id == idBooking);
+            var idTransaction = transaction.TransactionId;
+            return idTransaction;
+        }
+
         public Task<ServiceResult<Booking>> UpdateBookingInformation(string id, Booking bookingInformation)
         {
             throw new NotImplementedException();

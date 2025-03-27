@@ -31,6 +31,11 @@ namespace SkinTime.Controllers
             _services = services;
         }
 
+        /// <summary>
+        ///     Delete user password (by changing the user status)
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<AccountInformation>> DeleteUser(Guid id)
         {
@@ -44,7 +49,6 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <param name="user">some required fields</param>
         /// <returns></returns>
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateUser([FromBody] AccountUpdateInformation user)
         {
@@ -58,7 +62,6 @@ namespace SkinTime.Controllers
         /// </summary>
         /// <param name="password">old and new password</param>
         /// <returns></returns>
-        [Authorize]
         [HttpPost("password")]
         public async Task<IActionResult> UpdateUserPassword([FromBody] PasswordUpdate password)
         {
@@ -88,7 +91,6 @@ namespace SkinTime.Controllers
         ///     Return the currently authenticated user information.
         /// </summary>
         /// <returns>The user account information</returns>
-        [Authorize]
         [HttpGet]
         [ProducesResponseType<ApiResponse<AccountInformation>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
@@ -131,7 +133,35 @@ namespace SkinTime.Controllers
             return HandleServiceCall(result);
         }
 
+        /// <summary>
+        ///     Request a password reset through email.
+        /// </summary>
+        /// <param name="email">The user email used to register an account</param>
+        /// <param name="call_url">The site to redirect user when the email is sent to their inbox</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("password/forgot/request")]
+        public async Task<IActionResult> RequestChangePassword([FromQuery] string email, string call_url)
+        {
+            ServiceResult result = await _services.RequestForgetPassword(email, call_url);
 
+            return HandleServiceCall(result);
+        }
 
+        /// <summary>
+        ///     Update the user password with a new one.
+        /// </summary>
+        /// <remarks>Callback when the user is redirected to reset password site</remarks>
+        /// <param name="user_id">User id inside the system</param>
+        /// <param name="new_password">user new password</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("password/forgot")]
+        public async Task<IActionResult> ChangeForgotPassword(Guid user_id, [FromBody] string new_password)
+        {
+            ServiceResult result = await _services.UpdateForgetPassword(user_id, new_password);
+
+            return HandleServiceCall(result);
+        }
     }
 }

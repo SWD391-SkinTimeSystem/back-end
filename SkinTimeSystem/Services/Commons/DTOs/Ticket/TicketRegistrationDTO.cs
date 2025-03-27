@@ -22,13 +22,13 @@ namespace Services.Commons.DTOs.Ticket
         }
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public Guid UserId { get; set; } = Guid.Empty;
+        public Guid UserId { get; set; } 
 
-        public string Ticket_Otp { get; set; } = string.Empty;
 
-        public TicketRegistrationCacheDTO(TicketRegistrationDTO dto, Guid customerId)
+        public TicketRegistrationCacheDTO(TicketRegistrationDTO dto, Guid eventId,Guid userId)
         {
-            EventId = customerId;
+            UserId = userId;
+            EventId = eventId;
             Price = dto.Price;
             TotalAmount = dto.TotalAmount;
             SuccessCallbackUrl = dto.SuccessCallbackUrl;

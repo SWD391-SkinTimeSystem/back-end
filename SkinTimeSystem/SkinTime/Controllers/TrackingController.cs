@@ -50,18 +50,16 @@ namespace API.Controllers
         }
 
 
-        //[Authorize(Roles = nameof(UserRole.Staff))]
-        //[HttpGet("check/{scheduleID}")]
-        //public async Task<IActionResult> CheckScheduleWithTrackId(Guid scheduleID)
-        //{
+        [Authorize(Roles = nameof(UserRole.Staff))]
+        [HttpGet("check/{scheduleID}")]
+        public async Task<IActionResult> CheckScheduleWithTrackId(Guid scheduleID)
+        {
 
-        //    return await HandleServiceCall(async () =>
-        //    {
-        //        return ServiceResult.Success(await _trackingService.CheckScheduleWithTrackId(scheduleID));
-        //    });
-
-
-        //}
+            return await HandleServiceCall(async () =>
+            {
+                return ServiceResult.Success(await _trackingService.CheckScheduleWithTrackId(scheduleID));
+            });
+        }
 
         [Authorize(Roles = nameof(UserRole.Therapist))]
         [HttpPost("note")]

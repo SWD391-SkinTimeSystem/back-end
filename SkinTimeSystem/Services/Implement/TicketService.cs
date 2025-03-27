@@ -104,7 +104,7 @@ namespace Services.Implement
                 return ServiceResult<string>.Failed(ServiceError.ValidationFailed("This event is out of available ticket"));
             }
             var @even = _unitOfWork.Repository<Event>().GetById(registration.EventId);
-            var tiketEvent = registration as TicketRegistrationCacheDTO ?? new TicketRegistrationCacheDTO(registration, userId);
+            var tiketEvent = registration as TicketRegistrationCacheDTO ?? new TicketRegistrationCacheDTO(registration, targetEvent.Id,userId);
             var bank = Enum.TryParse(tiketEvent.PaymentMethod, true, out PaymentMethod pm) && Enum.IsDefined(pm) ? pm : (PaymentMethod?)null;
             string redisKey = $"{Guid.NewGuid()}";
             await _cache.SetAsync(redisKey, JsonConvert.SerializeObject(tiketEvent), TimeSpan.FromMinutes(30));

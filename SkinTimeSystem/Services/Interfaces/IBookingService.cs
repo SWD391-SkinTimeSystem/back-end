@@ -18,5 +18,6 @@ namespace Services.Interfaces
         Task<ServiceResult<string>> CreateBooking(BookingServiceDTO booking, Guid userId,string? returnAction);
 
         Task<ServiceResult<Booking>> UpdateBookingInformation(string id, Booking bookingInformation);
+        Task<Guid?> GetTransaction(Guid idBooking);
     }
 }
