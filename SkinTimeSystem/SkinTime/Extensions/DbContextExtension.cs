@@ -52,7 +52,6 @@ namespace SkinTime.Extensions
                 var logger = loggerFactory.CreateLogger<Program>();
                 logger.LogError(ex, "An error occurred during migration");
             }
-
             return app;
         }
 
@@ -65,7 +64,7 @@ namespace SkinTime.Extensions
             try
             {
                 var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-              
+                await TrySeed(context, app.Configuration);
             }
             catch (Exception ex)
             {
