@@ -8,6 +8,7 @@ using SharedLibrary.FIleSetting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,6 +20,21 @@ namespace Repositories.Implement
         public ServiceRepository(ApplicationDbContext context, FirebaseStorageService fileService) : base(context)
         {
             _fileService = fileService;
+        }
+        public async Task<PaginationResult<Service>> GetAllService(string? searchKey, int page = 1, int pageSize = 12)
+        {
+            Expression<Func<Service, bool>> filter = x => string.IsNullOrWhiteSpace(searchKey) ||
+                                                          x.ServiceName.Contains(searchKey);
+                                                          
+
+            return await AsPaginated(
+                page,
+                pageSize,
+                filter,
+                includes: x => x.Include(x => x.ServiceDetailNavigation)
+                                .Include(x => x.ServiceImageNavigation),
+                order: x => x.OrderBy(x => x.CreatedTime)
+            );
         }
 
         public async Task CreateServiceAdvand(Guid idService, IFormFile? thumbnail, ICollection<IFormFile>? serviceImages)
@@ -103,6 +119,23 @@ namespace Repositories.Implement
         .Include(s => s.ServiceImageNavigation)
         .Where(s => s.Id == idService && s.ServiceDetailNavigation.Count() >= 2)
         .FirstOrDefaultAsync();
+        }
+
+        public async Task<PaginationResult<Service>> GetAllServiceAvailibeEdit(string? searchKey, int page, int pageSize)
+        {
+            Expression<Func<Service, bool>> filter = x =>
+         (string.IsNullOrWhiteSpace(searchKey) || x.ServiceName.Contains(searchKey)) &&
+         !x.BookingNavigation.Any(b => b.Status == BookingStatus.NotStarted || b.Status == BookingStatus.Doing);
+
+
+            return await AsPaginated(
+                page,
+                pageSize,
+                filter,
+                includes: x => x.Include(x => x.ServiceDetailNavigation)
+                                .Include(x => x.ServiceImageNavigation),
+                order: x => x.OrderBy(x => x.CreatedTime)
+            );
         }
     }
 }

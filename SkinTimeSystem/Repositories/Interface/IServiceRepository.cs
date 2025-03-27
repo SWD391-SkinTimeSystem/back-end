@@ -13,6 +13,8 @@ namespace Repositories.Interface
         Task<Guid> CreateServiceBasic(Service service, ICollection<Guid> SkintypeIds, ICollection<ServiceDetail> ServiceDetails);
         Task CreateServiceAdvand(Guid idService, IFormFile? thumbnail, ICollection<IFormFile>? serviceImages);
         Task<ICollection<Service>> GetAllTretmenplan();
+        Task<PaginationResult<Service>> GetAllService(string? searchKey, int page , int pageSize );
+        Task<PaginationResult<Service>> GetAllServiceAvailibeEdit(string? searchKey, int page, int pageSize );
         Task<Service> GetService(Guid idService);
         Task<Service> GetTretmenplan(Guid idService);
     }

@@ -12,6 +12,7 @@ namespace Services.Interfaces
     public interface IBookingService
     {
         Task<ICollection<BokingServiceStatusDTO>> GetAppointments(Guid userId, string status);
+        Task<ICollection<BokingServiceStatusDTO>> GetAppointmentsOfTherapist(Guid userId, string status);
 
         Task<ServiceResult<BookingDetailDTO>> GetBookingInformation(Guid bookingId);
         Task<ServiceResult<string>> CreateBooking(BookingServiceDTO booking, Guid userId,string? returnAction);

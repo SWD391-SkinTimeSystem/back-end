@@ -3,6 +3,7 @@ using AutoMapper;
 using BusinessObject.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using Services.Commons;
 using Services.Commons.DTOs.Service;
 using Services.Interfaces;
@@ -31,15 +32,20 @@ namespace SkinTime.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllService()
+        public async Task<IActionResult> GetAllService(string? searchKey, int page = 1, int pageSize = 12)
         {
-            return await HandleServiceCall(async () =>
-            {
-                var services = await _skinTimeService.GetAllService();
-                return services;
-            });
+            var services = await _skinTimeService.GetAllService(searchKey, page, pageSize);
+            var result = ServiceResult<PaginationResult<ServiceDTO>>.Success(services);
+            return HandleServiceCall(result);
         }
 
+        [HttpGet("availibe-edit")]
+        public async Task<IActionResult> GetAllServiceAvailibeEdit(string? searchKey, int page = 1, int pageSize = 12)
+        {
+            var services = await _skinTimeService.GetAllServiceAvailibeEdit(searchKey, page, pageSize);
+            var result = ServiceResult<PaginationResult<ServiceDTO>>.Success(services);
+            return HandleServiceCall(result);
+        }
         [HttpGet("treatment-plan/{id}")]
         public async Task<IActionResult> GetTreatmentPlan(Guid id)
         {

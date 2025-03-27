@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using BusinessObject.Entities;
+using BusinessObject.Enum;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -19,6 +20,7 @@ namespace Services.PaymentSetting
         public double AmountInUsd { get; private set; }
         public string? RefundUrl { get; set; }
         public string? QueryOrderUrl { get; set; }
+        public string? QueryRefundUrl { get; set; }
 
         #region ZALOPAY
         public async Task<string> CreateZaloPayOrder(decimal? amount, string returnCallBack, string serviceName)
@@ -28,14 +30,65 @@ namespace Services.PaymentSetting
 
             if (response.TryGetValue("order_url", out var orderUrl))
             {
-                return orderUrl; 
+                return orderUrl;
             }
             throw new Exception("Failed to create ZaloPay order.");
         }
-        public async Task<Dictionary<string,string>> CreateZaloPayRefund(Transaction transaction)=>  await CreateZaloPayRefundAsync(transaction);
+        public async Task<(Transaction?, bool)> CreateZaloPayRefund(Transaction transaction)
+        {
+            var response = await CreateZaloPayRefundAsync(transaction);
+
+            var returnCode = int.Parse(response["returncode"]);
 
 
-           
+            if (returnCode == 2) 
+            {
+                var refundTransaction = new Transaction
+                {
+                    Id = Guid.NewGuid(),
+                    TransactionTime = DateTime.UtcNow, 
+                    PayDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Amount = transaction.Amount, 
+                    Method = transaction.Method, 
+                    TransactionCode = response["refundid"],
+                    TransactionReference = response["refundid"],
+                    Status = PaymentStatus.Success, 
+                    IsRefundTransaction = true,
+                };
+                return (refundTransaction, true);
+            }
+
+            return (null,false);
+        }
+
+
+        public async Task<string> QuerryTransactionZalo(Transaction transaction)
+        {
+            var param = new Dictionary<string, string>
+    {
+        { "appid", AppId },
+        { "mrefundid", transaction.TransactionReference }, 
+        { "timestamp", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString() }
+    };
+            string data = $"{AppId}|{param["mrefundid"]}|{param["timestamp"]}";
+
+            param.Add("mac", Compute(ZaloPayHMAC.HMACSHA256, Key1, data));
+
+            var response = await PostFormAsync<Dictionary<string, string>>(QueryRefundUrl, param);
+
+            if (response.TryGetValue("returncode", out var returnCode) && returnCode == "1")
+            {
+                if (response.TryGetValue("zp_trans_id", out var zpTransId))
+                {
+                    return zpTransId;
+                }
+            }
+
+            throw new Exception($"Không tìm thấy zp_trans_id hoặc giao dịch không thành công. Mã lỗi: {response["returnmessage"]}");
+        }
+
+
+
         #endregion
 
         #region Request Process
@@ -91,17 +144,17 @@ namespace Services.PaymentSetting
             Random rnd = new Random();
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
 
-            var zptransid = transaction.TransactionReference; 
+            var zptransid = transaction.TransactionReference;
             var mrefundid = $"{DateTime.UtcNow:yyMMdd}_{AppId}_{rnd.Next(100000000, 999999999)}";
 
-            var description = "Hoàn tiền" ;
+            var description = "Hoàn tiền";
 
             var param = new Dictionary<string, string>
     {
         { "appid", AppId },
         { "mrefundid", mrefundid },
         { "zptransid", zptransid },
-        { "amount", ((long)transaction.Amount).ToString() }, 
+        { "amount", ((long)transaction.Amount).ToString() },
         { "timestamp", timestamp },
         { "description", description }
     };

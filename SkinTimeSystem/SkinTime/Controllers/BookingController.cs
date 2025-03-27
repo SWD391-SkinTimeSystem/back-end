@@ -33,6 +33,15 @@ namespace SkinTime.Controllers
                 return ServiceResult.Success(await _service.GetAppointments(userId, status));
             });
         }
+        [Authorize]
+        [HttpGet("status/therapist/{status}")]
+        public async Task<ActionResult> GetBookingOfTherapist([FromRoute] string status)
+        {
+            return await HandleServiceCall(async () => {
+                Guid userId = Guid.Parse(GetUserIdFromJwt());
+                return ServiceResult.Success(await _service.GetAppointmentsOfTherapist(userId, status));
+            });
+        }
         [Authorize(Roles = nameof(UserRole.Customer))]
         [HttpPost]
         public async Task<ActionResult> BookingService(BookingServiceDTO booking)

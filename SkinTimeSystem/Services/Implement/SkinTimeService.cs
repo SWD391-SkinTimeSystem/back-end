@@ -15,6 +15,9 @@ using Services.Commons;
 using Services.Commons.DTOs.Service;
 using AutoMapper;
 using System.Reflection.Metadata.Ecma335;
+using Repositories;
+using Services.Commons.DTOs.Event;
+using System.Linq.Expressions;
 
 namespace Services.Implement
 {
@@ -58,10 +61,32 @@ namespace Services.Implement
         }
 
 
-        public async Task<ServiceResult<ICollection<ServiceDTO>>> GetAllService() { 
-           var listService = await _unitOfWork.Repository<Service>().GetAllAsync();
-            return ServiceResult<ICollection<ServiceDTO>>.Success(_mapper.Map<ICollection<ServiceDTO>>(listService));
+        public async Task<PaginationResult<ServiceDTO>> GetAllService(string? searchKey, int page, int pageSize )
+        {
+            PaginationResult<Service> listService = await _unitOfWork.Services.GetAllService(searchKey, page, pageSize);
+
+            return new PaginationResult<ServiceDTO>
+            {
+                Content = _mapper.Map<List<ServiceDTO>>(listService.Content), 
+                CurrentPage = listService.CurrentPage,
+                ItemAmount = listService.ItemAmount,
+                PageSize = pageSize
+            };
         }
+
+        public async Task<PaginationResult<ServiceDTO>> GetAllServiceAvailibeEdit(string? searchKey, int page, int pageSize)
+        {
+            PaginationResult<Service> listService = await _unitOfWork.Services.GetAllServiceAvailibeEdit(searchKey, page, pageSize);
+
+            return new PaginationResult<ServiceDTO>
+            {
+                Content = _mapper.Map<List<ServiceDTO>>(listService.Content),
+                CurrentPage = listService.CurrentPage,
+                ItemAmount = listService.ItemAmount,
+                PageSize = pageSize
+            };
+        }
+
         public async Task<ServiceResult<ICollection<ServiceDTO>>> GetAllTreatmentplant()
         {
             var listTreatmentPlan = await _unitOfWork.Services.GetAllTretmenplan();
