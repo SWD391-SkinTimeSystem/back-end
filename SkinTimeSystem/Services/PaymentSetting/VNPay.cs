@@ -1,12 +1,17 @@
 ﻿using BusinessObject.Entities;
+using BusinessObject.Enum;
 using Microsoft.AspNetCore.Http;
+using Services.Commons;
+using Services.Commons.DTOs.Transaction;
 using System.Globalization;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Services.PaymentSetting
 {
@@ -19,7 +24,7 @@ namespace Services.PaymentSetting
         public string? Command { get; set; }
         public string? CurrCode { get; set; }
         public string? Locale { get; set; }
-        public string? RefundUrl { get; private set; }
+        public string? RefundUrl { get; set; }
 
         private SortedList<string, string> _requestData = new SortedList<string, string>(
             new VnPayCompare()
@@ -31,18 +36,23 @@ namespace Services.PaymentSetting
         private readonly HttpClient _httpClient = new HttpClient();
 
         #region VNPAY
-        public async Task<string> CreateVNPayOrder(decimal? amount, string returnUrl,string serviceName)
+        public async Task<string> CreateVNPayOrder(decimal? amount, string returnUrl, string serviceName)
         {
             string ipAddress = await GetIpAddress();
             await ConfigureRequest(amount, returnUrl, ipAddress, serviceName);
             return await CreateRequestUrl(BaseUrl, HashSecret);
         }
-
-        public async Task<string> CreateVnPayRefund(Transaction transaction) 
+        public async Task<string> QuerryTransactionVnPay(Transaction transaction)
         {
             string ipAddress = await GetIpAddress();
-            await ConfigureRefundRequest( ipAddress, transaction);
-          return await  CreateRequestRefundUrl(RefundUrl, HashSecret);
+            await ConfigureQueryRequest(transaction, ipAddress);
+            return await CreateQueryTransaction(RefundUrl, HashSecret);
+        }
+        public async Task<(VnPayTransactionDTO?, bool)> CreateVnPayRefund(Transaction transaction)
+        {
+            string ipAddress = await GetIpAddress();
+            await ConfigureRefundRequest(ipAddress, transaction);
+             return await  CreateRequestRefundUrl(RefundUrl, HashSecret);
         }
         #endregion
 
@@ -54,24 +64,56 @@ namespace Services.PaymentSetting
             AddRequestData("vnp_Version", Version);
             AddRequestData("vnp_Command", Command);
             AddRequestData("vnp_TmnCode", TmnCode);
-            AddRequestData("vnp_Amount", (amount * 100).ToString()); 
+            AddRequestData("vnp_Amount", (amount * 100).ToString());
             AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
             AddRequestData("vnp_CurrCode", CurrCode);
             AddRequestData("vnp_IpAddr", ipAddress);
             AddRequestData("vnp_Locale", Locale);
-            AddRequestData("vnp_OrderInfo", "Thanh toan dich vu"); 
+            AddRequestData("vnp_OrderInfo", "Thanh toan dich vu");
             AddRequestData("vnp_OrderType", "other");
             AddRequestData("vnp_ReturnUrl", returnUrl);
             AddRequestData("vnp_TxnRef", Guid.NewGuid().ToString());
         }
-
-        public async Task ConfigureRefundRequest(string ipAddress,Transaction transaction)
+        public async Task ConfigureQueryRequest(Transaction transaction, string ipAddress )
         {
             _requestData.Clear();
-            string transaction_id = transaction.TransactionReference.ToString(); 
-            decimal amount = transaction.Amount; 
-            
-            string transactionDate = transaction.PayDate; 
+
+            string transactionId = transaction.TransactionReference.ToString();
+            decimal transactionAmount = transaction.Amount;
+            DateTime parsedTransactionDate = DateTime.ParseExact(transaction.PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            string transactionDate = parsedTransactionDate.ToString("yyyyMMddHHmmss");
+
+            string requestId = Guid.NewGuid().ToString("N");
+            string createDate = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            AddRequestData("vnp_RequestId", requestId);
+            AddRequestData("vnp_Version", Version);
+            AddRequestData("vnp_Command", "querydr");
+            AddRequestData("vnp_TmnCode", TmnCode);
+            AddRequestData("vnp_TxnRef", transactionId);
+            AddRequestData("vnp_TransactionType", "02");
+            AddRequestData("vnp_OrderInfo", "truy vấn giao dịch");
+            AddRequestData("vnp_TransactionNo", "");
+            AddRequestData("vnp_TransactionDate", transactionDate);
+            AddRequestData("vnp_CreateDate", createDate);
+            AddRequestData("vnp_IpAddr", ipAddress);
+
+            // Tạo chuỗi rawData theo quy tắc checksum chính xác
+            string rawData = $"{requestId}|{Version}|querydr|{TmnCode}|{transactionId}|{transactionDate}|{createDate}|{ipAddress}|truy vấn giao dịch";
+
+            // Tạo checksum theo thuật toán bảo mật
+            string secureHash = GenerateSecureHash(rawData);
+            AddRequestData("vnp_SecureHash", secureHash);
+        }
+
+        public async Task ConfigureRefundRequest(string ipAddress, Transaction transaction)
+        {
+            _requestData.Clear();
+            string transaction_id = transaction.TransactionReference.ToString();
+            decimal amount = transaction.Amount;
+            DateTime parsedTransactionDate = DateTime.ParseExact(transaction.PayDate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            string transactionDate = parsedTransactionDate.ToString("yyyyMMddHHmmss");
+
 
             string requestId = Guid.NewGuid().ToString("N");
 
@@ -80,6 +122,7 @@ namespace Services.PaymentSetting
             AddRequestData("vnp_Command", "refund");
             AddRequestData("vnp_TmnCode", TmnCode);
             AddRequestData("vnp_TransactionType", "02");
+            AddRequestData("vnp_CreateBy", "admin");
 
             AddRequestData("vnp_TxnRef", transaction_id);
             AddRequestData("vnp_Amount", ((long)(amount * 100)).ToString());
@@ -92,7 +135,8 @@ namespace Services.PaymentSetting
             AddRequestData("vnp_OrderInfo", "Thanh toán hoàn tiền");
             AddRequestData("vnp_OrderType", "hoàn tiền");
 
-            string rawData = $"{requestId}|{Version}|refund|{TmnCode}|02|{transaction_id}|{(int)(amount * 100)}||{transactionDate}|{DateTime.Now:yyyyMMddHHmmss}|{ipAddress}|Thanh";
+            string rawData = $"{requestId}|{Version}|refund|{TmnCode}|02|{transaction_id}|{(long)(amount * 100)}||{transactionDate}|admin|{DateTime.Now:yyyyMMddHHmmss}|{ipAddress}|Thanh toán hoàn tiền";
+
             string secureHash = GenerateSecureHash(rawData);
             AddRequestData("vnp_SecureHash", secureHash);
         }
@@ -133,27 +177,29 @@ namespace Services.PaymentSetting
             return baseUrl + "&vnp_SecureHash=" + vnp_SecureHash;
         }
 
-        public async Task<string> CreateRequestRefundUrl(string baseUrl, string vnp_HashSecret)
+        public async Task<string> CreateQueryTransaction(string baseUrl, string vnp_HashSecret)
         {
             var data = _requestData.Where(kv => !string.IsNullOrEmpty(kv.Value))
                                    .OrderBy(kv => kv.Key)
                                    .ToDictionary(kv => kv.Key, kv => kv.Value);
 
             string rawData = string.Join("|", new List<string>
-        {
-            data.GetValueOrDefault("vnp_RequestId", ""),
-            data.GetValueOrDefault("vnp_Version", ""),
-            data.GetValueOrDefault("vnp_Command", ""),
-            data.GetValueOrDefault("vnp_TmnCode", ""),
-            data.GetValueOrDefault("vnp_TransactionType", ""),
-            data.GetValueOrDefault("vnp_TxnRef", ""),
-            data.GetValueOrDefault("vnp_Amount", ""),
-            data.GetValueOrDefault("vnp_TransactionNo", ""),  
-            data.GetValueOrDefault("vnp_TransactionDate", ""),
-            data.GetValueOrDefault("vnp_CreateDate", ""),
-            data.GetValueOrDefault("vnp_IpAddr", ""),
-            data.GetValueOrDefault("vnp_OrderInfo", "")
-        });
+{
+    data.GetValueOrDefault("vnp_RequestId", ""),
+    data.GetValueOrDefault("vnp_Version", ""),
+    data.GetValueOrDefault("vnp_Command", ""),
+    data.GetValueOrDefault("vnp_TmnCode", ""),
+    data.GetValueOrDefault("vnp_TransactionType", ""),
+    data.GetValueOrDefault("vnp_TxnRef", ""),
+    data.GetValueOrDefault("vnp_Amount", ""),
+    data.GetValueOrDefault("vnp_TransactionNo", ""),
+    data.GetValueOrDefault("vnp_TransactionDate", ""),
+    data.GetValueOrDefault("vnp_CreateBy", ""),
+    data.GetValueOrDefault("vnp_CreateDate", ""),
+    data.GetValueOrDefault("vnp_IpAddr", ""),
+    data.GetValueOrDefault("vnp_OrderInfo", "")
+});
+
 
             string vnp_SecureHash = await HmacSHA512Async(vnp_HashSecret, rawData);
             data["vnp_SecureHash"] = vnp_SecureHash;
@@ -163,10 +209,48 @@ namespace Services.PaymentSetting
             HttpResponseMessage response = await _httpClient.PostAsync(baseUrl, content);
 
             string responseString = await response.Content.ReadAsStringAsync();
-
             return responseString;
         }
+        public async Task<(VnPayTransactionDTO,bool)> CreateRequestRefundUrl(string baseUrl, string vnp_HashSecret)
+        {
+            var data = _requestData.Where(kv => !string.IsNullOrEmpty(kv.Value))
+                                   .OrderBy(kv => kv.Key)
+                                   .ToDictionary(kv => kv.Key, kv => kv.Value);
 
+            string rawData = string.Join("|", new List<string>
+{
+    data.GetValueOrDefault("vnp_RequestId", ""),
+    data.GetValueOrDefault("vnp_Version", ""),
+    data.GetValueOrDefault("vnp_Command", ""),
+    data.GetValueOrDefault("vnp_TmnCode", ""),
+    data.GetValueOrDefault("vnp_TransactionType", ""),
+    data.GetValueOrDefault("vnp_TxnRef", ""),
+    data.GetValueOrDefault("vnp_Amount", ""),
+    data.GetValueOrDefault("vnp_TransactionNo", ""),
+    data.GetValueOrDefault("vnp_TransactionDate", ""),
+    data.GetValueOrDefault("vnp_CreateBy", ""),
+    data.GetValueOrDefault("vnp_CreateDate", ""),
+    data.GetValueOrDefault("vnp_IpAddr", ""),
+    data.GetValueOrDefault("vnp_OrderInfo", "")
+});
+
+
+            string vnp_SecureHash = await HmacSHA512Async(vnp_HashSecret, rawData);
+            data["vnp_SecureHash"] = vnp_SecureHash;
+
+            string jsonData = JsonSerializer.Serialize(data);
+            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PostAsync(baseUrl, content);
+
+            string responseString = await response.Content.ReadAsStringAsync();
+            VnpayRefundResponseDTO? vnpayData = JsonSerializer.Deserialize<VnpayRefundResponseDTO>(responseString);
+            VnPayTransactionDTO transactionDTO = new VnPayTransactionDTO(vnpayData);
+            if (transactionDTO.Status == PaymentStatus.Success)
+            {
+                return (transactionDTO, true);
+            }
+            return (transactionDTO, false);
+        }
 
 
         public void AddRequestData(string key, string value)
@@ -215,7 +299,7 @@ namespace Services.PaymentSetting
             }
             foreach (KeyValuePair<string, string> kv in _responseData)
             {
-                if (!String.IsNullOrEmpty(kv.Value))
+                if (!System.String.IsNullOrEmpty(kv.Value))
                 {
                     data.Append(
                         WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&"
@@ -275,5 +359,5 @@ namespace Services.PaymentSetting
 
 
 
-  
+
 }

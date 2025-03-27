@@ -66,6 +66,12 @@ namespace Services.Implement
 
         }
 
+        public async Task<ICollection<BokingServiceStatusDTO>> GetAppointmentsOfTherapist(Guid userId, string status)
+        {
+            var therapist = await _unitOfWork.Repository<Therapist>().FindAsync(x => x.UserID == userId);
+            var listBooking = await _unitOfWork.Bookings.GetAppointmentsOfTherapist(therapist.Id, status);
+            return _mapper.Map<ICollection<BokingServiceStatusDTO>>(listBooking);
+        }
 
         public async Task<ServiceResult<BookingDetailDTO>> GetBookingInformation(Guid bookingId)
         {
@@ -76,15 +82,18 @@ namespace Services.Implement
             return ServiceResult<BookingDetailDTO>.Success(bookingDTO);
         }
 
+        public async Task<Guid?> GetTransaction(Guid idBooking)
+        {
+            var transaction = await _unitOfWork.Repository<Booking>().FindAsync(x => x.Id == idBooking);
+            var idTransaction = transaction.TransactionId;
+            return idTransaction;
+        }
+
         public Task<ServiceResult<Booking>> UpdateBookingInformation(string id, Booking bookingInformation)
         {
             throw new NotImplementedException();
         }
 
-        public Task<(Booking, Service)> UpdateBookingService(Guid bookingId, DateTime dateTime)
-        {
-            throw new NotImplementedException();
-        }
 
     }
 }

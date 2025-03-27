@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Azure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Repositories.Interface;
@@ -63,7 +64,7 @@ namespace Services.Implement
                 return bookingDto.FailureURL;
             }
             var booking = _mapper.Map<Booking>(bookingDto);
-            await _unitOfWork.Bookings.CreateBookingAndSchedule(booking,bookingDto.ServiceHour);
+            await _unitOfWork.Bookings.CreateBookingAndSchedule(booking,bookingDto.ServiceHour,key);
             await _cache.DeleteAsync<string>(redisKey);
             return  bookingDto.ReturnURL;
         }
@@ -86,6 +87,7 @@ namespace Services.Implement
                 Status = status,
             };
 
+
             var transaction = _mapper.Map<Transaction>(vnPayTransactionDTO);
             transaction.Id = id;
 
@@ -99,23 +101,6 @@ namespace Services.Implement
         }
 
 
-        //private async Task<bool> CallBackVnPay(
-        //    string vnp_TxnRef,
-        //    string vnp_SecureHash,
-        //    IQueryCollection request
-        //)
-        //{
-        //    try
-        //    {
-        //        _vnPay.AddResponseDataFromQueryString(request);
-        //        await _vnPay.ValidateSignature(vnp_TxnRef, vnp_SecureHash);
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return false;
-        //    }
-        //}
         #endregion
 
         #region ZALOPAY
@@ -157,10 +142,29 @@ namespace Services.Implement
             var transacion = await _unitOfWork.Repository<Transaction>().FindAsync(tr => tr.Id == idTransaction);
            if(transacion.Method == PaymentMethod.VnPay)
             {
-               await _vnPay.CreateVnPayRefund(transacion);
+                var (transactionDTO, isSuccess) = await _vnPay.CreateVnPayRefund(transacion);
+                if (isSuccess) {
+                    var transaction = _mapper.Map<Transaction>(transactionDTO);
+                    transaction.IsRefundTransaction = true;
+                    await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
+                    await _unitOfWork.Complete();
+                }
+                else {
+                    return ServiceResult<bool>.Success(false);
+                }
             }
             if(transacion.Method == PaymentMethod.ZaloPay){
-                await _zaloPay.CreateZaloPayRefund(transacion); 
+                var (transactionDTO, isSuccess) = await _zaloPay.CreateZaloPayRefund(transacion);
+                if (isSuccess)
+                {
+                    var transaction = _mapper.Map<Transaction>(transactionDTO);
+                    await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
+                    await _unitOfWork.Complete();
+                }
+                else
+                {
+                    return ServiceResult<bool>.Success(false);
+                }
             }
            return ServiceResult<bool>.Success(true);
         }
@@ -192,9 +196,25 @@ namespace Services.Implement
                 return ticketRegistration.FailureCallbackUrl;
             }
             var ticket = _mapper.Map<EventTicket>(ticketRegistration);
+            ticket.TransactionId = key;
             var addedTicket = await _unitOfWork.Repository<EventTicket>().AddAsync(ticket);
+            await _unitOfWork.Complete();
             await _cache.DeleteAsync<string>(redisKey);
             return ticketRegistration.SuccessCallbackUrl;
+        }
+
+        public async Task<string> QuerryTransaction(Guid idTransaction)
+        {
+            var transacion = await _unitOfWork.Repository<Transaction>().FindAsync(tr => tr.Id == idTransaction);
+            if (transacion.Method == PaymentMethod.VnPay)
+            {
+              return  await _vnPay.QuerryTransactionVnPay(transacion);
+            }
+            if (transacion.Method == PaymentMethod.ZaloPay)
+            {
+                return await _zaloPay.QuerryTransactionZalo(transacion);
+            }
+            return "fail";
         }
     }
 }

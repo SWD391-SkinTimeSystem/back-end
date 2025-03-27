@@ -121,16 +121,16 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.PaidAmount))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
-            //CreateMap<TicketRegistrationDTO, TicketRegistrationCacheDTO>();
+            CreateMap<TicketRegistrationDTO, TicketRegistrationCacheDTO>();
 
-            //CreateMap<TicketRegistrationCacheDTO, EventTicket>()
-            //    .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.EventId))
-            //    .ForMember(dest => dest.UserID, opt => opt.MapFrom(src => src.UserId))
-            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            //    .ForMember(dest => dest.Status, opt => opt.MapFrom(x => EventTicketStatus.Paid))
-            //    .ForMember(dest => dest.PaidAmount, opt => opt.MapFrom(src => src.TotalAmount))
-            //    .ForMember(dest => dest.TicketCode, opt => opt.MapFrom(src => src.Ticket_Otp))
-            //    .ForMember(dest => dest.QRCode, opt => opt.MapFrom(src => src.Base64_QrCode));
+            CreateMap<TicketRegistrationCacheDTO, EventTicket>()
+                .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.EventId))
+                .ForMember(dest => dest.UserID, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(x => EventTicketStatus.Paid))
+                .ForMember(dest => dest.PaidAmount, opt => opt.MapFrom(src => src.TotalAmount))
+                .ForMember(dest => dest.TicketCode, opt => opt.MapFrom(src =>
+                         Math.Abs(BitConverter.ToInt32(src.Id.ToByteArray(), 0)).ToString().PadLeft(6, '0').Substring(0, 6))); ;
 
             CreateMap<SkinType, SkintypePercentageDTO>()
             .ForMember(dest => dest.NameSkinType, opt => opt.MapFrom(src => src.Name));

@@ -65,7 +65,7 @@ namespace SkinTime.Extensions
             try
             {
                 var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-                await TrySeed(context, app.Configuration);
+              
             }
             catch (Exception ex)
             {

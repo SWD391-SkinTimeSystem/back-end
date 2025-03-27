@@ -16,7 +16,7 @@ namespace Repositories.Implement
     {
         public BookingRepository(ApplicationDbContext context) : base(context) { }
 
-        public async Task<bool> CreateBookingAndSchedule(Booking booking, TimeOnly serviceHour)
+        public async Task<bool> CreateBookingAndSchedule(Booking booking, TimeOnly serviceHour, Guid key)
         {
             var service = await _context.Services
                 .FirstOrDefaultAsync(se => se.Id == booking.ServiceId);
@@ -24,7 +24,7 @@ namespace Repositories.Implement
                 .FirstOrDefaultAsync(se => se.Id == booking.VoucherId);
             decimal discount = voucher?.Discount ?? 0;
             booking.Id = Guid.NewGuid();
-            booking.Status = BookingStatus.Doing;
+            booking.TransactionId = key;
             booking.TotalPrice = service.Price*(1m - discount / 100);
 
             await _context.Bookings.AddAsync(booking);
@@ -88,6 +88,18 @@ namespace Repositories.Implement
             var bookingStatus = Enum.Parse<BookingStatus>(status);
             return await _context.Bookings
                 .Where(b => b.CustomerId == userId && b.Status == bookingStatus)
+                .Include(b => b.ServiceNavigation)
+                    .ThenInclude(s => s.ServiceDetailNavigation)
+                .Include(b => b.TherapistNavigation)
+                    .ThenInclude(t => t.UserNavigation)
+                .Include(b => b.ScheduleNavigation)
+                .ToListAsync();
+        }
+        public async Task<ICollection<Booking>> GetAppointmentsOfTherapist(Guid userId, string status)
+        {
+            var bookingStatus = Enum.Parse<BookingStatus>(status);
+            return await _context.Bookings
+                .Where(b => b.TherapistId == userId && b.Status == bookingStatus)
                 .Include(b => b.ServiceNavigation)
                     .ThenInclude(s => s.ServiceDetailNavigation)
                 .Include(b => b.TherapistNavigation)
