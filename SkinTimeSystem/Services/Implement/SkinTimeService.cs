@@ -64,7 +64,7 @@ namespace Services.Implement
         public async Task<PaginationResult<ServiceDTO>> GetAllService(string? searchKey, int page, int pageSize )
         {
             PaginationResult<Service> listService = await _unitOfWork.Services.GetAllService(searchKey, page, pageSize);
-
+            
             return new PaginationResult<ServiceDTO>
             {
                 Content = _mapper.Map<List<ServiceDTO>>(listService.Content), 

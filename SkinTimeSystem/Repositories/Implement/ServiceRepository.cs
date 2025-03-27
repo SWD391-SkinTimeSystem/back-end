@@ -32,6 +32,8 @@ namespace Repositories.Implement
                 pageSize,
                 filter,
                 includes: x => x.Include(x => x.ServiceDetailNavigation)
+                                .Include(x => x.BookingNavigation)
+                                .Include(x => x.ServiceCategory)
                                 .Include(x => x.ServiceImageNavigation),
                 order: x => x.OrderBy(x => x.CreatedTime)
             );

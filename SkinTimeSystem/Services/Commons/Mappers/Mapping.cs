@@ -156,8 +156,12 @@ namespace SkinTime.Helpers
                 });
             // Service => ServiceDTO
             CreateMap<Service, ServiceDTO>()
-            .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.ServiceDetailNavigation))
-            .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.ServiceImageNavigation));
+              .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.ServiceDetailNavigation))
+              .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.ServiceImageNavigation))
+              .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.ServiceCategoryID))
+              .ForMember(dest => dest.CategotyName, opt => opt.MapFrom(src => src.ServiceCategory != null ? src.ServiceCategory.Name : string.Empty))
+                  .ForMember(dest => dest.BookingCount, opt => opt.MapFrom(src => 
+                 src.BookingNavigation.Where(b => b.ServiceId == src.Id).Count()));
 
             CreateMap<ServiceDetail, ServiceDetailDTO>();
 
