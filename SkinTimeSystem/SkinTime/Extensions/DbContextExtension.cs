@@ -778,7 +778,7 @@ namespace SkinTime.Extensions
             if (!context.ServiceDetails.Any())
             {
                 var services = context.Services.ToArray();
-                
+
 
                 var serviceDetails = new[]
                 {
@@ -820,38 +820,38 @@ namespace SkinTime.Extensions
                 await context.SaveChangesAsync();
             }
 
-            // 5. Seed ServiceRecommendations
-            if (!context.ServiceRecommendation.Any())
-            {
-                var skinTypes = context.SkinTypes.ToArray();
-                var services = context.Services.ToArray();
+            //    // 5. Seed ServiceRecommendations
+            //    if (!context.ServiceRecommendation.Any())
+            //    {
+            //        var skinTypes = context.SkinTypes.ToArray();
+            //        var services = context.Services.ToArray();
 
-                if (skinTypes.Length < 3)
-                {
-                    throw new Exception("Không đủ SkinTypes để seeding ServiceRecommendations. Cần ít nhất 3 loại da.");
-                }
-                if (services.Length < 10)
-                {
-                    throw new Exception("Không đủ Services để seeding ServiceRecommendations. Cần ít nhất 10 dịch vụ.");
-                }
+            //        if (skinTypes.Length < 3)
+            //        {
+            //            throw new Exception("Không đủ SkinTypes để seeding ServiceRecommendations. Cần ít nhất 3 loại da.");
+            //        }
+            //        if (services.Length < 10)
+            //        {
+            //            throw new Exception("Không đủ Services để seeding ServiceRecommendations. Cần ít nhất 10 dịch vụ.");
+            //        }
 
-                var recommendations = new[]
-                {
-            new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[0].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[1].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[2].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[3].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[4].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[5].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[6].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[7].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[8].Id },
-            new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[9].Id }
-        };
+            //        var recommendations = new[]
+            //        {
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[0].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[1].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[2].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[3].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[4].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[5].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[6].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[1].Id, ServiceID = services[7].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[2].Id, ServiceID = services[8].Id },
+            //    new ServiceRecommendation { SkinTypeID = skinTypes[0].Id, ServiceID = services[9].Id }
+            //};
 
-                await context.ServiceRecommendation.AddRangeAsync(recommendations);
-                await context.SaveChangesAsync();
-            }
+            //        await context.ServiceRecommendation.AddRangeAsync(recommendations);
+            //        await context.SaveChangesAsync();
+            //    }
 
             // 6. Seed Questions
             if (!context.Questions.Any())
@@ -903,185 +903,185 @@ namespace SkinTime.Extensions
                 await context.SaveChangesAsync();
 
                 var savedOptions = context.QuestionOptions.ToArray();
-                var optionSkinTypes = new[] {
-    // Question 0 options (index 0-3)
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[0].Id, SkinTypeID = skinTypes[0].Id }, // A. Khô -> Da khô
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[0].Id, SkinTypeID = skinTypes[4].Id }, // A. Dễ chăm sóc -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[1].Id, SkinTypeID = skinTypes[1].Id }, // B. Bóng, nhờn -> Da dầu
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[1].Id, SkinTypeID = skinTypes[2].Id }, // B. Nhờn -> Da hỗn hợp
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[2].Id, SkinTypeID = skinTypes[2].Id }, // C. Trán, mũi trơn -> Da hỗn hợp
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[2].Id, SkinTypeID = skinTypes[1].Id }, // C. Trơn -> Da dầu
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[3].Id, SkinTypeID = skinTypes[3].Id }, // D. Căng sau rửa -> Da nhạy cảm
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[3].Id, SkinTypeID = skinTypes[0].Id }, // D. Căng -> Da khô
+                //                var optionSkinTypes = new[] {
+                //    // Question 0 options (index 0-3)
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[0].Id, SkinTypeID = skinTypes[0].Id }, // A. Khô -> Da khô
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[0].Id, SkinTypeID = skinTypes[4].Id }, // A. Dễ chăm sóc -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[1].Id, SkinTypeID = skinTypes[1].Id }, // B. Bóng, nhờn -> Da dầu
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[1].Id, SkinTypeID = skinTypes[2].Id }, // B. Nhờn -> Da hỗn hợp
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[2].Id, SkinTypeID = skinTypes[2].Id }, // C. Trán, mũi trơn -> Da hỗn hợp
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[2].Id, SkinTypeID = skinTypes[1].Id }, // C. Trơn -> Da dầu
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[3].Id, SkinTypeID = skinTypes[3].Id }, // D. Căng sau rửa -> Da nhạy cảm
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[3].Id, SkinTypeID = skinTypes[0].Id }, // D. Căng -> Da khô
 
-    // Question 1 options (index 4-7)
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[4].Id, SkinTypeID = skinTypes[1].Id }, // A. Luôn luôn (mụn) -> Da dầu
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[4].Id, SkinTypeID = skinTypes[2].Id }, // A. Luôn luôn -> Da hỗn hợp
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[5].Id, SkinTypeID = skinTypes[4].Id }, // B. Rất hiếm khi -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[5].Id, SkinTypeID = skinTypes[0].Id }, // B. Hiếm mụn -> Da khô
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[6].Id, SkinTypeID = skinTypes[2].Id }, // C. Khi kinh nguyệt -> Da hỗn hợp
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[6].Id, SkinTypeID = skinTypes[1].Id }, // C. Khi kinh nguyệt -> Da dầu
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[7].Id, SkinTypeID = skinTypes[3].Id }, // D. Thỉnh thoảng -> Da nhạy cảm
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[7].Id, SkinTypeID = skinTypes[4].Id }, // D. Thỉnh thoảng -> Da thường
+                //    // Question 1 options (index 4-7)
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[4].Id, SkinTypeID = skinTypes[1].Id }, // A. Luôn luôn (mụn) -> Da dầu
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[4].Id, SkinTypeID = skinTypes[2].Id }, // A. Luôn luôn -> Da hỗn hợp
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[5].Id, SkinTypeID = skinTypes[4].Id }, // B. Rất hiếm khi -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[5].Id, SkinTypeID = skinTypes[0].Id }, // B. Hiếm mụn -> Da khô
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[6].Id, SkinTypeID = skinTypes[2].Id }, // C. Khi kinh nguyệt -> Da hỗn hợp
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[6].Id, SkinTypeID = skinTypes[1].Id }, // C. Khi kinh nguyệt -> Da dầu
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[7].Id, SkinTypeID = skinTypes[3].Id }, // D. Thỉnh thoảng -> Da nhạy cảm
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[7].Id, SkinTypeID = skinTypes[4].Id }, // D. Thỉnh thoảng -> Da thường
 
-    // Question 2 options (index 8-11)
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[8].Id, SkinTypeID = skinTypes[2].Id }, // A. Trán, cằm -> Da hỗn hợp
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[8].Id, SkinTypeID = skinTypes[1].Id }, // A. Trán, cằm -> Da dầu
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[9].Id, SkinTypeID = skinTypes[4].Id }, // B. Rất hiếm khi -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[9].Id, SkinTypeID = skinTypes[0].Id }, // B. Hiếm khi -> Da khô
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[10].Id, SkinTypeID = skinTypes[3].Id }, // C. Không rửa tự nhiên -> Da nhạy cảm
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[10].Id, SkinTypeID = skinTypes[0].Id }, // C. Không rửa -> Da khô
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[11].Id, SkinTypeID = skinTypes[1].Id }, // D. Một lần/tháng -> Da dầu
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[11].Id, SkinTypeID = skinTypes[2].Id }, // D. Một lần/tháng -> Da hỗn hợp
+                //    // Question 2 options (index 8-11)
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[8].Id, SkinTypeID = skinTypes[2].Id }, // A. Trán, cằm -> Da hỗn hợp
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[8].Id, SkinTypeID = skinTypes[1].Id }, // A. Trán, cằm -> Da dầu
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[9].Id, SkinTypeID = skinTypes[4].Id }, // B. Rất hiếm khi -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[9].Id, SkinTypeID = skinTypes[0].Id }, // B. Hiếm khi -> Da khô
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[10].Id, SkinTypeID = skinTypes[3].Id }, // C. Không rửa tự nhiên -> Da nhạy cảm
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[10].Id, SkinTypeID = skinTypes[0].Id }, // C. Không rửa -> Da khô
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[11].Id, SkinTypeID = skinTypes[1].Id }, // D. Một lần/tháng -> Da dầu
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[11].Id, SkinTypeID = skinTypes[2].Id }, // D. Một lần/tháng -> Da hỗn hợp
 
-    // Question 3 options (index 12-15)
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[12].Id, SkinTypeID = skinTypes[4].Id }, // A. Không mụn -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[12].Id, SkinTypeID = skinTypes[0].Id }, // A. Không mụn -> Da khô
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[13].Id, SkinTypeID = skinTypes[4].Id }, // B. Cảm thấy sạch -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[13].Id, SkinTypeID = skinTypes[0].Id }, // B. Sạch -> Da khô
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[14].Id, SkinTypeID = skinTypes[3].Id }, // C. Không đỏ, viêm -> Da nhạy cảm
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[14].Id, SkinTypeID = skinTypes[4].Id }, // C. Không viêm -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[15].Id, SkinTypeID = skinTypes[4].Id }, // D. Trông khỏe mạnh -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[15].Id, SkinTypeID = skinTypes[0].Id }, // D. Khỏe mạnh -> Da khô
+                //    // Question 3 options (index 12-15)
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[12].Id, SkinTypeID = skinTypes[4].Id }, // A. Không mụn -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[12].Id, SkinTypeID = skinTypes[0].Id }, // A. Không mụn -> Da khô
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[13].Id, SkinTypeID = skinTypes[4].Id }, // B. Cảm thấy sạch -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[13].Id, SkinTypeID = skinTypes[0].Id }, // B. Sạch -> Da khô
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[14].Id, SkinTypeID = skinTypes[3].Id }, // C. Không đỏ, viêm -> Da nhạy cảm
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[14].Id, SkinTypeID = skinTypes[4].Id }, // C. Không viêm -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[15].Id, SkinTypeID = skinTypes[4].Id }, // D. Trông khỏe mạnh -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[15].Id, SkinTypeID = skinTypes[0].Id }, // D. Khỏe mạnh -> Da khô
 
-    // Question 4 options (index 16-19)
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[16].Id, SkinTypeID = skinTypes[4].Id }, // A. Chăm sóc tự nhiên -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[16].Id, SkinTypeID = skinTypes[3].Id }, // A. Chăm sóc -> Da nhạy cảm
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[17].Id, SkinTypeID = skinTypes[0].Id }, // B. Không nhờn -> Da khô
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[17].Id, SkinTypeID = skinTypes[4].Id }, // B. Không nhờn -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[18].Id, SkinTypeID = skinTypes[4].Id }, // C. Yêu làn da -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[18].Id, SkinTypeID = skinTypes[0].Id }, // C. Yêu làn da -> Da khô
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[19].Id, SkinTypeID = skinTypes[4].Id }, // D. Không mụn -> Da thường
-    new QuestionOptionSkintype { QuestionOptionId = savedOptions[19].Id, SkinTypeID = skinTypes[0].Id }  // D. Không mụn -> Da khô
-};
+                //    // Question 4 options (index 16-19)
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[16].Id, SkinTypeID = skinTypes[4].Id }, // A. Chăm sóc tự nhiên -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[16].Id, SkinTypeID = skinTypes[3].Id }, // A. Chăm sóc -> Da nhạy cảm
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[17].Id, SkinTypeID = skinTypes[0].Id }, // B. Không nhờn -> Da khô
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[17].Id, SkinTypeID = skinTypes[4].Id }, // B. Không nhờn -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[18].Id, SkinTypeID = skinTypes[4].Id }, // C. Yêu làn da -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[18].Id, SkinTypeID = skinTypes[0].Id }, // C. Yêu làn da -> Da khô
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[19].Id, SkinTypeID = skinTypes[4].Id }, // D. Không mụn -> Da thường
+                //    new QuestionOptionSkintype { QuestionOptionId = savedOptions[19].Id, SkinTypeID = skinTypes[0].Id }  // D. Không mụn -> Da khô
+                //};
 
-                await context.QuestionOptionSkintypes.AddRangeAsync(optionSkinTypes);
-                await context.SaveChangesAsync();
-            }
+                //                await context.QuestionOptionSkintypes.AddRangeAsync(optionSkinTypes);
+                //                await context.SaveChangesAsync();
+                //            }
 
-        //    // 8. Seed Bookings với 4 trạng thái và Feedbacks
-        //    if (!context.Bookings.Any())
-        //    {
-        //        var customers = context.Users.Where(u => u.Role == UserRole.Customer).ToArray();
-        //        var therapistIds = context.Therapists
-        //            .Include(t => t.UserNavigation)
-        //            .Where(t => t.UserNavigation != null && t.UserNavigation.Role == UserRole.Therapist)
-        //            .Select(t => t.Id)
-        //            .ToArray();
-        //        var services = context.Services.ToArray();
+                //    // 8. Seed Bookings với 4 trạng thái và Feedbacks
+                //    if (!context.Bookings.Any())
+                //    {
+                //        var customers = context.Users.Where(u => u.Role == UserRole.Customer).ToArray();
+                //        var therapistIds = context.Therapists
+                //            .Include(t => t.UserNavigation)
+                //            .Where(t => t.UserNavigation != null && t.UserNavigation.Role == UserRole.Therapist)
+                //            .Select(t => t.Id)
+                //            .ToArray();
+                //        var services = context.Services.ToArray();
 
-        //        if (customers.Length < 3) throw new Exception("Không đủ khách hàng để seeding Bookings. Cần ít nhất 3.");
-        //        if (therapistIds.Length < 4) throw new Exception("Không đủ Therapist để seeding Bookings. Cần ít nhất 4.");
-        //        if (services.Length < 10) throw new Exception("Không đủ Services để seeding Bookings. Cần ít nhất 10.");
+                //        if (customers.Length < 3) throw new Exception("Không đủ khách hàng để seeding Bookings. Cần ít nhất 3.");
+                //        if (therapistIds.Length < 4) throw new Exception("Không đủ Therapist để seeding Bookings. Cần ít nhất 4.");
+                //        if (services.Length < 10) throw new Exception("Không đủ Services để seeding Bookings. Cần ít nhất 10.");
 
-        //        var bookings = new List<Booking>
-        //{
-        //    // NotStarted
-        //    new Booking
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        CustomerId = customers[0].Id,
-        //        TherapistId = therapistIds[0],
-        //        ServiceId = services[0].Id,
-        //        ReservedTime = DateTime.Now.AddDays(5).AddHours(10),
-        //        Status = BookingStatus.NotStarted,
-        //        TotalPrice = services[0].Price,
-        //        TotalPayment = 0 // Chưa thanh toán
-        //    },
-        //    // Doing
-        //    new Booking
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        CustomerId = customers[1].Id,
-        //        TherapistId = therapistIds[1],
-        //        ServiceId = services[1].Id,
-        //        ReservedTime = DateTime.Now.AddHours(-1), // Đang thực hiện
-        //        Status = BookingStatus.Doing,
-        //        TotalPrice = services[1].Price,
-        //        TotalPayment = services[1].Price / 2 // Thanh toán một nửa
-        //    },
-        //    // Completed (có Feedback)
-        //    new Booking
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        CustomerId = customers[2].Id,
-        //        TherapistId = therapistIds[2],
-        //        ServiceId = services[2].Id,
-        //        ReservedTime = DateTime.Now.AddDays(-2).AddHours(14),
-        //        Status = BookingStatus.Completed,
-        //        TotalPrice = services[2].Price,
-        //        TotalPayment = services[2].Price
-        //    },
-        //    // Canceled
-        //    new Booking
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        CustomerId = customers[0].Id,
-        //        TherapistId = therapistIds[3],
-        //        ServiceId = services[3].Id,
-        //        ReservedTime = DateTime.Now.AddDays(-1).AddHours(9),
-        //        Status = BookingStatus.Canceled,
-        //        TotalPrice = services[3].Price,
-        //        TotalPayment = 0 // Không thanh toán vì hủy
-        //    },
-        //    // Completed thứ hai (có Feedback)
-        //    new Booking
-        //    {
-        //        Id = Guid.NewGuid(),
-        //        CustomerId = customers[1].Id,
-        //        TherapistId = therapistIds[0],
-        //        ServiceId = services[4].Id,
-        //        ReservedTime = DateTime.Now.AddDays(-3).AddHours(15),
-        //        Status = BookingStatus.Completed,
-        //        TotalPrice = services[4].Price,
-        //        TotalPayment = services[4].Price
-        //    }
-        //};
+                //        var bookings = new List<Booking>
+                //{
+                //    // NotStarted
+                //    new Booking
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        CustomerId = customers[0].Id,
+                //        TherapistId = therapistIds[0],
+                //        ServiceId = services[0].Id,
+                //        ReservedTime = DateTime.Now.AddDays(5).AddHours(10),
+                //        Status = BookingStatus.NotStarted,
+                //        TotalPrice = services[0].Price,
+                //        TotalPayment = 0 // Chưa thanh toán
+                //    },
+                //    // Doing
+                //    new Booking
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        CustomerId = customers[1].Id,
+                //        TherapistId = therapistIds[1],
+                //        ServiceId = services[1].Id,
+                //        ReservedTime = DateTime.Now.AddHours(-1), // Đang thực hiện
+                //        Status = BookingStatus.Doing,
+                //        TotalPrice = services[1].Price,
+                //        TotalPayment = services[1].Price / 2 // Thanh toán một nửa
+                //    },
+                //    // Completed (có Feedback)
+                //    new Booking
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        CustomerId = customers[2].Id,
+                //        TherapistId = therapistIds[2],
+                //        ServiceId = services[2].Id,
+                //        ReservedTime = DateTime.Now.AddDays(-2).AddHours(14),
+                //        Status = BookingStatus.Completed,
+                //        TotalPrice = services[2].Price,
+                //        TotalPayment = services[2].Price
+                //    },
+                //    // Canceled
+                //    new Booking
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        CustomerId = customers[0].Id,
+                //        TherapistId = therapistIds[3],
+                //        ServiceId = services[3].Id,
+                //        ReservedTime = DateTime.Now.AddDays(-1).AddHours(9),
+                //        Status = BookingStatus.Canceled,
+                //        TotalPrice = services[3].Price,
+                //        TotalPayment = 0 // Không thanh toán vì hủy
+                //    },
+                //    // Completed thứ hai (có Feedback)
+                //    new Booking
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        CustomerId = customers[1].Id,
+                //        TherapistId = therapistIds[0],
+                //        ServiceId = services[4].Id,
+                //        ReservedTime = DateTime.Now.AddDays(-3).AddHours(15),
+                //        Status = BookingStatus.Completed,
+                //        TotalPrice = services[4].Price,
+                //        TotalPayment = services[4].Price
+                //    }
+                //};
 
-        //        await context.Bookings.AddRangeAsync(bookings);
-        //        await context.SaveChangesAsync();
-        //    }
+                //        await context.Bookings.AddRangeAsync(bookings);
+                //        await context.SaveChangesAsync();
+                //    }
 
-        //    // 9. Seed Feedbacks cho các Booking đã Completed
-        //    if (!context.Feedbacks.Any())
-        //    {
-        //        var completedBookings = context.Bookings
-        //            .Where(b => b.Status == BookingStatus.Completed)
-        //            .ToArray();
+                //    // 9. Seed Feedbacks cho các Booking đã Completed
+                //    if (!context.Feedbacks.Any())
+                //    {
+                //        var completedBookings = context.Bookings
+                //            .Where(b => b.Status == BookingStatus.Completed)
+                //            .ToArray();
 
-        //        if (completedBookings.Length < 2) throw new Exception("Không đủ Booking Completed để seeding Feedbacks. Cần ít nhất 2.");
+                //        if (completedBookings.Length < 2) throw new Exception("Không đủ Booking Completed để seeding Feedbacks. Cần ít nhất 2.");
 
-        //        var feedbacks = new[]
-        //        {
-        //    new Feedback
-        //    {
-        //        BookingId = completedBookings[0].Id,
-        //        TherapistRating = 4,
-        //        ServiceRating = 5,
-        //        TherapistFeedback = "Nhân viên rất chuyên nghiệp và thân thiện",
-        //        ServiceFeedback = "Dịch vụ tuyệt vời, da tôi cải thiện rõ rệt"
-        //    },
-        //    new Feedback
-        //    {
-        //        BookingId = completedBookings[1].Id,
-        //        TherapistRating = 5,
-        //        ServiceRating = 4,
-        //        TherapistFeedback = "Kỹ thuật viên rất tận tâm",
-        //        ServiceFeedback = "Dịch vụ tốt nhưng giá hơi cao"
-        //    }
-        //};
+                //        var feedbacks = new[]
+                //        {
+                //    new Feedback
+                //    {
+                //        BookingId = completedBookings[0].Id,
+                //        TherapistRating = 4,
+                //        ServiceRating = 5,
+                //        TherapistFeedback = "Nhân viên rất chuyên nghiệp và thân thiện",
+                //        ServiceFeedback = "Dịch vụ tuyệt vời, da tôi cải thiện rõ rệt"
+                //    },
+                //    new Feedback
+                //    {
+                //        BookingId = completedBookings[1].Id,
+                //        TherapistRating = 5,
+                //        ServiceRating = 4,
+                //        TherapistFeedback = "Kỹ thuật viên rất tận tâm",
+                //        ServiceFeedback = "Dịch vụ tốt nhưng giá hơi cao"
+                //    }
+                //};
 
-        //        await context.Feedbacks.AddRangeAsync(feedbacks);
-        //        await context.SaveChangesAsync();
-        //    }
+                //        await context.Feedbacks.AddRangeAsync(feedbacks);
+                //        await context.SaveChangesAsync();
+                //    }
 
-            
 
-            // 11. Seed Events
-            if (!context.Events.Any())
-            {
-                var events = new[]
+
+                // 11. Seed Events
+                if (!context.Events.Any())
                 {
+                    var events = new[]
+                    {
                     new Event
                     {
                         Name = "Skincare Workshop",
@@ -1212,51 +1212,52 @@ namespace SkinTime.Extensions
                         Thumbnail = "https://i.ytimg.com/vi/kPOSNVrSadI/maxresdefault.jpg",
                         Status = EventStatus.Approved
                     }
-       
+
                 };
 
-                await context.Events.AddRangeAsync(events);
-                await context.SaveChangesAsync();
+                    await context.Events.AddRangeAsync(events);
+                    await context.SaveChangesAsync();
+                }
+
+                //// 12. Seed ticket event
+                //if (!context.EventTickets.Any())
+                //{
+                //    var eventId = context.Events.ToArray();
+                //    var userId = context.Users.ToArray();
+                //    Console.WriteLine($"Số lượng sự kiện: {eventId.Length}");
+                //    //if (eventId.Length < 10) throw new Exception("Không đủ Services để seeding ServiceDetails.");
+
+                //    var eventTickets  = new[]
+                //    {
+                //        new EventTicket { EventId = eventId[1].Id, UserID = userId[9].Id, PaidAmount = 150000m, QRCode = "QR123ABC", TicketCode = "445278", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[1].Id, UserID = userId[10].Id, PaidAmount = 150000m, QRCode = "QR124ABC", TicketCode = "582758", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[2].Id, UserID = userId[11].Id, PaidAmount = 200000m, QRCode = "QR125ABC", TicketCode = "698550", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[2].Id, UserID = userId[12].Id, PaidAmount = 200000m, QRCode = "QR126ABC", TicketCode = "702343", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[3].Id, UserID = userId[13].Id, PaidAmount = 180000m, QRCode = "QR127ABC", TicketCode = "489408", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[3].Id, UserID = userId[14].Id, PaidAmount = 180000m, QRCode = "QR128ABC", TicketCode = "418738", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[4].Id, UserID = userId[15].Id, PaidAmount = 120000m, QRCode = "QR129ABC", TicketCode = "357431", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[4].Id, UserID = userId[16].Id, PaidAmount = 120000m, QRCode = "QR130ABC", TicketCode = "300741", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[6].Id, UserID = userId[17].Id, PaidAmount = 170000m, QRCode = "QR131ABC", TicketCode = "749075", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[6].Id, UserID = userId[18].Id, PaidAmount = 170000m, QRCode = "QR132ABC", TicketCode = "259130", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[6].Id, UserID = userId[19].Id, PaidAmount = 170000m, QRCode = "QR133ABC", TicketCode = "549310", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[8].Id, UserID = userId[20].Id, PaidAmount = 140000m, QRCode = "QR134ABC", TicketCode = "533272", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[8].Id, UserID = userId[21].Id, PaidAmount = 140000m, QRCode = "QR135ABC", TicketCode = "574362", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[8].Id, UserID = userId[22].Id, PaidAmount = 140000m, QRCode = "QR136ABC", TicketCode = "277445", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[10].Id, UserID = userId[23].Id, PaidAmount = 220000m, QRCode = "QR137ABC", TicketCode = "659561", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[10].Id, UserID = userId[24].Id, PaidAmount = 220000m, QRCode = "QR138ABC", TicketCode = "308473", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[10].Id, UserID = userId[25].Id, PaidAmount = 220000m, QRCode = "QR139ABC", TicketCode = "996688", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[10].Id, UserID = userId[26].Id, PaidAmount = 220000m, QRCode = "QR140ABC", TicketCode = "719042", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[10].Id, UserID = userId[27].Id, PaidAmount = 220000m, QRCode = "QR141ABC", TicketCode = "535380", Status = EventTicketStatus.Paid },
+                //        new EventTicket { EventId = eventId[10].Id, UserID = userId[28].Id, PaidAmount = 220000m, QRCode = "QR142ABC", TicketCode = "679216", Status = EventTicketStatus.Paid }
+
+
+
+                //    };
+
+                //    await context.EventTickets.AddRangeAsync(eventTickets);
+                //    await context.SaveChangesAsync();
+                //}
             }
-
-            //// 12. Seed ticket event
-            //if (!context.EventTickets.Any())
-            //{
-            //    var eventId = context.Events.ToArray();
-            //    var userId = context.Users.ToArray();
-            //    Console.WriteLine($"Số lượng sự kiện: {eventId.Length}");
-            //    //if (eventId.Length < 10) throw new Exception("Không đủ Services để seeding ServiceDetails.");
-
-            //    var eventTickets  = new[]
-            //    {
-            //        new EventTicket { EventId = eventId[1].Id, UserID = userId[9].Id, PaidAmount = 150000m, QRCode = "QR123ABC", TicketCode = "445278", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[1].Id, UserID = userId[10].Id, PaidAmount = 150000m, QRCode = "QR124ABC", TicketCode = "582758", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[2].Id, UserID = userId[11].Id, PaidAmount = 200000m, QRCode = "QR125ABC", TicketCode = "698550", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[2].Id, UserID = userId[12].Id, PaidAmount = 200000m, QRCode = "QR126ABC", TicketCode = "702343", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[3].Id, UserID = userId[13].Id, PaidAmount = 180000m, QRCode = "QR127ABC", TicketCode = "489408", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[3].Id, UserID = userId[14].Id, PaidAmount = 180000m, QRCode = "QR128ABC", TicketCode = "418738", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[4].Id, UserID = userId[15].Id, PaidAmount = 120000m, QRCode = "QR129ABC", TicketCode = "357431", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[4].Id, UserID = userId[16].Id, PaidAmount = 120000m, QRCode = "QR130ABC", TicketCode = "300741", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[6].Id, UserID = userId[17].Id, PaidAmount = 170000m, QRCode = "QR131ABC", TicketCode = "749075", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[6].Id, UserID = userId[18].Id, PaidAmount = 170000m, QRCode = "QR132ABC", TicketCode = "259130", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[6].Id, UserID = userId[19].Id, PaidAmount = 170000m, QRCode = "QR133ABC", TicketCode = "549310", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[8].Id, UserID = userId[20].Id, PaidAmount = 140000m, QRCode = "QR134ABC", TicketCode = "533272", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[8].Id, UserID = userId[21].Id, PaidAmount = 140000m, QRCode = "QR135ABC", TicketCode = "574362", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[8].Id, UserID = userId[22].Id, PaidAmount = 140000m, QRCode = "QR136ABC", TicketCode = "277445", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[10].Id, UserID = userId[23].Id, PaidAmount = 220000m, QRCode = "QR137ABC", TicketCode = "659561", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[10].Id, UserID = userId[24].Id, PaidAmount = 220000m, QRCode = "QR138ABC", TicketCode = "308473", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[10].Id, UserID = userId[25].Id, PaidAmount = 220000m, QRCode = "QR139ABC", TicketCode = "996688", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[10].Id, UserID = userId[26].Id, PaidAmount = 220000m, QRCode = "QR140ABC", TicketCode = "719042", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[10].Id, UserID = userId[27].Id, PaidAmount = 220000m, QRCode = "QR141ABC", TicketCode = "535380", Status = EventTicketStatus.Paid },
-            //        new EventTicket { EventId = eventId[10].Id, UserID = userId[28].Id, PaidAmount = 220000m, QRCode = "QR142ABC", TicketCode = "679216", Status = EventTicketStatus.Paid }
-
-
-
-            //    };
-
-            //    await context.EventTickets.AddRangeAsync(eventTickets);
-            //    await context.SaveChangesAsync();
-            //}
         }
     }
 }
