@@ -3,6 +3,7 @@ using BusinessObject.Entities;
 using BusinessObject.Enum;
 using BusinessObject.Schedule;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -17,6 +18,8 @@ using Services.Commons.DTOs.Ticket;
 using Services.Commons.DTOs.Transaction;
 using Services.Interfaces;
 using Services.PaymentSetting;
+using SkinTime.Hubs;
+using System.Net.NetworkInformation;
 
 namespace Services.Implement
 {
@@ -27,14 +30,18 @@ namespace Services.Implement
         private readonly ICache _cache;
         private readonly VNPay _vnPay;
         private readonly ZaloPay _zaloPay;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly INotificationService _notificationService;
 
-        public TransactionService(IMapper mapper,ICache cache, IUnitOfWork unitOfWork, VNPay vNPay, ZaloPay zaloPay)
+        public TransactionService(IMapper mapper,ICache cache, IUnitOfWork unitOfWork, VNPay vNPay, ZaloPay zaloPay,IHubContext<NotificationHub> hubContext,INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _vnPay = vNPay;
             _zaloPay = zaloPay;
             _cache = cache;
             _mapper = mapper;
+            _hubContext = hubContext;
+            _notificationService   = notificationService;
         }
 
         public async Task<string> CallbackPayment(string redisKey, IQueryCollection data)
@@ -138,7 +145,8 @@ namespace Services.Implement
 
         public async Task<ServiceResult<bool>> RefundPayment(Guid idTransaction)
         {
-
+            bool isRefunded = false;
+            string notificationMessage = "";
             var transacion = await _unitOfWork.Repository<Transaction>().FindAsync(tr => tr.Id == idTransaction);
            if(transacion.Method == PaymentMethod.VnPay)
             {
@@ -146,11 +154,14 @@ namespace Services.Implement
                 if (isSuccess) {
                     var transaction = _mapper.Map<Transaction>(transactionDTO);
                     transaction.IsRefundTransaction = true;
+                    CancelBooking(transaction);
                     await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
                     await _unitOfWork.Complete();
+                    isRefunded = true;
+                    notificationMessage = $"Số tền {transacion.Amount} đã được hoàn tiền qua VNPay.";
                 }
                 else {
-                    return ServiceResult<bool>.Success(false);
+                    notificationMessage = $"Số tền {transacion.Amount} qua VNPay thất bại!";
                 }
             }
             if(transacion.Method == PaymentMethod.ZaloPay){
@@ -160,15 +171,29 @@ namespace Services.Implement
                     var transaction = _mapper.Map<Transaction>(transactionDTO);
                     await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
                     await _unitOfWork.Complete();
+                    CancelBooking(transaction);
+                    isRefunded = true;
+                    notificationMessage = $"Số tền {transacion.Amount} đã được hoàn tiền qua ZaloPay.";
                 }
                 else
                 {
-                    return ServiceResult<bool>.Success(false);
+                    notificationMessage = $"Số tền  {transacion.Amount} qua ZaloPay thất bại!";
                 }
             }
-           return ServiceResult<bool>.Success(true);
-        }
+            await _notificationService.CreateNotificationOfSystem(transacion.BookingNavigation.CustomerId, notificationMessage, null);
 
+            await _hubContext.Clients.User(transacion.BookingNavigation.CustomerId.ToString())
+    .SendAsync("ReceiveNotification", notificationMessage);
+            return isRefunded
+      ? ServiceResult<bool>.Success(true)
+      : ServiceResult<bool>.Success(false);
+        }
+        public async Task CancelBooking(Transaction transaction)
+        {
+            var booking = await _unitOfWork.Repository<Booking>().FindAsync(bo => bo.TransactionId == transaction.Id);
+             booking.Status = BookingStatus.Canceled;
+          await  _unitOfWork.Complete();
+        }
         public async Task<string> CallbackPaymentTicket(string redisKey, IQueryCollection data)
         {
             string jsonData = await _cache.GetAsync<string>(redisKey);

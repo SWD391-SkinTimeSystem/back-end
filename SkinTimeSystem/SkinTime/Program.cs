@@ -17,7 +17,7 @@ namespace SkinTime
             services.ConfigurateAuthenticationMethod(config);
             services.AddRedisService(config);
             services.AddControllers();
-            services.AddSignalR().AddNewtonsoftJsonProtocol(); ;
+            services.AddSignalR().AddNewtonsoftJsonProtocol(); 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddCors(options =>

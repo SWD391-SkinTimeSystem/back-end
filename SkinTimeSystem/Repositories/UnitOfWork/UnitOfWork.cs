@@ -19,6 +19,7 @@ namespace Repositories.UnitOfWork
         private readonly FirebaseStorageService _fileService;
         public IBookingRepository Bookings { get; private set; }
         public IServiceRepository Services { get; private set; }
+        public INotificationRepository NotificationRepository { get; private set; }
         public IUserRepository UserRepository {get; private set; }
         public ITherapistRepository TherapistRepository { get; private set; }
         public IEventRepository EventRepository { get; private set; }
@@ -28,6 +29,7 @@ namespace Repositories.UnitOfWork
         public UnitOfWork(ApplicationDbContext context,FirebaseStorageService fileService)
         {
             _context = context;
+            NotificationRepository = new NotificationRepository(context);
             Bookings = new BookingRepository(context);
             Services = new ServiceRepository(context,fileService);
             Trackings = new TrackingRepository(context);

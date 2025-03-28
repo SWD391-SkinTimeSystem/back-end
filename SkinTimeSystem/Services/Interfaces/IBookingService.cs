@@ -1,4 +1,5 @@
 ﻿using BusinessObject.Entities;
+using Repositories;
 using Services.Commons;
 using Services.Commons.DTOs.Booking;
 using System;
@@ -13,7 +14,7 @@ namespace Services.Interfaces
     {
         Task<ICollection<BokingServiceStatusDTO>> GetAppointments(Guid userId, string status);
         Task<ICollection<BokingServiceStatusDTO>> GetAppointmentsOfTherapist(Guid userId, string status);
-
+        Task<ServiceResult<PaginationResult<BookingAll>>> GetAllBooking(int page, int pageSize);
         Task<ServiceResult<BookingDetailDTO>> GetBookingInformation(Guid bookingId);
         Task<ServiceResult<string>> CreateBooking(BookingServiceDTO booking, Guid userId,string? returnAction);
 

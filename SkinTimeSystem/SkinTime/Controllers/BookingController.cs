@@ -63,7 +63,14 @@ namespace SkinTime.Controllers
                 return await _service.GetBookingInformation(id);
             });
         }
-
+        [HttpGet]
+        public async Task<ActionResult> GetAllbooking(int page = 1, int pageSize = 10)
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.GetAllBooking(page,pageSize);
+            });
+        }
         [HttpGet("transaction/{id}")]
         public async Task<ActionResult> GetTransaction(Guid id)
         {

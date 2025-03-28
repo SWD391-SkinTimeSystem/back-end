@@ -9,6 +9,7 @@ using Services.Commons.DTOs.Booking;
 using Services.Commons.DTOs.Category;
 using Services.Commons.DTOs.Event;
 using Services.Commons.DTOs.Feedback;
+using Services.Commons.DTOs.Notification;
 using Services.Commons.DTOs.Question;
 using Services.Commons.DTOs.Schedule;
 using Services.Commons.DTOs.Service;
@@ -136,6 +137,12 @@ namespace SkinTime.Helpers
                     : "Not yet"))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceNavigation.Description))
                 .ReverseMap();
+            CreateMap<Booking, BookingAll>()
+    .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src => src.TherapistNavigation.UserNavigation.FullName))
+    .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+    .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.CreatedTime)))
+    .ForMember(dest => dest.BookingTime, opt => opt.MapFrom(src => TimeOnly.FromDateTime(src.CreatedTime)));
             #endregion
 
             #region Schedules
@@ -199,7 +206,7 @@ namespace SkinTime.Helpers
             CreateMap<Feedback, Services.Commons.DTOs.Feedback.ServiceFeedbackDTO>()
                 .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId))
-                .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.FullName))
+                //.ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.BookingNavigation.CustomerNavigation.FullName))
                 .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.ServiceRating)) // Trung bình rating
                 .ForMember(dest => dest.Feedback, opt => opt.MapFrom(src => $"{src.ServiceFeedback}".Trim()))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.CreatedTime)));
@@ -332,10 +339,17 @@ namespace SkinTime.Helpers
             #region skintype
             CreateMap<SkinTypeDescriptionDTO, SkinType>().ReverseMap();
             #endregion
+            #region nottification
+            CreateMap<Notification, NotificationAll>();
+            #endregion
 
 
 
         }
+
+
+
+        
     }
 
 }

@@ -4,15 +4,18 @@ using BusinessObject.Enum;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Repositories;
 using Repositories.Interface;
 using Repositories.UnitOfWork;
 using Services.Commons;
 using Services.Commons.DTOs.Booking;
+using Services.Commons.DTOs.Event;
 using Services.Interfaces;
 using Services.PaymentSetting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -57,6 +60,23 @@ namespace Services.Implement
 
             return ServiceResult<string>.Failed(ServiceError.ValidationFailed("Unsupported payment type"));
         }
+
+        public async Task<ServiceResult<PaginationResult<BookingAll>>> GetAllBooking(int page, int pageSize)
+        {
+            PaginationResult<Booking> results = await _unitOfWork.Bookings.GetBookingPaginated(page, pageSize);
+
+            var mappedResults = new PaginationResult<BookingAll>
+            {
+                Content = _mapper.Map<ICollection<BookingAll>>(results.Content),
+                CurrentPage = results.CurrentPage,
+                ItemAmount = results.ItemAmount,
+                PageSize = pageSize
+            };
+
+            return ServiceResult<PaginationResult<BookingAll>>.Success(mappedResults);
+        }
+
+
 
         public async Task<ICollection<BokingServiceStatusDTO>> GetAppointments(Guid userId, string status)
         {

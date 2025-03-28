@@ -15,7 +15,7 @@ namespace BusinessObject.Entities
         [MaxLength(2048)]
         public required string Content { get; set; }
         [Column("to_user_id")]
-        public required Guid ToUserId { get; set; }
+        public required Guid? ToUserId { get; set; }
         [Column("is_read")]
         public bool IsRead { get; set; } = false;
         [Column("about_id")]
