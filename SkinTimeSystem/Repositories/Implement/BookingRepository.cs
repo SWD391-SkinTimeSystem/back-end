@@ -110,7 +110,8 @@ namespace Repositories.Implement
 
         public async Task<PaginationResult<Booking>> GetBookingPaginated(int page, int pageSize)
         {
-            return await AsPaginated(page, pageSize, null, includes: x => x.Include(x => x.TherapistNavigation).Include(x=>x.ServiceNavigation),null);
+            return await AsPaginated(page, pageSize, null, includes: x => x.Include(x => x.TherapistNavigation).Include(x=>x.ServiceNavigation).Include(X=> X.ScheduleNavigation).Include(X => X.CustomerNavigation),
+                order: x => x.OrderBy(x => x.CreatedTime));
         }
     }
 }

@@ -2,6 +2,7 @@
 using BusinessObject.Entities;
 using BusinessObject.Enum;
 using BusinessObject.EventEnums;
+using BusinessObject.Schedule;
 using Microsoft.AspNetCore.Http;
 using Services.Commons.Analysis;
 using Services.Commons.DTOs.Analysis;
@@ -138,11 +139,25 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ServiceNavigation.Description))
                 .ReverseMap();
             CreateMap<Booking, BookingAll>()
-    .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src => src.TherapistNavigation.UserNavigation.FullName))
-    .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
-    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-    .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.CreatedTime)))
-    .ForMember(dest => dest.BookingTime, opt => opt.MapFrom(src => TimeOnly.FromDateTime(src.CreatedTime)));
+     .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src => src.TherapistNavigation.UserNavigation.FullName))
+     .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
+     .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerNavigation.FullName))
+     .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.ReservedTime)))
+     .ForMember(dest => dest.BookingTime, opt => opt.MapFrom(src => TimeOnly.FromDateTime(src.ReservedTime)))
+     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+         .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src =>
+        src.ScheduleNavigation.Where(s => s.Status == ScheduleStatus.Completed)));
+
+            CreateMap<Schedule, ScheduleDTO>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.ReservedStartTime))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.ReservedEndTime))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Id))
+                .ForMember(dest => dest.ServiceStepId, opt => opt.MapFrom(src => src.ServiceDetailId))
+                .ForMember(dest => dest.ServiceStepName, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Name))
+                .ForMember(dest => dest.Step, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Name));
+
             #endregion
 
             #region Schedules
