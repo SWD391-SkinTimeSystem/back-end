@@ -123,13 +123,9 @@ namespace SkinTime.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<ScheduleDTO>>> GetPersonalSchedule()
         {
-            // Get the user id from jwt token.
-            string jwtToken = Request.Headers.Authorization.Single()!;
-            Guid userId = Guid.Parse(_tokenUtils.GetDataDictionaryFromJwt(jwtToken.Split()[1])["id"]);
-
-            return await HandleServiceCall<ICollection<Schedule>, ICollection<ScheduleDTO>>(async () =>
+            return await HandleServiceCall<ICollection<ScheduleDTO>>(async () =>
             {
-                var schedules = await _service.GetUserSchedules(userId);
+                var schedules = await _service.GetUserSchedules(Guid.Parse(base.GetUserIdFromJwt()));
                 return schedules;
             });
         }

@@ -70,6 +70,14 @@ namespace SkinTime.Controllers
             return HandleServiceCall(result);
         }
 
+        [HttpPost("status")]
+        public async Task<IActionResult> UpdateUserStatus([FromBody] AccountStatusUpdate update)
+        {
+            ServiceResult result = await _services.UpdateUserStatus(update.UserId, update.Status);
+
+            return HandleServiceCall(result);
+        }
+
         /// <summary>
         ///     Get account information for all user in the system. (This should be limited to admin)
         /// </summary>
@@ -77,15 +85,16 @@ namespace SkinTime.Controllers
         [AllowAnonymous]
         [ProducesResponseType<ApiResponse<PaginationResult<AccountInformation>>>(StatusCodes.Status200OK)]
         [HttpGet("list")]
-        public async Task<ActionResult<IReadOnlyCollection<AccountInformation>>> GetUserAccountList(int page = 1, int page_size = 10)
+        public async Task<ActionResult<IReadOnlyCollection<AccountInformation>>> GetUserAccountList(int page = 1, int page_size = 10, UserRole? role = null, UserStatus? status = null)
         {
-            return Ok(new ApiResponse
+            return Ok(new ApiResponse<PaginationResult<AccountInformation>>
             {
                 Success = true,
                 Message = "Success",
-                Data = await _services.GetAllUser(page, page_size),
+                Data = await _services.GetUserByRole(page, page_size, role, status),
             });
         }
+
 
         /// <summary>
         ///     Return the currently authenticated user information.
@@ -124,12 +133,21 @@ namespace SkinTime.Controllers
         /// <remarks>Only the admin may use this endpoint
         /// </remarks>
         /// <returns>200Ok response if successfully create an user account, else 400BadRequest</returns>
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("account")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountRegistration registrationInfo)
         {
-            ServiceResult result = await _services.CreateAccount(registrationInfo);
+            ServiceResult result;
 
+            if (User.IsInRole("Admin"))
+            {
+                result = await _services.CreateUserAsAdmin(registrationInfo);
+            }
+            else
+            {
+                result = await _services.CreateAccount(registrationInfo);
+            }
+            
             return HandleServiceCall(result);
         }
 
