@@ -13,7 +13,7 @@ namespace BusinessObject.Entities
     public class ServiceDetail: BaseEntity
     {
         [Column("name", TypeName = "NVARCHAR")]
-        [MaxLength(100)]
+        [MaxLength(120)]
         public string Name{  get; set; } = string.Empty;
 
         [Column("description", TypeName = "NVARCHAR")]

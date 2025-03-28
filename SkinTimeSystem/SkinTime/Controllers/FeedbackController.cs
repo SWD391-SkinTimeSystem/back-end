@@ -50,7 +50,7 @@ namespace SkinTime.Controllers
         ///     Get all the feedback exist in the system. Only available for manager and admin.
         /// </summary>
         /// <returns>An <see cref="ApiResponse{T}"/> with a list of all booking feedback made by users.</returns>
-        [Authorize(Roles = "Manager,Admin")]
+        //[Authorize(Roles = "Manager,Admin")]
         [HttpGet]
         [ProducesResponseType<ApiResponse<ICollection<BookingFeedbackDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
@@ -121,7 +121,7 @@ namespace SkinTime.Controllers
         [HttpGet("therapist/{id}")]
         [ProducesResponseType<ApiResponse<ICollection<TherapistFeedbackDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ApiResponse>> GetTherapistFeedback(string id)
+        public async Task<IActionResult> GetTherapistFeedback(string id)
         {
             return await HandleServiceCall<ICollection<TherapistFeedbackDTO>>(async () =>
             {
@@ -132,12 +132,12 @@ namespace SkinTime.Controllers
         /// <summary>
         ///     Only return service related feedback data of a service.
         /// </summary>
-        /// <param name="id">The therapist id</param>
+        /// <param name="id">The service id</param>
         /// <returns></returns>
         [ProducesResponseType<ApiResponse<ICollection<ServiceFeedbackDTO>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ApiResponse>(StatusCodes.Status400BadRequest)]
         [HttpGet("service/{id}")]
-        public async Task<ActionResult<ApiResponse>> GetServiceFeedback(string id)
+        public async Task<IActionResult> GetServiceFeedback(string id)
         {
             return await HandleServiceCall<ICollection<ServiceFeedbackDTO>>(async () =>
             {

@@ -13,7 +13,7 @@ namespace BusinessObject.Entities
     public class Event: BaseEntity
     {
         [Column("event_name", TypeName = "NVARCHAR")]
-        [MaxLength(50)]
+        [MaxLength(120)]
         public required string Name { get; set; }//
 
         [Column("capacity")]

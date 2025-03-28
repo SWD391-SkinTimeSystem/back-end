@@ -14,7 +14,7 @@ namespace BusinessObject.Entities
     public class Service : BaseEntity
     {
         [Column("service_name", TypeName = "NVARCHAR")]
-        [MaxLength(50)]
+        [MaxLength(120)]
         public required string ServiceName { get; set; }
 
         [Column("service_description", TypeName = "NVARCHAR")]

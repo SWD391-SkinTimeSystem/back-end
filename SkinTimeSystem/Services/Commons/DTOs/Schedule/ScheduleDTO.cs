@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using BusinessObject.Schedule;
+using System.Text.Json.Serialization;
 
 namespace Services.Commons.DTOs.Schedule
 {
@@ -14,6 +15,8 @@ namespace Services.Commons.DTOs.Schedule
         public TimeOnly? EndTime { get; set; }
         [JsonPropertyName("status")]
         public required string Status { get; set; }
+        [JsonPropertyName("status_id")]
+        public required ScheduleStatus StatusId { get; set; }
         [JsonPropertyName("service_id")]
         public required Guid ServiceId { get; set; }
         [JsonPropertyName("step_id")]
