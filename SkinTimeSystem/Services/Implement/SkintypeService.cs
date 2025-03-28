@@ -49,6 +49,17 @@ namespace Services.Implement
             return ServiceResult<ICollection<SkintypeDetailDTO>>.Success(listSkintypeDTO);
         }
 
+        public async Task<ServiceResult<ICollection<SkinTypeDescriptionDTO>>> GetAllSkinTypeWithDescription()
+        {
+            var listSkintype = await _unitOfWork.Repository<SkinType>().GetAllAsync();
+            var listSkintypeDTO = _mapper.Map<ICollection<SkinTypeDescriptionDTO>>(listSkintype);
+
+            return ServiceResult<ICollection<SkinTypeDescriptionDTO>>.Success(listSkintypeDTO);
+        }
+
+
+
+
         public Task<SkinType> GetSkinTypeById(Guid id)
         {
             throw new NotImplementedException();

@@ -37,10 +37,10 @@ namespace Repositories.Implement
             return true;
         }
 
-        public async Task<bool> CheckoutTracking(Guid trackingId)
+        public async Task<bool> CheckoutTracking(Guid scheduleId)
         {
-            var tracking = _context.Trackings.SingleOrDefault(x => x.Id == trackingId);
-            var schedule = _context.Schedules.SingleOrDefault(x => x.Id == tracking.ScheduleId);
+            var schedule = _context.Schedules.SingleOrDefault(x => x.Id == scheduleId);
+            var tracking = _context.Trackings.SingleOrDefault(x => x.Id == schedule.TrakingNavigation.Id);
             tracking.CheckoutTime = DateTime.Now;
             schedule.Status = ScheduleStatus.Completed;
             _context.Schedules.Update(schedule);

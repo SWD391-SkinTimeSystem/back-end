@@ -343,6 +343,13 @@ namespace SkinTime.Helpers
             CreateMap<SkinTypeCreationDTO, SkinType>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()));
             #endregion
+
+            #region skintype
+            CreateMap<SkinTypeDescriptionDTO, SkinType>().ReverseMap();
+            #endregion
+
+
+
         }
 
 

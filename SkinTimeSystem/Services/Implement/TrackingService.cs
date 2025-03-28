@@ -96,8 +96,8 @@ namespace Services.Implement
         }
 
 
-        public async Task<ServiceResult<string>> CheckoutTracking(Guid trackingId) { 
-            await _unitOfWork.Trackings.CheckoutTracking(trackingId);
+        public async Task<ServiceResult<string>> CheckoutTracking(Guid scheduleId) { 
+            await _unitOfWork.Trackings.CheckoutTracking(scheduleId);
             return ServiceResult<string>.Success("Tracking checkout successfully");
 
         }

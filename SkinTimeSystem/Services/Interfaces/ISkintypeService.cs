@@ -20,5 +20,7 @@ namespace Services.Interfaces
 
         Task<ServiceResult> UpdateSkinType(Guid id, SkinType skintype);
         Task<ServiceResult<ICollection<SkintypeDetailDTO>>> GetAllSkintype();
+
+        Task<ServiceResult<ICollection<SkinTypeDescriptionDTO>>> GetAllSkinTypeWithDescription();
     }
 }

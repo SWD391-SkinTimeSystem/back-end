@@ -38,5 +38,15 @@ namespace API.Controllers
 
             });
         }
+
+        [HttpGet("/all-decription")]
+        public async Task<IActionResult> GetAllSkinTypeWithDescription()
+        {
+            return await HandleServiceCall(async () =>
+            {
+                return await _service.GetAllSkinTypeWithDescription();
+
+            });
+        }
     }
 }
