@@ -99,7 +99,7 @@ namespace Services.PaymentSetting
             AddRequestData("vnp_IpAddr", ipAddress);
 
             // Tạo chuỗi rawData theo quy tắc checksum chính xác
-            string rawData = $"{requestId}|{Version}|querydr|{TmnCode}|{transactionId}|{transactionDate}|{createDate}|{ipAddress}|truy vấn giao dịch";
+            string rawData = $"{requestId}|2.1.0|querydr|{TmnCode}|{transactionId}|{transactionDate}|{createDate}|{ipAddress}|Truy vấn giao dịch";
 
             // Tạo checksum theo thuật toán bảo mật
             string secureHash = GenerateSecureHash(rawData);

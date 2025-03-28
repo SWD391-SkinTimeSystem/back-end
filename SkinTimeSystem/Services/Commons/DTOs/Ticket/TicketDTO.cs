@@ -18,6 +18,8 @@ namespace Services.Commons.DTOs.Ticket
         public required string Status { get; set; }
         [JsonPropertyName("otp_code")]
         public required string Otp { get; set; }
+        [JsonPropertyName("event_date")]
+        public required DateTime EventDate { get; set; }
         [JsonPropertyName("qr_code")]
         public required string QRCode { get; set; }
     }
