@@ -143,10 +143,8 @@ namespace Services.Implement
         #endregion
 
 
-        public async Task<ServiceResult<bool>> RefundPayment(Guid idTransaction)
+        public async Task<bool> RefundPayment(Guid idTransaction)
         {
-            bool isRefunded = false;
-            string notificationMessage = "";
             var transacion = await _unitOfWork.Repository<Transaction>().FindAsync(tr => tr.Id == idTransaction);
            if(transacion.Method == PaymentMethod.VnPay)
             {
@@ -154,14 +152,13 @@ namespace Services.Implement
                 if (isSuccess) {
                     var transaction = _mapper.Map<Transaction>(transactionDTO);
                     transaction.IsRefundTransaction = true;
-                    CancelBooking(transaction);
                     await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
                     await _unitOfWork.Complete();
-                    isRefunded = true;
-                    notificationMessage = $"Số tền {transacion.Amount} đã được hoàn tiền qua VNPay.";
+                    await CancelBooking(idTransaction);
+                   
                 }
                 else {
-                    notificationMessage = $"Số tền {transacion.Amount} qua VNPay thất bại!";
+                    return false;
                 }
             }
             if(transacion.Method == PaymentMethod.ZaloPay){
@@ -171,26 +168,19 @@ namespace Services.Implement
                     var transaction = _mapper.Map<Transaction>(transactionDTO);
                     await _unitOfWork.Repository<Transaction>().AddAsync(transaction);
                     await _unitOfWork.Complete();
-                    CancelBooking(transaction);
-                    isRefunded = true;
-                    notificationMessage = $"Số tền {transacion.Amount} đã được hoàn tiền qua ZaloPay.";
+                   await CancelBooking(idTransaction);
+
                 }
                 else
                 {
-                    notificationMessage = $"Số tền  {transacion.Amount} qua ZaloPay thất bại!";
+                    return false;
                 }
             }
-            await _notificationService.CreateNotificationOfSystem(transacion.BookingNavigation.CustomerId, notificationMessage, null);
-
-            await _hubContext.Clients.User(transacion.BookingNavigation.CustomerId.ToString())
-    .SendAsync("ReceiveNotification", notificationMessage);
-            return isRefunded
-      ? ServiceResult<bool>.Success(true)
-      : ServiceResult<bool>.Success(false);
+            return true;
         }
-        public async Task CancelBooking(Transaction transaction)
+        public async Task CancelBooking(Guid transaction)
         {
-            var booking = await _unitOfWork.Repository<Booking>().FindAsync(bo => bo.TransactionId == transaction.Id);
+            var booking = await _unitOfWork.Repository<Booking>().FindAsync(bo => bo.TransactionId == transaction);
              booking.Status = BookingStatus.Canceled;
           await  _unitOfWork.Complete();
         }

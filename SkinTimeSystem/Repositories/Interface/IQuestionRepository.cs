@@ -9,6 +9,7 @@ namespace Repositories.Interface
 {
     public interface IQuestionRepository : IGenericRepository<Question>
     {
-
+        Task<Dictionary<SkinType, double>> GetSkinTypePercentagesAsync(List<Guid> listResult);
+        Task<ICollection<Question>> GetAllQuestionsAsync();
     }
 }

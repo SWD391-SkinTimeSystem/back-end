@@ -26,9 +26,13 @@ namespace Repositories.UnitOfWork
         public ITrackingRepository Trackings { get; private set; }
         public IScheduleRepository Schedules { get; private set; }
         public IEventTicketRepository EventTicket { get; private set; }
+
+        public IQuestionRepository QuestionRepository { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context,FirebaseStorageService fileService)
         {
             _context = context;
+            QuestionRepository = new QuestionRepository(context);
             NotificationRepository = new NotificationRepository(context);
             Bookings = new BookingRepository(context);
             Services = new ServiceRepository(context,fileService);

@@ -11,6 +11,8 @@ namespace Services.Commons.DTOs.Service
     public class ServiceCreateBasicDTO
     {
         public required string ServiceName { get; set; }
+        public string? Id { get; set; }
+        public string? Duration { get; set; }
         public required string Description { get; set; }
         public required decimal Price { get; set; }
         public Guid ServiceCategoryID { get; set; }

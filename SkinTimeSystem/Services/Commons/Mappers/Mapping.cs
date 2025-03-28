@@ -61,9 +61,13 @@ namespace SkinTime.Helpers
             #region Service
             CreateMap<ServiceDetailsDTO, ServiceDetail>()
                .ForMember(dest => dest.ServiceID, opt => opt.Ignore());
-            
+
             CreateMap<ServiceDetail, ServiceDetailDTO>();
-            
+            CreateMap<ServiceCreateBasicDTO, Service>()
+             .ForMember(dest => dest.Id, opt => opt.Ignore())
+             .ForMember(dest => dest.Duration, opt => opt.Ignore())
+              .ReverseMap();
+
             CreateMap<Service, ServiceDTO>()
             .ForMember(dest => dest.ServiceDetails, opt => opt.MapFrom(src => src.ServiceDetailNavigation))
             .ForMember(dest => dest.ServiceImages, opt => opt.MapFrom(src => src.ServiceImageNavigation));
@@ -130,7 +134,7 @@ namespace SkinTime.Helpers
      .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
      .ForMember(dest => dest.TimeStart, opt => opt.MapFrom(src => src.ReservedTime))
      .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerNavigation.FullName))
-      .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => src.ReservedTime.ToString("yyyy-MM-dd")))  
+      .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => src.ReservedTime.ToString("yyyy-MM-dd")))
     .ForMember(dest => dest.BookingTime, opt => opt.MapFrom(src => src.ReservedTime.ToString("HH:mm:ss")))
      .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
          .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src =>
@@ -353,7 +357,7 @@ namespace SkinTime.Helpers
 
 
 
-        
+
     }
 
 }

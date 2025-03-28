@@ -16,7 +16,7 @@ namespace Services.Interfaces
     {
         Task<string> CallbackPayment(string redisKey,IQueryCollection data);
         Task<string> CallbackPaymentTicket(string redisKey, IQueryCollection data);
-        Task<ServiceResult<bool>> RefundPayment(Guid idTransaction);
+        Task<bool> RefundPayment(Guid idTransaction);
         Task<string> QuerryTransaction(Guid idTransaction);
     }
 }

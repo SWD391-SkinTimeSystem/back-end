@@ -15,6 +15,7 @@ namespace Repositories.UnitOfWork
         IUserRepository UserRepository { get; }
         ITherapistRepository TherapistRepository { get; }
         INotificationRepository NotificationRepository { get; }
+        IQuestionRepository QuestionRepository { get; }
         IEventRepository EventRepository { get; }
 
         ITrackingRepository Trackings { get; }

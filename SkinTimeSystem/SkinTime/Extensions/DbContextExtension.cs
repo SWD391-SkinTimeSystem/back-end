@@ -951,29 +951,30 @@ namespace SkinTime.Extensions
             if (!context.QuestionOptions.Any())
             {
                 var questions = context.Questions.ToArray();
+                var skinTypes = context.SkinTypes.ToArray();
 
                 var questionOptions = new[]
                 {
-            new QuestionOption { Content = "A. Khô, bình tĩnh và dễ chăm sóc", QuestionID = questions[0].Id },
-            new QuestionOption { Content = "B. Bóng, nhờn và có một chút vấn đề", QuestionID = questions[0].Id },
-            new QuestionOption { Content = "C. Vùng trán và mũi của tôi trơn", QuestionID = questions[0].Id },
-            new QuestionOption { Content = "D. Căng sau khi tôi rửa bằng chất tẩy rửa không tự nhiên", QuestionID = questions[0].Id },
-            new QuestionOption { Content = "A. Luôn luôn", QuestionID = questions[1].Id },
-            new QuestionOption { Content = "B. Rất hiếm khi", QuestionID = questions[1].Id },
-            new QuestionOption { Content = "C. Vào thời điểm kinh nguyệt của tôi", QuestionID = questions[1].Id },
-            new QuestionOption { Content = "D. Thỉnh thoảng", QuestionID = questions[1].Id },
-            new QuestionOption { Content = "A. Trên trán, dọc theo đường chân tóc và trên cằm", QuestionID = questions[2].Id },
-            new QuestionOption { Content = "B. Rất hiếm khi", QuestionID = questions[2].Id },
-            new QuestionOption { Content = "C. Thường là khi tôi không rửa mặt bằng chất tẩy rửa tự nhiên", QuestionID = questions[2].Id },
-            new QuestionOption { Content = "D. Một lần một tháng", QuestionID = questions[2].Id },
-            new QuestionOption { Content = "A. Không có mụn", QuestionID = questions[3].Id },
-            new QuestionOption { Content = "B. Cảm thấy sạch", QuestionID = questions[3].Id },
-            new QuestionOption { Content = "C. Không đỏ và viêm", QuestionID = questions[3].Id },
-            new QuestionOption { Content = "D. Trông khỏe mạnh", QuestionID = questions[3].Id },
-            new QuestionOption { Content = "A. Tôi sử dụng các sản phẩm chăm sóc da tự nhiên hai lần một ngày", QuestionID = questions[4].Id },
-            new QuestionOption { Content = "B. Da tôi không có cảm giác nhờn", QuestionID = questions[4].Id },
-            new QuestionOption { Content = "C. Tôi yêu làn da và bản thân mình", QuestionID = questions[4].Id },
-            new QuestionOption { Content = "D. Tôi không có mụn hoặc mụn đầu đen", QuestionID = questions[4].Id }
+            new QuestionOption { Content = "A. Khô, bình tĩnh và dễ chăm sóc", QuestionID = questions[0].Id, SkinTypes = new List<SkinType> {skinTypes[1] }},
+            new QuestionOption { Content = "B. Bóng, nhờn và có một chút vấn đề", QuestionID = questions[0].Id, SkinTypes = new List<SkinType> {skinTypes[2] } },
+            new QuestionOption { Content = "C. Vùng trán và mũi của tôi trơn", QuestionID = questions[0].Id, SkinTypes = new List<SkinType> {skinTypes[3] } },
+            new QuestionOption { Content = "D. Căng sau khi tôi rửa bằng chất tẩy rửa không tự nhiên", QuestionID = questions[0].Id , SkinTypes = new List<SkinType> {skinTypes[4] }},
+            new QuestionOption { Content = "A. Luôn luôn", QuestionID = questions[1].Id, SkinTypes = new List<SkinType> {skinTypes[2] , skinTypes[3] }},
+            new QuestionOption { Content = "B. Rất hiếm khi", QuestionID = questions[1].Id, SkinTypes = new List<SkinType> {skinTypes[2] , skinTypes[3] } },
+            new QuestionOption { Content = "C. Vào thời điểm kinh nguyệt của tôi", QuestionID = questions[1].Id, SkinTypes = new List<SkinType> {skinTypes[1] , skinTypes[4] } },
+            new QuestionOption { Content = "D. Thỉnh thoảng", QuestionID = questions[1].Id , SkinTypes = new List<SkinType> {skinTypes[0] } },
+            new QuestionOption { Content = "A. Trên trán, dọc theo đường chân tóc và trên cằm", QuestionID = questions[2].Id, SkinTypes = new List<SkinType> {skinTypes[3] }  },
+            new QuestionOption { Content = "B. Rất hiếm khi", QuestionID = questions[2].Id, SkinTypes = new List<SkinType> {skinTypes[1] , skinTypes[4] } },
+            new QuestionOption { Content = "C. Thường là khi tôi không rửa mặt bằng chất tẩy rửa tự nhiên", QuestionID = questions[2].Id, SkinTypes = new List<SkinType> {skinTypes[1] , skinTypes[4] } },
+            new QuestionOption { Content = "D. Một lần một tháng", QuestionID = questions[2].Id , SkinTypes = new List<SkinType> {skinTypes[0] , skinTypes[1], skinTypes[2], skinTypes[3],skinTypes[4] } },
+            new QuestionOption { Content = "A. Không có mụn", QuestionID = questions[3].Id, SkinTypes = new List<SkinType> {skinTypes[1] , skinTypes[4] } },
+            new QuestionOption { Content = "B. Cảm thấy sạch", QuestionID = questions[3].Id, SkinTypes = new List<SkinType> {skinTypes[2] , skinTypes[3] } },
+            new QuestionOption { Content = "C. Không đỏ và viêm", QuestionID = questions[3].Id,SkinTypes = new List<SkinType> {skinTypes[4] }},
+            new QuestionOption { Content = "D. Trông khỏe mạnh", QuestionID = questions[3].Id , SkinTypes = new List<SkinType> {skinTypes[4] } },
+            new QuestionOption { Content = "A. Tôi sử dụng các sản phẩm chăm sóc da tự nhiên hai lần một ngày", QuestionID = questions[4].Id , SkinTypes = new List<SkinType> {skinTypes[1] , skinTypes[4] } },
+            new QuestionOption { Content = "B. Da tôi không có cảm giác nhờn", QuestionID = questions[4].Id, SkinTypes = new List<SkinType> {skinTypes[2] , skinTypes[3] } },
+            new QuestionOption { Content = "C. Tôi yêu làn da và bản thân mình", QuestionID = questions[4].Id, SkinTypes = new List<SkinType> {skinTypes[0] , skinTypes[1], skinTypes[2], skinTypes[3],skinTypes[4] } },
+            new QuestionOption { Content = "D. Tôi không có mụn hoặc mụn đầu đen", QuestionID = questions[4].Id, SkinTypes = new List<SkinType> {skinTypes[2] , skinTypes[3] } }
         };
 
                 await context.QuestionOptions.AddRangeAsync(questionOptions);

@@ -31,7 +31,8 @@ namespace Repositories.Implement
 
         public async Task<bool> NoteTracking(Guid trackingId, string note)
         {
-            var tracking = _context.Trackings.SingleOrDefault(x => x.Id == trackingId);
+            var schedule = _context.Schedules.SingleOrDefault(x => x.Id == trackingId);
+            var tracking = _context.Trackings.SingleOrDefault(x => x.Id == schedule.TrakingNavigation.Id);
             tracking.Note = note;
             await _context.SaveChangesAsync();
             return true;
