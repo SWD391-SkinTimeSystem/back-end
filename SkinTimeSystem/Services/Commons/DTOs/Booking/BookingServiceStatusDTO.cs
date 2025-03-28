@@ -7,6 +7,7 @@
         public DateOnly Date { get; set; }
         public string TherapistName { get; set; }
         public string ServiceName { get; set; }
+        public string CustomerName { get; set; }
         public string Thumbnail { get; set; }
         public bool IsTretmentPlan { get; set; }
         public TimeOnly TimeStart { get; set; }

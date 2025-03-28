@@ -109,6 +109,7 @@ namespace SkinTime.Helpers
 
             CreateMap<Booking, BokingServiceStatusDTO>()
                 .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerNavigation.FullName))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.ReservedTime)))
                 .ForMember(dest => dest.TimeStart, opt => opt.MapFrom(src =>
                       src.ScheduleNavigation
