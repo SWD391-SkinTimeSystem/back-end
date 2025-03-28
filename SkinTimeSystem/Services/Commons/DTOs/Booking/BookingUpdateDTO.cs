@@ -1,4 +1,4 @@
-﻿namespace Services.Commons.DTOs.Booking
+﻿    namespace Services.Commons.DTOs.Booking
 {
     public class UpdateBookingDTO
     {
