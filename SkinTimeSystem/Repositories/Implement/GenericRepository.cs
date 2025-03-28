@@ -225,7 +225,6 @@ namespace Repositories.Implement
                 ItemAmount = items.Count(),
                 CurrentPage = page,
                 PageSize = pageSize,
-
             };
         }
     }

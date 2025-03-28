@@ -32,27 +32,13 @@ namespace SkinTime.Helpers
     {
         public Mapping()
         {
-            //CreateMap<Booking, BookingDTO>()
-            //    .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerNavigation.FullName))
-            //    .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src => src.TherapistNavigation.UserNavigation.FullName))
-            //    .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName));
-
-            //CreateMap<Booking, BookingDetailDTO>()
-            //    .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.TotalPayment))
-            //    .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src => src.TotalPayment))
-            //    .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.TotalPayment))
-            //    .ForMember(dest => dest.PaymentValue, opt => opt.MapFrom(src => src.TotalPayment))
-            //    .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.TransactionId != null ? "Success" : "Failed"))
-            //    .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.ScheduleNavigation))
-            //    .ForMember(dest => dest.VoucherPercentage, opt => opt
-            //        .MapFrom(src => src.VoucherNavigation == null ? 0 : src.VoucherNavigation.Discount));
-
             #region User
             CreateMap<CustomerRegistration, User>()
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "Customer"));
 
-            CreateMap<AccountRegistration, User>();
+            CreateMap<AccountRegistration, User>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Username));
 
             CreateMap<AccountUpdateInformation, User>();
 
@@ -209,7 +195,7 @@ namespace SkinTime.Helpers
 
             CreateMap<Feedback, BookingFeedbackDTO>()
                 .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.CreatedTime))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.CreatedTime)))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.BookingNavigation.CustomerId));
 
             CreateMap<Feedback, TherapistFeedbackDTO>()

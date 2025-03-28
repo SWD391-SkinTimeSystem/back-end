@@ -193,7 +193,8 @@ namespace Services.Implement
             }
 
             var result = await _unitOfWork.Repository<Schedule>()
-                .ListAsync(x => x.BookingNavigation.CustomerId == userId || x.BookingNavigation.TherapistId == userId);
+                .ListAsync(x => x.Include(x => x.BookingNavigation).ThenInclude(x => x.TherapistNavigation),
+                x => x.BookingNavigation.CustomerId == userId || x.BookingNavigation.TherapistNavigation.UserID == userId);
 
             return ServiceResult<ICollection<Schedule>>.Success(result.ToList());
         }

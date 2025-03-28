@@ -77,32 +77,6 @@ namespace Services.Implement
             return ServiceResult<User>.Success(userInformation);
         }
 
-        public async Task<PaginationResult<AccountInformation>> GetAllUser(int page, int page_size)
-        {
-            var result = await _unitOfWork.UserRepository.AsPaginated(page, page_size);
-
-            ICollection<AccountInformation> information = _mapper.Map<ICollection<AccountInformation>>(result.Content);
-
-            return new PaginationResult<AccountInformation>
-            {
-                Content = information,
-                CurrentPage = page,
-                ItemAmount = result.ItemAmount,
-                PageSize = page_size,
-            };
-        }
-
-        public async Task<ServiceResult> GetUserById(Guid id)
-        {
-            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
-
-            if (user != null)
-            {
-                return ServiceResult.Success(_mapper.Map<AccountInformation>(user));
-            }
-            return ServiceResult.Failed(ServiceError.NotFound("Can not find the user entity with provided id."));
-        }
-
         public async Task<ServiceResult> CreateAccount(AccountRegistration account)
         {
             User userInformation = _mapper.Map<User>(account);
@@ -121,6 +95,31 @@ namespace Services.Implement
             await _emailUtils.SendGoogleEmailAsync(account.Email, "Account creation notification", email_content);
 
             return result;
+        }
+
+        public async Task<ServiceResult> CreateUserAsAdmin(AccountRegistration account)
+        {
+            User user = _mapper.Map<User>(account);
+            user.Status = UserStatus.Active;
+
+            var result = await CreateUserAccount(user);
+
+            if (result.IsFailed)
+            {
+                return result;
+            }
+
+            string email_content = File.ReadAllText(".\\StaticResoucres\\register_notify")
+                .Replace("[0]", user.FullName)
+                .Replace("[1]", user.Email)
+                .Replace("[2]", user.Password);
+            await _emailUtils.SendGoogleEmailAsync(user.Email, "Account creation notification", email_content);
+
+
+            await _unitOfWork.UserRepository.AddAsync(user);
+            await _unitOfWork.Complete();
+
+            return ServiceResult.Success();
         }
 
         public async Task<ServiceResult> CreateCustomerAccount(CustomerRegistration account)
@@ -240,6 +239,49 @@ namespace Services.Implement
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.Complete();
             return ServiceResult.Success();
+        }
+
+        public async Task<PaginationResult<AccountInformation>> GetAllUser(int page, int page_size)
+        {
+            var result = await _unitOfWork.UserRepository.AsPaginated(page, page_size);
+
+            ICollection<AccountInformation> information = _mapper.Map<ICollection<AccountInformation>>(result.Content);
+
+            return new PaginationResult<AccountInformation>
+            {
+                Content = information,
+                CurrentPage = page,
+                ItemAmount = result.ItemAmount,
+                PageSize = page_size,
+            };
+        }
+
+        public async Task<ServiceResult> GetUserById(Guid id)
+        {
+            var user = await _unitOfWork.Repository<User>().GetByIdAsync(id);
+
+            if (user != null)
+            {
+                return ServiceResult.Success(_mapper.Map<AccountInformation>(user));
+            }
+            return ServiceResult.Failed(ServiceError.NotFound("Can not find the user entity with provided id."));
+        }
+
+        public async Task<PaginationResult<AccountInformation>> GetUserByRole(int page, int page_size, UserRole? role, UserStatus? status)
+        {
+            PaginationResult<User> staffs = (PaginationResult<User>) await _unitOfWork.UserRepository
+                .GetMatchPaginated(page, page_size, null, null, null, role, status, x => x
+                    .OrderByDescending(user => user.CreatedTime));
+
+            ICollection<AccountInformation> list = _mapper.Map<ICollection<AccountInformation>>(staffs.Content);
+
+            return new PaginationResult<AccountInformation>
+            {
+                Content = list,
+                CurrentPage = page,
+                ItemAmount = staffs.ItemAmount,
+                PageSize = page_size,
+            };
         }
     }
 }

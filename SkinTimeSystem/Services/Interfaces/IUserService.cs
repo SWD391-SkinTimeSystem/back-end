@@ -7,6 +7,7 @@ using Services.Commons.DTOs.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,9 +17,13 @@ namespace Services.Interfaces
     {
         Task<PaginationResult<AccountInformation>> GetAllUser(int page, int page_size);
 
+        Task<PaginationResult<AccountInformation>> GetUserByRole(int page, int page_size, UserRole? role, UserStatus? status);
+
         Task<ServiceResult> GetUserById(Guid id);
 
         Task<ServiceResult> CreateAccount(AccountRegistration account);
+        
+        Task<ServiceResult> CreateUserAsAdmin(AccountRegistration registration);
 
         Task<ServiceResult> CreateCustomerAccount(CustomerRegistration account);
 
