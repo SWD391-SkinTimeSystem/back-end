@@ -141,9 +141,10 @@ namespace SkinTime.Helpers
             CreateMap<Booking, BookingAll>()
      .ForMember(dest => dest.TherapistName, opt => opt.MapFrom(src => src.TherapistNavigation.UserNavigation.FullName))
      .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.ServiceNavigation.ServiceName))
+     .ForMember(dest => dest.TimeStart, opt => opt.MapFrom(src => src.ReservedTime))
      .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerNavigation.FullName))
-     .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.ReservedTime)))
-     .ForMember(dest => dest.BookingTime, opt => opt.MapFrom(src => TimeOnly.FromDateTime(src.ReservedTime)))
+      .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => src.ReservedTime.ToString("yyyy-MM-dd")))  
+    .ForMember(dest => dest.BookingTime, opt => opt.MapFrom(src => src.ReservedTime.ToString("HH:mm:ss")))
      .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
          .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src =>
         src.ScheduleNavigation.Where(s => s.Status == ScheduleStatus.Completed)));

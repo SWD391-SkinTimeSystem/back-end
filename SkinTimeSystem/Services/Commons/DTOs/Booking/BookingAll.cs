@@ -15,8 +15,8 @@ namespace Services.Commons.DTOs.Booking
         public DateTime TimeStart { get; set; }
         public string ServiceName { get; set; }
         public string Status { get; set; }
-        public DateOnly BookingDate { get; set; }
-        public TimeOnly BookingTime { get; set; }
-        public ICollection<ScheduleDTO> Schedules = new List<ScheduleDTO>();
+        public string BookingDate { get; set; }
+        public string BookingTime { get; set; }
+        public ICollection<ScheduleDTO> Schedules { get; set; } = new List<ScheduleDTO>();
     }
 }
