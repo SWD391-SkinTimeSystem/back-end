@@ -1,4 +1,4 @@
-﻿namespace API.Model
+﻿namespace Services.Commons.DTOs.StatisticDTOs
 {
     public class PopularServicesViewModel
     {

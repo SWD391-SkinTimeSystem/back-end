@@ -65,6 +65,7 @@ namespace SkinTime.Controllers
                 return treatmentPlan;
             });
         }
+
         [HttpPost("basic")]
         public async Task<IActionResult> CreateServiceBasic(ServiceCreateBasicDTO serviceDTO)
         {
