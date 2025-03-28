@@ -39,11 +39,11 @@ namespace API.Controllers
 
         [Authorize(Roles = nameof(UserRole.Staff))]
         [HttpPost("checkout")]
-        public async Task<IActionResult> CheckoutTracking([FromBody] Guid trackingId)
+        public async Task<IActionResult> CheckoutTracking([FromBody] Guid scheduleId)
         {
             return await HandleServiceCall(async () =>
             {
-                return await _trackingService.CheckoutTracking(trackingId);
+                return await _trackingService.CheckoutTracking(scheduleId);
             });
 
             

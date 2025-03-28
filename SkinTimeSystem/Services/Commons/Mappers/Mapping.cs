@@ -328,6 +328,13 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.TicketCode, opt => opt.MapFrom(src =>
                          Math.Abs(BitConverter.ToInt32(src.Id.ToByteArray(), 0)).ToString().PadLeft(6, '0').Substring(0, 6))); ;
             #endregion
+
+            #region skintype
+            CreateMap<SkinTypeDescriptionDTO, SkinType>().ReverseMap();
+            #endregion
+
+
+
         }
     }
 

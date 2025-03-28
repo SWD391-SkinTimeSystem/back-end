@@ -11,7 +11,7 @@ namespace Repositories.Interface
     {
         Task<Tracking> CreateTracking(Tracking tracking);
         Task<bool> NoteTracking(Guid trackingId, string note);
-        Task<bool> CheckoutTracking(Guid trackingId);
+        Task<bool> CheckoutTracking(Guid scheduleId);
 
         Task<Tracking> GetTrackingWithSchedulId(Guid scheduleId);
 

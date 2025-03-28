@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace BusinessObject.Entities
         [Column("description", TypeName = "NVARCHAR")]
         [MaxLength(250)]
         public string? Description { get; set; }
-        public virtual ICollection<Service> Services { get; set; } = new List<Service>();
+        public virtual ICollection<Service> Services { get; set; } = new Collection<Service>();
 
         public virtual ICollection<QuestionOption> QuestionOptions { get; set; } = new List<QuestionOption>();
     }

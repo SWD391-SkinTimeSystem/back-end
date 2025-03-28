@@ -14,7 +14,7 @@ namespace Services.Interfaces
     {
         Task<ServiceResult> CreateTracking(CreationalTrackingDTO creationalTrackingDTO);
         Task<ServiceResult<string>> NoteTracking(TrackingNoteDTO trackingNoteDTO);
-        Task<ServiceResult<string>> CheckoutTracking(Guid trackingId);
+        Task<ServiceResult<string>> CheckoutTracking(Guid scheduleId);
 
         Task<ServiceResult> CheckScheduleWithTrackId(Guid scheduleID);
     }
