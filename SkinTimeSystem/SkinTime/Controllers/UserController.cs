@@ -70,6 +70,11 @@ namespace SkinTime.Controllers
             return HandleServiceCall(result);
         }
 
+        /// <summary>
+        ///     Update a user status
+        /// </summary>
+        /// <param name="update">User id and new status</param>
+        /// <returns></returns>
         [HttpPost("status")]
         public async Task<IActionResult> UpdateUserStatus([FromBody] AccountStatusUpdate update)
         {

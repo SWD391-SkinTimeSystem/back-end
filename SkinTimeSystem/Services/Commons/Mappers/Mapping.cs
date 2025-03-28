@@ -156,6 +156,7 @@ namespace SkinTime.Helpers
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.ReservedStartTime))
                 .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.ReservedEndTime))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.Step, opt => opt.MapFrom(src => src.ServiceDetailNavigation.Step));
 
             CreateMap<Schedule, BookingStepDetailsDTO>()
