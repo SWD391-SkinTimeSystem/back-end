@@ -19,5 +19,6 @@ namespace Services.Interfaces
 
         Task<ServiceResult<Booking>> UpdateBookingInformation(string id, Booking bookingInformation);
         Task<Guid?> GetTransaction(Guid idBooking);
+
     }
 }
